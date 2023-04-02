@@ -44,7 +44,7 @@ NSView* NSView_initWithFrame(NSRect frameRect);
 void NSView_addSubview(NSView* view, NSView* subview);
 void NSView_release(NSView* view);
 
-NSTextField* NSTextField_initWithFrame(NSRect frameRect);
+NSTextField* NSTextField_init(NSRect frameRect);
 void NSTextField_setStringValue(NSTextField* field, const char* string);
 void NSTextField_setBezeled(NSTextField* field, bool flag);
 void NSTextField_setDrawsBackground(NSTextField* field, bool flag);
@@ -60,6 +60,17 @@ NSFont* NSFontManager_convertFontToHaveTrait(NSFontManager* manager, NSFont* fon
 
 NSFont* NSFont_init(const char* fontName, CGFloat fontSize);
 const char* NSFont_fontName(NSFont* font);
+
+NSButton* NSButton_init(NSRect frameRect);
+void NSButton_setTitle(NSButton* button, const char* title);
+void NSButton_setBezelStyle(NSButton* button, NSBezelStyle bezelStyle);
+void NSButton_setTarget(NSButton* button, id target);
+void NSButton_setAction(NSButton* button, SEL action);
+void NSButton_setAutoresizingMask(NSButton* button, NSAutoresizingMaskOptions autoresizingMask);
+void NSButton_setButtonType(NSButton* button, NSButtonType type);
+void NSButton_setState(NSButton* button, NSControlStateValue value);
+NSControlStateValue NSButton_state(NSButton* button);
+void NSButton_setAllowsMixedState(NSButton* button, bool flag);
 
 bool NSApp_setActivationPolicy(NSApplicationActivationPolicy activationPolicy);
 void NSApp_activateIgnoringOtherApps(bool flag);

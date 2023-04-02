@@ -7,10 +7,13 @@ extern "C" {
 #include "macros.h"
 #include "types.h"
 
-#include "headers/NSEvent.h"
 #include "headers/NSWindow.h"
+#include "headers/NSView.h"
+#include "headers/NSEvent.h"
 #include "headers/NSFontManager.h"
 #include "headers/NSFontDescriptor.h"
+#include "headers/NSCell.h"
+#include "headers/NSButtonCell.h"
 
 
 typedef NS_ENUM(NSUInteger, NSBackingStoreType) {

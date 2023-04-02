@@ -10,8 +10,22 @@ Apart from Objective-C/Swift, you can only use libraries to make applications. H
 
 Silicon provides a full C functional-oriented programming wrapper over Cocoa for those low-level programmers in need, as well as anyone that doesn't really want to learn Objective-C or Swift. This library provides functions, types, macros, enums, etc from the Cocoa API and translates to make C-syntax friendly library, as well as other features to make Mac OS development a bit more easier.
 
+# Examples
+- [hello-word.c](examples/hello-word.c) - a simple application with a "Hello world" text field.
+- [mac-load.c](examples/mac-load.c) - a Silicon port of [hidefromkgb's original Obj-C/C example](https://github.com/hidefromkgb/mac_load#objective-c-gui-app-example)
+- [application-loop.c](examples/application-loop.c) - utilizes the use of the NSEvent type to get the required events.
+- [opengl.c](examples/opengl.c) - a continuation from the previous example, as well as showing how to setup an OpenGL environment.
+- [menu.c](examples/menu.c) - demonstrates how to create menu bars in OS X.
+- [button.c](examples/button.c) - shows how to create and utilize buttons using the Cocoa API.
+- [checkbox.c](examples/checkbox.c) - similar to the previous example from above, however instead they're checkboxes instead of regular buttons.
+
 # Documentation
+## Prerequisites
 [todo]
+
+# Class shenanigans
+
+## General tips
 
 # Credits
 ## General
@@ -19,8 +33,6 @@ Silicon provides a full C functional-oriented programming wrapper over Cocoa for
 - Apple - all of the headers from [include/Silicon/headers](include/Silicon/headers/) have been directly copied and modified to not have any Objective-C shenanigans in them for them to be compiled in C.
 
 ## The example sources
-All of the repositories that I took examples from and eithered completely ported to Silicon or modified:
-- [hello-word.c](examples/hello-word.c) - [Gammasoft's 'Examples_Cocoa' repository](https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/HelloWorlds/HelloWorld/README.md)
-- [mac-load.c](examples/mac-load.c) - [hidefromkgb's 'mac_load' repository](https://github.com/hidefromkgb/mac_load#objective-c-gui-app-example)
-- [hello-word.c](examples/hello-word.c) - [Gammasoft's 'Examples_Cocoa' repository](https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/Applications/ApplicationWithMessageLoop/README.md)
-- [menu.c](examples/menu.c) - [Gammasoft's 'Examples_Cocoa' repository](https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/MenusAndToolbars/MainMenu/README.md)
+All of the repositories that I took examples from and eithered completely ported to Silicon or modified heavilly:
+- [Gammasoft's 'Examples_Cocoa' repository](https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/HelloWorlds/HelloWorld/README.md)
+- [hidefromkgb's 'mac_load' repository](https://github.com/hidefromkgb/mac_load#objective-c-gui-app-example)

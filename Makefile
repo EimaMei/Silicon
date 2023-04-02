@@ -33,5 +33,5 @@ $(OUTPUT)/%.o: source/%.m
 $(OUTPUT):
 	mkdir $(OUTPUT)
 
-debug:
-	gdb $(EXE)
+debug: $(EXE)
+	lldb ./$(EXE)

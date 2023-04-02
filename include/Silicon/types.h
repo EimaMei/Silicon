@@ -46,9 +46,10 @@ mac_type_define(NSNotification);
 mac_type_define(NSEvent);
 mac_type_define(NSTextField);
 mac_type_define(NSFontManager);
-mac_type_define(NSMenu);
 mac_type_define(NSProcessInfo);
+mac_type_define(NSMenu);
 mac_type_define(NSMenuItem);
+mac_type_define(NSButton);
 
 /* Deprecated*/
 mac_type_define(NSOpenGLPixelFormat);

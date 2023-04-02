@@ -1,5 +1,5 @@
 /*
-	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/HelloWorlds/HelloWorld/HelloWorld.m
+	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/HelloWorlds/HelloWorld/README.md
 */
 
 #include <Silicon/silicon.h>
@@ -14,7 +14,7 @@ bool windowShouldClose(void* self, id sender)  {
 int main() {
 	funcs[0] = windowShouldClose;
 
-	NSTextField* label = NSTextField_initWithFrame(NSMakeRect(5, 100, 290, 100));
+	NSTextField* label = NSTextField_init(NSMakeRect(5, 100, 290, 100));
 	NSTextField_setStringValue(label, "Hello, World!");
 	NSTextField_setBezeled(label, false);
 	NSTextField_setDrawsBackground(label, false);

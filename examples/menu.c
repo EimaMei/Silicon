@@ -1,5 +1,5 @@
 /*
-    Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/MenusAndToolbars/MainMenu/MainMenu.m
+    Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/MenusAndToolbars/MainMenu/README.md
 */
 
 #include <Silicon/silicon.h>
@@ -25,8 +25,9 @@ bool windowShouldClose(id sender) {
 }
 
 /*
-	C's function pointers and Objective-C's class methods (SELs) are different. While they are 'pointers' at their cores, SELs are class functions and as such, sending a regular function pointer will not work.
-	The way to fix this is to use the 'func_to_SEL' macro, which takes a function and adds it as a method to a NSObject class. With this you can now do selector(<function name>) and work.
+	C's function pointers and Objective-C's class methods (SELs) are different. While they are 'pointers' at their core, SELs are class functions and as such, sending a regular function pointer will not work.
+	The way to fix this is to use the 'func_to_SEL' macro, which takes a function and adds it as a method to a NSObject class. With this you can now do selector(<function name>), which finds the SEL pointer
+	to the provided function and use it as a valid argument.
 */
 void convert_functions_to_SEL() {
 	func_to_SEL(fileNew);

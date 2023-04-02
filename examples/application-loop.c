@@ -1,5 +1,5 @@
 /*
-	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/Applications/ApplicationWithMessageLoop/ApplicationWithMessageLoop.m
+	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/Applications/ApplicationWithMessageLoop/README.md
 */
 #include <Silicon/silicon.h>
 

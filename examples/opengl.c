@@ -17,7 +17,6 @@ int main() {
 	funcs[0] = OnClose;
 
 	NSWindow* win = NSWindow_init(NSMakeRect(100, 100, 512, 512), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable, NSBackingStoreBuffered, false);
-
 	NSWindow_setTitle(win, "trolleybus");
 
 	NSOpenGLPixelFormatAttribute attributes[] = {
