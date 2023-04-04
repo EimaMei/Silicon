@@ -375,6 +375,9 @@ NSEventType NSEvent_type(NSEvent* event) {
 	return [event type];
 }
 
+unsigned int NSEvent_keyCode(NSEvent* event) { 
+	return event.keyCode;
+}
 
 NSPoint NSEvent_locationInWindow(NSEvent* event) {
 	return [event locationInWindow];
