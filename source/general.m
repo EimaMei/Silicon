@@ -65,6 +65,9 @@ void NSView_addSubview(NSView* view, NSView* subview) {
 	[view addSubview:(subview)];
 }
 
+void NSWindow_setFrame(NSWindow* window, NSRect rect){
+	[window setFrame:rect display:YES animate:YES];
+}
 
 NSTextField* NSTextField_init(NSRect frameRect) {
 	NSTextField* label = [[ViewClass alloc] label];
