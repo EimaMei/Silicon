@@ -101,6 +101,7 @@ NSEventType NSEvent_type(NSEvent* event);
 unsigned int NSEvent_keyCode(NSEvent* event);
 char* NSEvent_keyString(NSEvent* event);
 NSPoint NSEvent_point(NSEvent* event);
+CGFloat NSEvent_deltaY(NSEvent* event)
 
   
 NSPoint NSEvent_locationInWindow(NSEvent* event);
