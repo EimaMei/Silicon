@@ -96,6 +96,8 @@ void NSApplication_sendEvent(NSApplication* application, NSEvent* event);
 NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, int mode, bool deqFlag);
 
 NSEventType NSEvent_type(NSEvent* event);
+unsigned int NSEvent_keyCode(NSEvent* event);
+  
 NSPoint NSEvent_locationInWindow(NSEvent* event);
 NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event);
 
