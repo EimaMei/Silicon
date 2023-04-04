@@ -100,12 +100,10 @@ NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEvent
 NSEventType NSEvent_type(NSEvent* event);
 unsigned int NSEvent_keyCode(NSEvent* event);
 char* NSEvent_keyString(NSEvent* event);
-NSPoint NSEvent_point(NSEvent* event);
 CGFloat NSEvent_deltaY(NSEvent* event);
 unsigned int NSEvent_keyCodeForChar(char* keyStr);
-
-  
 NSPoint NSEvent_locationInWindow(NSEvent* event);
+
 NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event);
 
 NSMenu* NSMenu_init(const char* title);
