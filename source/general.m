@@ -382,6 +382,45 @@ unsigned int NSEvent_keyCode(NSEvent* event) {
 	return event.keyCode;
 }
 
+unsigned int NSEvent_keyCodeForChar(char* keyStr){
+    NSString *keyString = char_to_NSString(keyStr);
+
+    if (strcmp(keyStr, "Up") == 0) return NSUpArrowFunctionKey;
+    else if (strcmp(keyStr, "Down") == 0) return NSDownArrowFunctionKey;
+    else if (strcmp(keyStr, "Left") == 0) return NSLeftArrowFunctionKey;
+    else if (strcmp(keyStr, "Right") == 0) return NSRightArrowFunctionKey;
+    else if (strcmp(keyStr, "F1") == 0) return NSF1FunctionKey;
+    else if (strcmp(keyStr, "F2") == 0) return NSF2FunctionKey;
+    else if (strcmp(keyStr, "F3") == 0) return NSF3FunctionKey;
+    else if (strcmp(keyStr, "F4") == 0) return NSF4FunctionKey;
+    else if (strcmp(keyStr, "F5") == 0) return NSF5FunctionKey;
+    else if (strcmp(keyStr, "F6") == 0) return NSF6FunctionKey;
+    else if (strcmp(keyStr, "F7") == 0) return NSF7FunctionKey;
+    else if (strcmp(keyStr, "F8") == 0) return NSF8FunctionKey;
+    else if (strcmp(keyStr, "F9") == 0) return NSF9FunctionKey;
+    else if (strcmp(keyStr, "F10") == 0) return NSF10FunctionKey;
+    else if (strcmp(keyStr, "F11") == 0) return NSF11FunctionKey;
+    else if (strcmp(keyStr, "F12") == 0) return NSF12FunctionKey;
+    else if (strcmp(keyStr, "Delete") == 0) return NSDeleteFunctionKey;
+    else if (strcmp(keyStr, "Insert") == 0) return NSInsertFunctionKey;
+    else if (strcmp(keyStr, "Home") == 0) return NSHomeFunctionKey;
+    else if (strcmp(keyStr, "End") == 0) return NSEndFunctionKey;
+    else if (strcmp(keyStr, "PageUp") == 0) return NSPageUpFunctionKey;
+    else if (strcmp(keyStr, "PageDown") == 0) return NSPageDownFunctionKey;
+    else if (strcmp(keyStr, "Backspace") == 0) return NSBackspaceCharacter;
+    else if (strcmp(keyStr, "Tab") == 0) return NSTabCharacter;
+    else if (strcmp(keyStr, "Enter") == 0) return NSNewlineCharacter;
+    else if (strcmp(keyStr, "Return") == 0) return NSCarriageReturnCharacter;
+    else if (strcmp(keyStr, "Escape") == 0) return 0x1B;
+    else if (strcmp(keyStr, "Space") == 0) return 0x20;
+    else if (strcmp(keyStr, "Shift") == 0) return 0x56;
+    else if (strcmp(keyStr, "CapsLock") == 0) return 0x57;
+	else if (strcmp(keyStr, "BackSpace")) return 0x51;
+	
+	unichar keyChar = [keyString characterAtIndex:0];
+	return [NSEvent keyCodeForChar:keyChar];
+}
+
 char* NSEvent_keyString(NSEvent* event) {
     unichar keyChar = [[event charactersIgnoringModifiers] characterAtIndex:0];
     NSUInteger flags = [event modifierFlags] & (NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand);
