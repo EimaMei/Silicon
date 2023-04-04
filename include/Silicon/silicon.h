@@ -38,6 +38,8 @@ void NSWindow_setIsVisible(NSWindow* window, bool flag);
 NSRect NSWindow_frame(NSWindow* window);
 void NSWindow_center(NSWindow* window);
 void NSWindow_makeMainWindow(NSWindow* window);
+  
+void NSWindow_setFrame(NSWindow* window, NSRect rect);
 
 NSView* NSView_init();
 NSView* NSView_initWithFrame(NSRect frameRect);
