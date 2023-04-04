@@ -453,8 +453,12 @@ char* NSEvent_keyString(NSEvent* event) {
     }
 }
 
-NSPoint NSEvent_point(NSEvent* event){
+NSPoint NSEvent_point(NSEvent* event) {
 	return [event locationInWindow];
+}
+
+CGFloat NSEvent_deltaY(NSEvent* event) {
+    return [event deltaY];
 }
 
 NSPoint NSEvent_locationInWindow(NSEvent* event) {
