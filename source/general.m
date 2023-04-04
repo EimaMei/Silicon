@@ -379,6 +379,81 @@ unsigned int NSEvent_keyCode(NSEvent* event) {
 	return event.keyCode;
 }
 
+char* NSEvent_keyString(NSEvent* event) {
+    unichar keyChar = [[event charactersIgnoringModifiers] characterAtIndex:0];
+    NSUInteger flags = [event modifierFlags] & (NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand);
+    switch (keyChar) {
+        case NSUpArrowFunctionKey:
+            return "Up";
+        case NSDownArrowFunctionKey:
+            return "Down";
+        case NSLeftArrowFunctionKey:
+            return "Left";
+        case NSRightArrowFunctionKey:
+            return "Right";
+        case NSF1FunctionKey:
+            return "F1";
+        case NSF2FunctionKey:
+            return "F2";
+        case NSF3FunctionKey:
+            return "F3";
+        case NSF4FunctionKey:
+            return "F4";
+        case NSF5FunctionKey:
+            return "F5";
+        case NSF6FunctionKey:
+            return "F6";
+        case NSF7FunctionKey:
+            return "F7";
+        case NSF8FunctionKey:
+            return "F8";
+        case NSF9FunctionKey:
+            return "F9";
+        case NSF10FunctionKey:
+            return "F10";
+        case NSF11FunctionKey:
+            return "F11";
+        case NSF12FunctionKey:
+            return "F12";
+        case NSDeleteFunctionKey:
+            return "Delete";
+        case NSInsertFunctionKey:
+            return "Insert";
+        case NSHomeFunctionKey:
+            return "Home";
+        case NSEndFunctionKey:
+            return "End";
+        case NSPageUpFunctionKey:
+            return "PageUp";
+        case NSPageDownFunctionKey:
+            return "PageDown";
+        case NSBackspaceCharacter:
+            return "Backspace";
+        case NSTabCharacter:
+            return "Tab";
+        case NSNewlineCharacter:
+            return "Enter";
+        case NSCarriageReturnCharacter:
+            return "Return";
+        case 0x1B: // Escape key
+            return "Escape";
+        case 0x20: // Spacebar
+            return "Space";
+		case 0x56:
+			return "Shift";
+		case 0x57:
+			return "CapsLock"
+		case 0x51:
+			return "BackSpace";
+        default:
+            return NSString_to_char([event characters]);
+    }
+}
+
+NSPoint NSEvent_point(NSEvent* event){
+	return [event locationInWindow];
+}
+
 NSPoint NSEvent_locationInWindow(NSEvent* event) {
 	return [event locationInWindow];
 }
