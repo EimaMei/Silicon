@@ -8,7 +8,7 @@ BACKEND-OBJ = $(addprefix $(OUTPUT)/,$(addsuffix .o,$(notdir $(BACKEND-SRC))))
 BACKEND = $(OUTPUT)/libESGL.a
 
 SRC = main.c
-FLAGS = -O2 -std=c99
+FLAGS = -O2 -std=c99 -ferror-limit=3
 LIBS = $(BACKEND) -framework AppKit -framework Foundation -framework OpenGL -framework CoreVideo
 INCLUDE = -I"include" -I"source"
 
@@ -17,6 +17,9 @@ all: $(OUTPUT) $(BACKEND) $(EXE) run
 
 run:
 	./$(EXE)
+
+runExamples:
+	@for f in $(shell ls examples/*.c); do make SRC=$${f}; rm -rf $(EXE); done
 
 clean:
 	rm $(BACKEND) $(EXE) $(BACKEND-OBJ)

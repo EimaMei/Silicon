@@ -21,6 +21,7 @@ extern "C" {
 typedef CGRect  NSRect;  /* A structure that contains the location and dimensions of a rectangle. */
 typedef CGSize  NSSize;  /* A structure that contains width and height values. */
 typedef CGPoint NSPoint; /* A structure that contains a point in a two-dimensional coordinate system. */
+typedef CGPoint NSScreen;
 
 /* New NS types. */
 #if SILICON_TARGET_64BIT
@@ -50,7 +51,8 @@ mac_type_define(NSProcessInfo);
 mac_type_define(NSMenu);
 mac_type_define(NSMenuItem);
 mac_type_define(NSButton);
-
+mac_type_define(NSComboBox);
+mac_type_define(NSControl);
 /* Deprecated*/
 mac_type_define(NSOpenGLPixelFormat);
 mac_type_define(NSOpenGLView);

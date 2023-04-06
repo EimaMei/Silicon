@@ -50,14 +50,14 @@ int main() {
 	NSWindow_makeMainWindow(win);
 
 	NSApplication_sharedApplication();
-	NSApp_setActivationPolicy(NSApplicationActivationPolicyRegular);
-	NSApp_finishLaunching();
+	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
+	NSApplication_finishLaunching(NSApp);
 
 	while (is_running) {
-		NSEvent* e = NSApp_nextEventMatchingMask(NSEventMaskAny, NSDate_distantFuture(), 0, true);
+		NSEvent* e = NSApplication_nextEventMatchingMask(NSApp, NSEventMaskAny, NSDate_distantFuture(), 0, true);
 
-		NSApp_sendEvent(e);
-		NSApp_updateWindows();
+		NSApplication_sendEvent(NSApp, e);
+		NSApplication_updateWindows(NSApp);
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -69,7 +69,7 @@ int main() {
 	CVDisplayLinkStop(displayLink);
 	CVDisplayLinkRelease(displayLink);
 	NSView_release((NSView*)view);
-	NSApp_terminate((id)win);
+	NSApplication_terminate(NSApp, (id)win);
 
 
 	return 0;

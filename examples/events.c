@@ -11,15 +11,15 @@ int main(int argc, char* argv[]) {
 	NSWindow_setIsVisible(window1, true);
 
 	NSApplication_sharedApplication();
-	NSApp_setActivationPolicy(NSApplicationActivationPolicyRegular);
-	NSApp_finishLaunching();
+	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
+	NSApplication_finishLaunching(NSApp);
 
 	while (true) {
-		NSEvent* event = NSApp_nextEventMatchingMask(NSEventMaskAny, NSDate_distantFuture(), 0, true);
+		NSEvent* event = NSApplication_nextEventMatchingMask(NSApp, NSEventMaskAny, NSDate_distantFuture(), 0, true);
 
 		printf("Event [type=%s location={%f, %f} modifierFlags={%s}]\n", NSEventTypeToChar(NSEvent_type(event)), NSEvent_locationInWindow(event).x, NSEvent_locationInWindow(event).y, NSEventModifierFlagsToChar(NSEvent_modifierFlags(event)));
-		NSApp_sendEvent(event);
-		NSApp_updateWindows();
+		NSApplication_sendEvent(NSApp, event);
+		NSApplication_updateWindows(NSApp);
   	}
 }
 
