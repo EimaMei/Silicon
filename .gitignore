@@ -5,7 +5,7 @@ source/test
 games/
 res
 build
-script/
+scripts/
 
 # Files 
 *.exe
