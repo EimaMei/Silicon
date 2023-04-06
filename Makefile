@@ -5,7 +5,7 @@ EXE = $(OUTPUT)/$(NAME)
 
 BACKEND-SRC = $(basename $(wildcard source/*.m))
 BACKEND-OBJ = $(addprefix $(OUTPUT)/,$(addsuffix .o,$(notdir $(BACKEND-SRC))))
-BACKEND = $(OUTPUT)/libESGL.a
+BACKEND = $(OUTPUT)/libSilicon.a
 
 SRC = main.c
 FLAGS = -O2 -std=c99 -ferror-limit=3

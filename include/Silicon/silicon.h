@@ -7,7 +7,6 @@ extern "C" {
 #include <CoreVideo/CVDisplayLink.h>
 #include <ApplicationServices/ApplicationServices.h>
 
-#include "headers/NSObjCRuntime.h"
 
 #include "macros.h"
 #include "types.h"
@@ -57,6 +56,10 @@ define_property(NSWindow, id, delegate, Delegate, window);
 define_property(NSWindow, bool, isVisible, IsVisible, window);
 /* Get/Set the frame of the window. */
 define_property(NSWindow, NSRect, frame, Frame, window);
+/* Get/Set the background color of the window. */
+define_property(NSWindow, NSColor*, backgroundColor, BackgroundColor, window);
+/* Get/set the opaque of the window. */
+define_property(NSWindow, bool, isOpaque, Opaque, window);
 
 /* ====== NSWindow functions ====== */
 /* Initializes a NSWindow handle. */
@@ -65,6 +68,8 @@ NSWindow* NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingSt
 void NSWindow_orderFront(NSWindow* window, NSWindow* sender);
 /* */
 void NSWindow_makeKeyWindow(NSWindow* window);
+/* */
+bool NSWindow_isKeyWindow(NSWindow* window);
 /* */
 void NSWindow_center(NSWindow* window);
 /* */
@@ -216,7 +221,16 @@ void NSApplication_updateWindows(NSApplication* application);
 /* */
 void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool flag);
 /* */
+void NSApplication_setApplicationIconImage(NSApplication* application, NSImage* image);
+/* */
 NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, int mode, bool deqFlag);
+
+
+/* ============ NSScreen class ============ */
+/* */
+NSScreen* NSScreen_mainScreen();
+/* */
+NSRect NSScreen_frame(NSScreen* screen);
 
 
 /* ============ NSEvent class ============ */
@@ -227,6 +241,16 @@ NSEventType NSEvent_type(NSEvent* event);
 NSPoint NSEvent_locationInWindow(NSEvent* event);
 /* */
 NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event);
+/* */
+unsigned short NSEvent_keyCode(NSEvent* event);
+/* */
+const char* NSEvent_characters(NSEvent* event);
+/* */
+CGFloat NSEvent_deltaY(NSEvent* event);
+/* */
+unsigned short NSEvent_keyCodeForChar(char* keyStr);
+/* */
+NSPoint NSEvent_mouseLocation(NSEvent* event);
 
 
 /* ============ NSMenu class ============ */
@@ -282,7 +306,12 @@ NSProcessInfo* NSProcessInfo_processInfo();
 /* */
 const char* NSProcessInfo_processName(NSProcessInfo* processInfo);
 
-/* deprecated. */
+
+/* ============ NSImage class ============ */
+NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length);
+
+
+/* deprecated, kinda ignore it for now. */
 NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs);
 NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format);
 void NSOpenGLView_prepareOpenGL(NSOpenGLView* view);
@@ -290,7 +319,6 @@ NSOpenGLContext* NSOpenGLView_openGLContext(NSOpenGLView* view);
 void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpenGLContextParameter param);
 void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context);
 void NSOpenGLContext_flushBuffer(NSOpenGLContext* context);
-
 
 
 #undef GL_SILENCE_DEPRECATION

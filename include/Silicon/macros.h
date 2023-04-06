@@ -13,7 +13,7 @@ extern "C" {
 #define nil                  ((void *)0) /* The NULL to C. */
 #endif
 
-/* If our target OS is 64bits. */
+/* If our target OS is 64-bits. */
 #define SILICON_TARGET_64BIT         __LP64__ || TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32 || NS_BUILD_32_LIKE_64
 
 #ifdef __cplusplus
@@ -32,11 +32,15 @@ extern "C" {
 #define NS_OPENGL_CLASS_DEPRECATED(message, minVers, maxVers) API_AVAILABLE(macos(minVers))
 #endif
 
+#ifndef NS_OPTIONS
 /* Declarations of enums macros. */
+#define NS_OPTIONS(type, name) type name; enum /* Used to declare structs with a specific type. */
+#define NS_ENUM(type, name) NS_OPTIONS(type, name) /* Used to declare structs with a specific type. */
+#endif
+
 #define NSIntegerMax    LONG_MAX  /* The minimum value for an NSInteger. */
 #define NSIntegerMin    LONG_MIN  /* The maximum value for an NSInteger. */
 #define NSUIntegerMax   ULONG_MAX /* The maximum value for an NSUInteger. */
-
 
 #define sizeof_class(typename) class_getInstanceSize(class(typename)) /* Gets the size of the class. */
 
