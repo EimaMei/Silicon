@@ -56,6 +56,10 @@ define_property(NSWindow, id, delegate, Delegate, window);
 define_property(NSWindow, bool, isVisible, IsVisible, window);
 /* Get/Set the frame of the window. */
 define_property(NSWindow, NSRect, frame, Frame, window);
+/* Get/Set the background color of the window. */
+define_property(NSWindow, NSColor*, backgroundColor, BackgroundColor, window);
+/* Get/set the opaque of the window. */
+define_property(NSWindow, bool, isOpaque, Opaque, window);
 
 /* ====== NSWindow functions ====== */
 /* Initializes a NSWindow handle. */
@@ -65,15 +69,12 @@ void NSWindow_orderFront(NSWindow* window, NSWindow* sender);
 /* */
 void NSWindow_makeKeyWindow(NSWindow* window);
 /* */
-void NSWindow_setOpaque(NSWindow* window, bool opaque);
-/* */
 bool NSWindow_isKeyWindow(NSWindow* window);
 /* */
 void NSWindow_center(NSWindow* window);
 /* */
 void NSWindow_makeMainWindow(NSWindow* window);
-/* */
-void NSWindow_setBackgroundColor(NSWindow* window, float white, float alpha);
+
 
 /* ============ NSView class ============ */
 /* ====== NSView functions ====== */
@@ -224,10 +225,13 @@ void NSApplication_setApplicationIconImage(NSApplication* application, NSImage* 
 /* */
 NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, int mode, bool deqFlag);
 
-/* ============ NSScreen class ============*/
+
+/* ============ NSScreen class ============ */
+/* */
 NSScreen* NSScreen_mainScreen();
 /* */
 NSRect NSScreen_frame(NSScreen* screen);
+
 
 /* ============ NSEvent class ============ */
 /* ====== NSEvent functions ====== */
@@ -238,15 +242,16 @@ NSPoint NSEvent_locationInWindow(NSEvent* event);
 /* */
 NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event);
 /* */
-unsigned int NSEvent_keyCode(NSEvent* event);
+unsigned short NSEvent_keyCode(NSEvent* event);
 /* */
-char* NSEvent_characters(NSEvent* event);
+const char* NSEvent_characters(NSEvent* event);
 /* */
 CGFloat NSEvent_deltaY(NSEvent* event);
 /* */
-unsigned int NSEvent_keyCodeForChar(char* keyStr);
+unsigned short NSEvent_keyCodeForChar(char* keyStr);
 /* */
 NSPoint NSEvent_mouseLocation(NSEvent* event);
+
 
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */
@@ -301,7 +306,12 @@ NSProcessInfo* NSProcessInfo_processInfo();
 /* */
 const char* NSProcessInfo_processName(NSProcessInfo* processInfo);
 
-/* deprecated. */
+
+/* ============ NSImage class ============ */
+NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length);
+
+
+/* deprecated, kinda ignore it for now. */
 NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs);
 NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format);
 void NSOpenGLView_prepareOpenGL(NSOpenGLView* view);
@@ -310,8 +320,6 @@ void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpen
 void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context);
 void NSOpenGLContext_flushBuffer(NSOpenGLContext* context);
 
-/* ============ NSEvent class ============ */
-NSImage* NSImage_initWithData(unsigned char* bitmapData, int length);
 
 #undef GL_SILENCE_DEPRECATION
 #ifdef __cplusplus

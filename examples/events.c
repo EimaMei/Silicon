@@ -2,6 +2,7 @@
 	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/Applications/ApplicationWithMessageLoop/README.md
 */
 #include <Silicon/silicon.h>
+#define KEY_Q 12 // From the "https://boredzo.org/blog/wp-content/uploads/2007/05/imtx-virtual-keycodes.png" image.
 
 const char* NSEventTypeToChar(NSEventType eventType);
 const char* NSEventModifierFlagsToChar(NSEventModifierFlags modifierFlags);
@@ -17,7 +18,12 @@ int main(int argc, char* argv[]) {
 	while (true) {
 		NSEvent* event = NSApplication_nextEventMatchingMask(NSApp, NSEventMaskAny, NSDate_distantFuture(), 0, true);
 
+		// We have to check if the user is even pressing anything in the first place, otherwise the program will crash!
+		if (NSEvent_type(event) == NSEventTypeKeyDown && NSEvent_keyCode(event) == KEY_Q)
+			break;
+
 		printf("Event [type=%s location={%f, %f} modifierFlags={%s}]\n", NSEventTypeToChar(NSEvent_type(event)), NSEvent_locationInWindow(event).x, NSEvent_locationInWindow(event).y, NSEventModifierFlagsToChar(NSEvent_modifierFlags(event)));
+
 		NSApplication_sendEvent(NSApp, event);
 		NSApplication_updateWindows(NSApp);
   	}

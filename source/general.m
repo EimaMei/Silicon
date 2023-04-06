@@ -34,6 +34,23 @@
 typedef bool format(void* self, ...);
 format* funcs[2];
 
+/* Key stuff. */
+char* NSKEYS[] = {
+	"Up", "Down", "Left", "Right",
+	"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+	"Delete", "Insert", "Home", "End", "PageUp", "PageDown",
+	"Backspace", "Tab", "Enter", "Return",
+	"Escape", "Space", "Shift", "CapsLock", "BackSpace"
+};
+unsigned short NSKEYI[sizeof(NSKEYS)] = {
+	NSUpArrowFunctionKey, NSDownArrowFunctionKey, NSLeftArrowFunctionKey, NSRightArrowFunctionKey,
+	NSF1FunctionKey, NSF2FunctionKey, NSF3FunctionKey, NSF4FunctionKey, NSF5FunctionKey, NSF6FunctionKey, NSF7FunctionKey, NSF8FunctionKey, NSF9FunctionKey, NSF10FunctionKey, NSF11FunctionKey, NSF12FunctionKey,
+	NSDeleteFunctionKey, NSInsertFunctionKey, NSHomeFunctionKey, NSEndFunctionKey, NSPageUpFunctionKey, NSPageDownFunctionKey,
+	NSBackspaceCharacter, NSTabCharacter, NSNewlineCharacter, NSCarriageReturnCharacter,
+	0x1B, 0x20, 0x56, 0x57, 0x51
+};
+unsigned char NSKEYCOUNT = sizeof(NSKEYS);
+
 @interface WindowClass : NSWindow {}
 @end
 
@@ -91,18 +108,10 @@ implement_property(NSWindow, bool, isVisible, IsVisible, window);
 NSRect NSWindow_frame(NSWindow* window) {
 	return [window frame];
 }
-/* Set the frame of the window. */
-void NSWindow_setFrame(NSWindow* window, NSRect frame) {
-	[window setFrame:(frame) display:(true) animate:(true)];
-}
-/* Toggle opaque for the window*/
-void NSWindow_setOpaque(NSWindow* window, bool opaque){
-	[window setOpaque:opaque];
-}
-/* set background color of window */
-void NSWindow_setBackgroundColor(NSWindow* window, float white, float alpha){ 
-    [window setBackgroundColor:[NSColor colorWithCalibratedWhite:white alpha:alpha]];
-}
+/* */
+implement_property(NSWindow, NSColor*, backgroundColor, BackgroundColor, window);
+/* Toggle opaque for the window. */
+implement_property(NSWindow, bool, isOpaque, Opaque, window);
 
 /* ====== NSWindow functions ====== */
 /* Get/Set the title of the window. */
@@ -129,6 +138,11 @@ void NSWindow_center(NSWindow* window) {
 void NSWindow_makeMainWindow(NSWindow* window) {
 	[window makeMainWindow];
 }
+/* Set the frame of the window. */
+void NSWindow_setFrame(NSWindow* window, NSRect frame) {
+	[window setFrame:(frame) display:(true) animate:(true)];
+}
+
 
 /* ============ NSView class ============ */
 /* ====== NSView functions ====== */
@@ -320,6 +334,7 @@ NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEvent
 	return [application nextEventMatchingMask:(mask) untilDate:(expiration) inMode:(NSDefaultRunLoopMode) dequeue:(deqFlag)];;
 }
 
+
 /* ============ NSScreen class ============*/
 NSScreen* NSScreen_mainScreen() {
 	return [NSScreen mainScreen];
@@ -344,39 +359,33 @@ NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event) {
 	return [event modifierFlags];
 }
 /* */
-unsigned int NSEvent_keyCode(NSEvent* event) { 
-	return event.keyCode;
+unsigned short NSEvent_keyCode(NSEvent* event) {
+	return [event keyCode];
 }
 /* */
 NSPoint NSEvent_mouseLocation(NSEvent* event) {
 	return [NSEvent mouseLocation];
 }
 /* */
-
-char* NSKEYS[31] = {"Up", "Down", "Left", "Right", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Delete", "Insert", "Home", "End", "PageUp", "PageDown", "Backspace", "Tab", "Enter", "Return", "Escape", "Space", "Shift", "CapsLock", "BackSpace"};
-unsigned int NSKEYI[31] = { NSUpArrowFunctionKey,NSDownArrowFunctionKey,NSLeftArrowFunctionKey,NSRightArrowFunctionKey,NSF1FunctionKey,NSF2FunctionKey,NSF3FunctionKey,NSF4FunctionKey,NSF5FunctionKey,NSF6FunctionKey,NSF7FunctionKey,NSF8FunctionKey,NSF9FunctionKey,NSF10FunctionKey,NSF11FunctionKey,NSF12FunctionKey,NSDeleteFunctionKey,NSInsertFunctionKey,NSHomeFunctionKey,NSEndFunctionKey,NSPageUpFunctionKey,NSPageDownFunctionKey,NSBackspaceCharacter,NSTabCharacter,NSNewlineCharacter,NSCarriageReturnCharacter,0x1B,0x20,0x56,0x57,0x51 };
-
-int NSKEYCOUNT = 31;
-
-unsigned int NSEvent_keyCodeForChar(char* keyStr){
+unsigned short NSEvent_keyCodeForChar(char* keyStr){
     unsigned int i;
     for (i = 0; i < NSKEYCOUNT; i++)
         if (strcmp(keyStr, NSKEYS[i]))
             return NSKEYI[i + 1];
-
     NSString *keyString = char_to_NSString(keyStr);
-	unichar keyChar = [keyString characterAtIndex:0];
-	return [NSEvent keyCodeForChar:keyChar];
+	unichar keyChar = [keyString characterAtIndex:(0)];
+	return keyChar;
 }
 /* */
-char* NSEvent_characters(NSEvent* event) {
-    unichar keyCode = [[event charactersIgnoringModifiers] characterAtIndex:0];
+const char* NSEvent_characters(NSEvent* event) {
+    unichar keyCode = [[event charactersIgnoringModifiers] characterAtIndex:(0)];
     NSUInteger flags = [event modifierFlags] & (NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand);
 
     unsigned int i;
-    for (i = 0; i < NSKEYCOUNT; i++)
+    for (i = 0; i < NSKEYCOUNT; i++) {
         if (keyCode == NSKEYI[i])
             return NSKEYS[i];
+	}
 
     return NSString_to_char([event characters]);
 }
@@ -404,7 +413,7 @@ implement_property(NSMenuItem, NSMenu*, submenu, Submenu, item);
 /* */
 implement_str_property(NSMenuItem, const char*, title, Title, item);
 
-/* ====== NSEvent functions ====== */
+/* ====== NSMenuItem functions ====== */
 /* */
 NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEquivalent) {
 	NSString* menu_title = char_to_NSString(title);
@@ -445,6 +454,7 @@ NSColor* NSColor_keyboardFocusIndicatorColor() {
 	return [NSColor keyboardFocusIndicatorColor];
 }
 
+
 /* ============ NSBezierPath class ============ */
 /* ====== NSBezierPath functions ====== */
 /* */
@@ -471,8 +481,9 @@ const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
 	return NSString_to_char([processInfo processName]);
 }
 
-/* ============ NSEvent class ============ */
+
+/* ============ NSImage class ============ */
 /* */
-NSImage* NSImage_initWithData(unsigned char* bitmapData, int length) { 
-    return [[NSImage alloc] initWithData:[NSData dataWithBytes:bitmapData length:length]];
+NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
+    return [[NSImage alloc] initWithData:([NSData dataWithBytes:(bitmapData) length:(length)])];
 }
