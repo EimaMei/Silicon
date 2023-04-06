@@ -220,6 +220,8 @@ void NSApplication_updateWindows(NSApplication* application);
 /* */
 void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool flag);
 /* */
+void NSApplication_setApplicationIconImage(NSApplication* application, NSImage* image);
+/* */
 NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, int mode, bool deqFlag);
 
 /* ============ NSScreen class ============*/
@@ -243,6 +245,8 @@ char* NSEvent_characters(NSEvent* event);
 CGFloat NSEvent_deltaY(NSEvent* event);
 /* */
 unsigned int NSEvent_keyCodeForChar(char* keyStr);
+/* */
+NSPoint NSEvent_mouseLocation(NSEvent* event);
 
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */
@@ -306,7 +310,8 @@ void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpen
 void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context);
 void NSOpenGLContext_flushBuffer(NSOpenGLContext* context);
 
-
+/* ============ NSEvent class ============ */
+NSImage* NSImage_initWithData(unsigned char* bitmapData, int length);
 
 #undef GL_SILENCE_DEPRECATION
 #ifdef __cplusplus

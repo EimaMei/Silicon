@@ -22,6 +22,7 @@ typedef CGRect  NSRect;  /* A structure that contains the location and dimension
 typedef CGSize  NSSize;  /* A structure that contains width and height values. */
 typedef CGPoint NSPoint; /* A structure that contains a point in a two-dimensional coordinate system. */
 typedef CGPoint NSScreen;
+typedef struct NSImage NSImage;
 
 /* New NS types. */
 #if SILICON_TARGET_64BIT

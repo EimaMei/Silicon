@@ -308,6 +308,10 @@ void NSApplication_updateWindows(NSApplication* application) {
 	[application updateWindows];
 }
 /* */
+void NSApplication_setApplicationIconImage(NSApplication* application, NSImage* image){
+    return [NSApp setApplicationIconImage:image];
+}
+/* */
 void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool flag) {
 	[application activateIgnoringOtherApps:(flag)];
 }
@@ -342,6 +346,10 @@ NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event) {
 /* */
 unsigned int NSEvent_keyCode(NSEvent* event) { 
 	return event.keyCode;
+}
+/* */
+NSPoint NSEvent_mouseLocation(NSEvent* event) {
+	return [NSEvent mouseLocation];
 }
 /* */
 
@@ -461,4 +469,10 @@ NSProcessInfo* NSProcessInfo_processInfo() {
 /* */
 const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
 	return NSString_to_char([processInfo processName]);
+}
+
+/* ============ NSEvent class ============ */
+/* */
+NSImage* NSImage_initWithData(unsigned char* bitmapData, int length) { 
+    return [[NSImage alloc] initWithData:[NSData dataWithBytes:bitmapData length:length]];
 }
