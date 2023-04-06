@@ -60,6 +60,7 @@ extern "C" {
 #define define_inherented_function(Class, function, ...) \
     Class* Class##_##function(__VA_ARGS__)
 
+
 #define implement_inherented_function(return_type, inherented_class, function, ...) \
     { \
     	return (return_type*)inherented_class##_##function(__VA_ARGS__);\
