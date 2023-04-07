@@ -401,17 +401,10 @@ CGFloat NSEvent_deltaY(NSEvent* event) {
 NSMenu* NSMenu_init(const char* title) {
 	return [[NSMenu alloc] initWithTitle:(char_to_NSString(title))];
 }
-/* Set the frame of the window. */
-void NSWindow_setFrame(NSWindow* window, NSRect frame) {
-	[window setFrame:(frame) display:(true) animate:(true)];
-}
 
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */
 /* */
-NSMenu* NSMenu_init(const char* title) {
-	return [[NSMenu alloc] initWithTitle:(char_to_NSString(title))];
-}
 /* */
 void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem) {
 	[menu addItem:(newItem)];
@@ -498,4 +491,27 @@ const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
 /* */
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
     return [[NSImage alloc] initWithData:([NSData dataWithBytes:(bitmapData) length:(length)])];
+}
+
+/* ============ NSGraphicsContext class ============ */
+/* */
+CGContextRef NSGraphicsContext_currentContext() {
+	return [[NSGraphicsContext currentContext] graphicsPort];
+}
+
+/* =========== NSPasteBoard ============ */
+char* NSPasteboard_stringForType(NSPasteboard* pasteboard) {
+    return NSString_to_char([pasteboard stringForType:NSPasteboardTypeString]);
+}
+/* */
+NSPasteboard* NSPasteboard_generalPasteboard() {
+	return [NSPasteboard generalPasteboard];
+}
+/* */
+void NSPasteBoard_declareTypes(NSPasteboard* pasteboard) {
+    [pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
+}
+/* */
+void NSPasteBoard_setString(NSPasteboard* pasteboard, char* stringToWrite) {
+    [pasteboard setString:char_to_NSString(stringToWrite) forType:NSStringPboardType];
 }

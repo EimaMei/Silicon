@@ -310,6 +310,18 @@ const char* NSProcessInfo_processName(NSProcessInfo* processInfo);
 /* ============ NSImage class ============ */
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length);
 
+/* ============ NSGraphicsContext class ============ */
+/* */
+CGContextRef NSGraphicsContext_currentContext();
+
+/* =========== NSPasteBoard ============ */
+NSPasteboard* NSPasteboard_generalPasteboard();
+/* */
+char* NSPasteboard_stringForType(NSPasteboard* pasteboard);
+/* */
+void NSPasteBoard_setString(NSPasteboard* pasteBoard, char* stringToWrite);
+/* */
+void NSPasteBoard_declareTypes(NSPasteboard* pasteboard);
 
 /* deprecated, kinda ignore it for now. */
 NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs);
@@ -319,7 +331,6 @@ NSOpenGLContext* NSOpenGLView_openGLContext(NSOpenGLView* view);
 void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpenGLContextParameter param);
 void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context);
 void NSOpenGLContext_flushBuffer(NSOpenGLContext* context);
-
 
 #undef GL_SILENCE_DEPRECATION
 #ifdef __cplusplus
