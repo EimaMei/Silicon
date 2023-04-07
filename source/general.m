@@ -401,17 +401,10 @@ CGFloat NSEvent_deltaY(NSEvent* event) {
 NSMenu* NSMenu_init(const char* title) {
 	return [[NSMenu alloc] initWithTitle:(char_to_NSString(title))];
 }
-/* Set the frame of the window. */
-void NSWindow_setFrame(NSWindow* window, NSRect frame) {
-	[window setFrame:(frame) display:(true) animate:(true)];
-}
 
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */
 /* */
-NSMenu* NSMenu_init(const char* title) {
-	return [[NSMenu alloc] initWithTitle:(char_to_NSString(title))];
-}
 /* */
 void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem) {
 	[menu addItem:(newItem)];
