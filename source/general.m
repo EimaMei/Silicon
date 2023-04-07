@@ -509,7 +509,7 @@ NSPasteboard* NSPasteboard_generalPasteboard() {
 }
 /* */
 void NSPasteBoard_declareTypes(NSPasteboard* pasteboard) {
-    [pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
+    [pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:NULL];
 }
 /* */
 void NSPasteBoard_setString(NSPasteboard* pasteboard, char* stringToWrite) {
