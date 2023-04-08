@@ -1,8 +1,8 @@
 /*
-    NSView.h
-    Application Kit
-    Copyright (c) 1994-2021, Apple Inc.
-    All rights reserved.
+	NSView.h
+	Application Kit
+	Copyright (c) 1994-2021, Apple Inc.
+	All rights reserved.
 */
 
 #pragma once
@@ -16,48 +16,48 @@ extern "C" {
 
 // Bitset options for the autoresizingMask
 typedef NS_OPTIONS(NSUInteger, NSAutoresizingMaskOptions) {
-    NSViewNotSizable			=  0,
-    NSViewMinXMargin			=  1,
-    NSViewWidthSizable			=  2,
-    NSViewMaxXMargin			=  4,
-    NSViewMinYMargin			=  8,
-    NSViewHeightSizable			= 16,
-    NSViewMaxYMargin			= 32
+	NSViewNotSizable			=  0,
+	NSViewMinXMargin			=  1,
+	NSViewWidthSizable			=  2,
+	NSViewMaxXMargin			=  4,
+	NSViewMinYMargin			=  8,
+	NSViewHeightSizable			= 16,
+	NSViewMaxYMargin			= 32
 };
 
 typedef NS_ENUM(NSUInteger, NSBorderType) {
-    NSNoBorder				= 0,
-    NSLineBorder			= 1,
-    NSBezelBorder			= 2,
-    NSGrooveBorder			= 3
+	NSNoBorder				= 0,
+	NSLineBorder			= 1,
+	NSBezelBorder			= 2,
+	NSGrooveBorder			= 3
 };
 
 typedef NS_ENUM(NSInteger, NSViewLayerContentsRedrawPolicy) {
-    // Leave the layer's contents alone. Never mark the layer as needing display, or draw the view's contents to the layer
-    NSViewLayerContentsRedrawNever = 0,
-    // Map view -setNeedsDisplay...: activity to the layer, and redraw affected layer parts by invoking the view's -drawRect:, but don't mark the view or layer as needing display when the view's size changes.
-    NSViewLayerContentsRedrawOnSetNeedsDisplay = 1,
-    // Resize the layer and redraw the view to the layer when the view's size changes. If the resize is animated, AppKit will drive the resize animation itself and will do this resize+redraw at each step of the animation. Affected parts of the layer will also be redrawn when the view is marked as needing display. (This mode is a superset of NSViewLayerContentsRedrawOnSetNeedsDisplay.) 
-    NSViewLayerContentsRedrawDuringViewResize = 2,
-    // Resize the layer and redraw the view to the layer when the view's size changes. This will be done just once at the beginning of a resize animation, not at each frame of the animation. Affected parts of the layer will also be redrawn when the view is marked as needing display. (This mode is a superset of NSViewLayerContentsRedrawOnSetNeedsDisplay.)
-    NSViewLayerContentsRedrawBeforeViewResize = 3,
-    // When a view is resized, the layer contents will be redrawn once and the contents will crossfade from the old value to the new value. Use this in conjunction with the layerContentsPlacement to get a nice crossfade animation for complex layer-backed views that can't correctly update on each step of the animation
-    NSViewLayerContentsRedrawCrossfade API_AVAILABLE(macos(10.9)) = 4
+	// Leave the layer's contents alone. Never mark the layer as needing display, or draw the view's contents to the layer
+	NSViewLayerContentsRedrawNever = 0,
+	// Map view -setNeedsDisplay...: activity to the layer, and redraw affected layer parts by invoking the view's -drawRect:, but don't mark the view or layer as needing display when the view's size changes.
+	NSViewLayerContentsRedrawOnSetNeedsDisplay = 1,
+	// Resize the layer and redraw the view to the layer when the view's size changes. If the resize is animated, AppKit will drive the resize animation itself and will do this resize+redraw at each step of the animation. Affected parts of the layer will also be redrawn when the view is marked as needing display. (This mode is a superset of NSViewLayerContentsRedrawOnSetNeedsDisplay.)
+	NSViewLayerContentsRedrawDuringViewResize = 2,
+	// Resize the layer and redraw the view to the layer when the view's size changes. This will be done just once at the beginning of a resize animation, not at each frame of the animation. Affected parts of the layer will also be redrawn when the view is marked as needing display. (This mode is a superset of NSViewLayerContentsRedrawOnSetNeedsDisplay.)
+	NSViewLayerContentsRedrawBeforeViewResize = 3,
+	// When a view is resized, the layer contents will be redrawn once and the contents will crossfade from the old value to the new value. Use this in conjunction with the layerContentsPlacement to get a nice crossfade animation for complex layer-backed views that can't correctly update on each step of the animation
+	NSViewLayerContentsRedrawCrossfade API_AVAILABLE(macos(10.9)) = 4
 } API_AVAILABLE(macos(10.6));
 
 typedef NS_ENUM(NSInteger, NSViewLayerContentsPlacement) {
-    NSViewLayerContentsPlacementScaleAxesIndependently      =  0,
-    NSViewLayerContentsPlacementScaleProportionallyToFit    =  1,
-    NSViewLayerContentsPlacementScaleProportionallyToFill   =  2,
-    NSViewLayerContentsPlacementCenter                      =  3,
-    NSViewLayerContentsPlacementTop                         =  4,
-    NSViewLayerContentsPlacementTopRight                    =  5,
-    NSViewLayerContentsPlacementRight                       =  6,
-    NSViewLayerContentsPlacementBottomRight                 =  7,
-    NSViewLayerContentsPlacementBottom                      =  8,
-    NSViewLayerContentsPlacementBottomLeft                  =  9,
-    NSViewLayerContentsPlacementLeft                        = 10,
-    NSViewLayerContentsPlacementTopLeft                     = 11
+	NSViewLayerContentsPlacementScaleAxesIndependently      =  0,
+	NSViewLayerContentsPlacementScaleProportionallyToFit    =  1,
+	NSViewLayerContentsPlacementScaleProportionallyToFill   =  2,
+	NSViewLayerContentsPlacementCenter                      =  3,
+	NSViewLayerContentsPlacementTop                         =  4,
+	NSViewLayerContentsPlacementTopRight                    =  5,
+	NSViewLayerContentsPlacementRight                       =  6,
+	NSViewLayerContentsPlacementBottomRight                 =  7,
+	NSViewLayerContentsPlacementBottom                      =  8,
+	NSViewLayerContentsPlacementBottomLeft                  =  9,
+	NSViewLayerContentsPlacementLeft                        = 10,
+	NSViewLayerContentsPlacementTopLeft                     = 11
 } API_AVAILABLE(macos(10.6));
 
 typedef NSInteger NSTrackingRectTag;

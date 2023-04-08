@@ -15,43 +15,43 @@ extern "C" {
 
 
 typedef NS_ENUM(NSUInteger, NSButtonType) {
-    NSButtonTypeMomentaryLight    = 0,
-    NSButtonTypePushOnPushOff     = 1,
-    NSButtonTypeToggle            = 2,
-    NSButtonTypeSwitch            = 3,
-    NSButtonTypeRadio             = 4,
-    NSButtonTypeMomentaryChange   = 5,
-    NSButtonTypeOnOff             = 6,
-    NSButtonTypeMomentaryPushIn   = 7,
-    NSButtonTypeAccelerator API_AVAILABLE(macos(10.10.3)) = 8,
-    NSButtonTypeMultiLevelAccelerator API_AVAILABLE(macos(10.10.3)) = 9,
+	NSButtonTypeMomentaryLight    = 0,
+	NSButtonTypePushOnPushOff     = 1,
+	NSButtonTypeToggle            = 2,
+	NSButtonTypeSwitch            = 3,
+	NSButtonTypeRadio             = 4,
+	NSButtonTypeMomentaryChange   = 5,
+	NSButtonTypeOnOff             = 6,
+	NSButtonTypeMomentaryPushIn   = 7,
+	NSButtonTypeAccelerator API_AVAILABLE(macos(10.10.3)) = 8,
+	NSButtonTypeMultiLevelAccelerator API_AVAILABLE(macos(10.10.3)) = 9,
 };
 
 typedef NS_ENUM(NSUInteger, NSBezelStyle) {
-    NSBezelStyleRounded           = 1,
-    NSBezelStyleRegularSquare     = 2,
-    NSBezelStyleDisclosure        = 5,
-    NSBezelStyleShadowlessSquare  = 6,
-    NSBezelStyleCircular          = 7,
-    NSBezelStyleTexturedSquare    = 8,
-    NSBezelStyleHelpButton        = 9,
-    NSBezelStyleSmallSquare       = 10,
-    NSBezelStyleTexturedRounded   = 11,
-    NSBezelStyleRoundRect         = 12,
-    NSBezelStyleRecessed          = 13,
-    NSBezelStyleRoundedDisclosure = 14,
-    NSBezelStyleInline API_AVAILABLE(macos(10.7)) = 15,
+	NSBezelStyleRounded           = 1,
+	NSBezelStyleRegularSquare     = 2,
+	NSBezelStyleDisclosure        = 5,
+	NSBezelStyleShadowlessSquare  = 6,
+	NSBezelStyleCircular          = 7,
+	NSBezelStyleTexturedSquare    = 8,
+	NSBezelStyleHelpButton        = 9,
+	NSBezelStyleSmallSquare       = 10,
+	NSBezelStyleTexturedRounded   = 11,
+	NSBezelStyleRoundRect         = 12,
+	NSBezelStyleRecessed          = 13,
+	NSBezelStyleRoundedDisclosure = 14,
+	NSBezelStyleInline API_AVAILABLE(macos(10.7)) = 15,
 };
 
 
 /* Deprecations */
 
 typedef NS_ENUM(NSUInteger, NSGradientType) {
-    NSGradientNone          = 0,
-    NSGradientConcaveWeak   = 1,
-    NSGradientConcaveStrong = 2,
-    NSGradientConvexWeak    = 3,
-    NSGradientConvexStrong  = 4
+	NSGradientNone          = 0,
+	NSGradientConcaveWeak   = 1,
+	NSGradientConcaveStrong = 2,
+	NSGradientConvexWeak    = 3,
+	NSGradientConvexStrong  = 4
 } API_DEPRECATED("", macos(10.0,10.12));
 
 static const NSButtonType NSMomentaryLightButton API_DEPRECATED_WITH_REPLACEMENT("NSButtonTypeMomentaryLight", macos(10.0,10.14)) = NSButtonTypeMomentaryLight;

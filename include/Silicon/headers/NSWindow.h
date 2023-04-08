@@ -1,8 +1,8 @@
 /*
-    NSWindow.h
-    Application Kit
-    Copyright (c) 1994-2021, Apple Inc.
-    All rights reserved.
+	NSWindow.h
+	Application Kit
+	Copyright (c) 1994-2021, Apple Inc.
+	All rights reserved.
 */
 #pragma once
 #ifdef __cplusplus
@@ -12,39 +12,37 @@ extern "C" {
 #include "../macros.h"
 #include "../types.h"
 
-#include <ApplicationServices/ApplicationServices.h>
-
 
 typedef NS_OPTIONS(NSUInteger, NSWindowStyleMask) {
-    NSWindowStyleMaskBorderless = 0,
-    NSWindowStyleMaskTitled = 1 << 0,
-    NSWindowStyleMaskClosable = 1 << 1,
-    NSWindowStyleMaskMiniaturizable = 1 << 2,
-    NSWindowStyleMaskResizable	= 1 << 3,
-    
-    /* Specifies a window with textured background. Textured windows generally don't draw a top border line under the titlebar/toolbar. To get that line, use the NSUnifiedTitleAndToolbarWindowMask mask.
-     */
-    NSWindowStyleMaskTexturedBackground API_DEPRECATED("Textured window style should no longer be used", macos(10.2, 11.0)) = 1 << 8,
-    
-    /* Specifies a window whose titlebar and toolbar have a unified look - that is, a continuous background. Under the titlebar and toolbar a horizontal separator line will appear.
-     */
-    NSWindowStyleMaskUnifiedTitleAndToolbar = 1 << 12,
-    
-    /* When present, the window will appear full screen. This mask is automatically toggled when toggleFullScreen: is called.
-     */
-    NSWindowStyleMaskFullScreen API_AVAILABLE(macos(10.7)) = 1 << 14,
-    
-    /* If set, the contentView will consume the full size of the window; it can be combined with other window style masks, but is only respected for windows with a titlebar.
-     Utilizing this mask opts-in to layer-backing. Utilize the contentLayoutRect or auto-layout contentLayoutGuide to layout views underneath the titlebar/toolbar area.
-     */
-    NSWindowStyleMaskFullSizeContentView API_AVAILABLE(macos(10.10)) = 1 << 15,
-    
-    /* The following are only applicable for NSPanel (or a subclass thereof)
-     */
-    NSWindowStyleMaskUtilityWindow			= 1 << 4,
-    NSWindowStyleMaskDocModalWindow 		= 1 << 6,
-    NSWindowStyleMaskNonactivatingPanel		= 1 << 7, // Specifies that a panel that does not activate the owning application
-    NSWindowStyleMaskHUDWindow API_AVAILABLE(macos(10.6)) = 1 << 13 // Specifies a heads up display panel
+	NSWindowStyleMaskBorderless = 0,
+	NSWindowStyleMaskTitled = 1 << 0,
+	NSWindowStyleMaskClosable = 1 << 1,
+	NSWindowStyleMaskMiniaturizable = 1 << 2,
+	NSWindowStyleMaskResizable	= 1 << 3,
+
+	/* Specifies a window with textured background. Textured windows generally don't draw a top border line under the titlebar/toolbar. To get that line, use the NSUnifiedTitleAndToolbarWindowMask mask.
+	 */
+	NSWindowStyleMaskTexturedBackground API_DEPRECATED("Textured window style should no longer be used", macos(10.2, 11.0)) = 1 << 8,
+
+	/* Specifies a window whose titlebar and toolbar have a unified look - that is, a continuous background. Under the titlebar and toolbar a horizontal separator line will appear.
+	 */
+	NSWindowStyleMaskUnifiedTitleAndToolbar = 1 << 12,
+
+	/* When present, the window will appear full screen. This mask is automatically toggled when toggleFullScreen: is called.
+	 */
+	NSWindowStyleMaskFullScreen API_AVAILABLE(macos(10.7)) = 1 << 14,
+
+	/* If set, the contentView will consume the full size of the window; it can be combined with other window style masks, but is only respected for windows with a titlebar.
+	 Utilizing this mask opts-in to layer-backing. Utilize the contentLayoutRect or auto-layout contentLayoutGuide to layout views underneath the titlebar/toolbar area.
+	 */
+	NSWindowStyleMaskFullSizeContentView API_AVAILABLE(macos(10.10)) = 1 << 15,
+
+	/* The following are only applicable for NSPanel (or a subclass thereof)
+	 */
+	NSWindowStyleMaskUtilityWindow			= 1 << 4,
+	NSWindowStyleMaskDocModalWindow 		= 1 << 6,
+	NSWindowStyleMaskNonactivatingPanel		= 1 << 7, // Specifies that a panel that does not activate the owning application
+	NSWindowStyleMaskHUDWindow API_AVAILABLE(macos(10.6)) = 1 << 13 // Specifies a heads up display panel
 };
 
 // Additional NSModalResponse values
@@ -53,62 +51,62 @@ static const NSModalResponse NSModalResponseCancel = 0;
 
 /* used with NSRunLoop's performSelector:target:argument:order:modes: */
 enum {
-    NSDisplayWindowRunLoopOrdering	= 600000,
-    NSResetCursorRectsRunLoopOrdering	= 700000
+	NSDisplayWindowRunLoopOrdering	= 600000,
+	NSResetCursorRectsRunLoopOrdering	= 700000
 };
 
 typedef NS_ENUM(NSUInteger, NSWindowSharingType) {
-    NSWindowSharingNone = 0,                // Window contents may not be read by another process
-    NSWindowSharingReadOnly = 1,            // Window contents may be read but not modified by another process
-    NSWindowSharingReadWrite = 2            // Window contents may be read or modified by another process
+	NSWindowSharingNone = 0,                // Window contents may not be read by another process
+	NSWindowSharingReadOnly = 1,            // Window contents may be read but not modified by another process
+	NSWindowSharingReadWrite = 2            // Window contents may be read or modified by another process
 } API_AVAILABLE(macos(10.5));
 
 typedef NS_OPTIONS(NSUInteger, NSWindowCollectionBehavior) {
-    NSWindowCollectionBehaviorDefault = 0,
-    NSWindowCollectionBehaviorCanJoinAllSpaces = 1 << 0,
-    NSWindowCollectionBehaviorMoveToActiveSpace = 1 << 1,
-    
-    /* You may specify at most one of NSWindowCollectionBehaviorManaged, NSWindowCollectionBehaviorTransient, or NSWindowCollectionBehaviorStationary.  If unspecified, the window gets the default behavior determined by its window level */
-    NSWindowCollectionBehaviorManaged API_AVAILABLE(macos(10.6)) = 1 << 2,         // participates in spaces, exposé.  Default behavior if windowLevel == NSNormalWindowLevel
-    NSWindowCollectionBehaviorTransient API_AVAILABLE(macos(10.6)) = 1 << 3,       // floats in spaces, hidden by exposé.  Default behavior if windowLevel != NSNormalWindowLevel
-    NSWindowCollectionBehaviorStationary API_AVAILABLE(macos(10.6)) = 1 << 4,      // unaffected by exposé.  Stays visible and stationary, like desktop window
+	NSWindowCollectionBehaviorDefault = 0,
+	NSWindowCollectionBehaviorCanJoinAllSpaces = 1 << 0,
+	NSWindowCollectionBehaviorMoveToActiveSpace = 1 << 1,
 
-    /* You may specify at most one of NSWindowCollectionBehaviorParticipatesInCycle or NSWindowCollectionBehaviorIgnoresCycle.  If unspecified, the window gets the default behavior determined by its window level */
-    NSWindowCollectionBehaviorParticipatesInCycle API_AVAILABLE(macos(10.6)) = 1 << 5,     // default behavior if windowLevel == NSNormalWindowLevel
-    NSWindowCollectionBehaviorIgnoresCycle API_AVAILABLE(macos(10.6)) = 1 << 6,            // default behavior if windowLevel != NSNormalWindowLevel
-    
-    /* You may specify at most one of NSWindowCollectionBehaviorFullScreenPrimary, NSWindowCollectionBehaviorFullScreenAuxiliary, or NSWindowCollectionBehaviorFullScreenNone. */
-    NSWindowCollectionBehaviorFullScreenPrimary API_AVAILABLE(macos(10.7)) = 1 << 7,       // the frontmost window with this collection behavior will be the fullscreen window.
-    NSWindowCollectionBehaviorFullScreenAuxiliary API_AVAILABLE(macos(10.7)) = 1 << 8,     // windows with this collection behavior can be shown with the fullscreen window.
-    NSWindowCollectionBehaviorFullScreenNone API_AVAILABLE(macos(10.7)) = 1 << 9, // The window can not be made fullscreen when this bit is set
-    
-    /* 	You may specify at most one of NSWindowCollectionBehaviorFullScreenAllowsTiling or NSWindowCollectionBehaviorFullScreenDisallowsTiling, or an assertion will be raised.
-     
-     The default behavior is to allow any window to participate in full screen tiling, as long as it meets certain requirements, such as being resizable and not a panel or sheet. Windows which are not full screen capable can still become a secondary tile in full screen. A window can explicitly allow itself to be placed into a full screen tile by including NSWindowCollectionBehaviorFullScreenAllowsTiling. Even if a window allows itself to be placed in a tile, it still may not be put in the tile if its minFullScreenContentSize is too large to fit. A window can explicitly disallow itself from being placed in a full screen tile by including NSWindowCollectionBehaviorFullScreenDisallowsTiling. This is useful for non-full screen capable windows to explicitly prevent themselves from being tiled. It can also be used by a full screen window to prevent any other windows from being placed in its full screen tile. */
-    NSWindowCollectionBehaviorFullScreenAllowsTiling API_AVAILABLE(macos(10.11)) = 1 << 11,       // This window can be a full screen tile window. It does not have to have FullScreenPrimary set.
-    NSWindowCollectionBehaviorFullScreenDisallowsTiling API_AVAILABLE(macos(10.11)) = 1 << 12      // This window can NOT be made a full screen tile window; it still may be allowed to be a regular FullScreenPrimary window.
+	/* You may specify at most one of NSWindowCollectionBehaviorManaged, NSWindowCollectionBehaviorTransient, or NSWindowCollectionBehaviorStationary.  If unspecified, the window gets the default behavior determined by its window level */
+	NSWindowCollectionBehaviorManaged API_AVAILABLE(macos(10.6)) = 1 << 2,         // participates in spaces, exposé.  Default behavior if windowLevel == NSNormalWindowLevel
+	NSWindowCollectionBehaviorTransient API_AVAILABLE(macos(10.6)) = 1 << 3,       // floats in spaces, hidden by exposé.  Default behavior if windowLevel != NSNormalWindowLevel
+	NSWindowCollectionBehaviorStationary API_AVAILABLE(macos(10.6)) = 1 << 4,      // unaffected by exposé.  Stays visible and stationary, like desktop window
+
+	/* You may specify at most one of NSWindowCollectionBehaviorParticipatesInCycle or NSWindowCollectionBehaviorIgnoresCycle.  If unspecified, the window gets the default behavior determined by its window level */
+	NSWindowCollectionBehaviorParticipatesInCycle API_AVAILABLE(macos(10.6)) = 1 << 5,     // default behavior if windowLevel == NSNormalWindowLevel
+	NSWindowCollectionBehaviorIgnoresCycle API_AVAILABLE(macos(10.6)) = 1 << 6,            // default behavior if windowLevel != NSNormalWindowLevel
+
+	/* You may specify at most one of NSWindowCollectionBehaviorFullScreenPrimary, NSWindowCollectionBehaviorFullScreenAuxiliary, or NSWindowCollectionBehaviorFullScreenNone. */
+	NSWindowCollectionBehaviorFullScreenPrimary API_AVAILABLE(macos(10.7)) = 1 << 7,       // the frontmost window with this collection behavior will be the fullscreen window.
+	NSWindowCollectionBehaviorFullScreenAuxiliary API_AVAILABLE(macos(10.7)) = 1 << 8,     // windows with this collection behavior can be shown with the fullscreen window.
+	NSWindowCollectionBehaviorFullScreenNone API_AVAILABLE(macos(10.7)) = 1 << 9, // The window can not be made fullscreen when this bit is set
+
+	/* 	You may specify at most one of NSWindowCollectionBehaviorFullScreenAllowsTiling or NSWindowCollectionBehaviorFullScreenDisallowsTiling, or an assertion will be raised.
+
+	 The default behavior is to allow any window to participate in full screen tiling, as long as it meets certain requirements, such as being resizable and not a panel or sheet. Windows which are not full screen capable can still become a secondary tile in full screen. A window can explicitly allow itself to be placed into a full screen tile by including NSWindowCollectionBehaviorFullScreenAllowsTiling. Even if a window allows itself to be placed in a tile, it still may not be put in the tile if its minFullScreenContentSize is too large to fit. A window can explicitly disallow itself from being placed in a full screen tile by including NSWindowCollectionBehaviorFullScreenDisallowsTiling. This is useful for non-full screen capable windows to explicitly prevent themselves from being tiled. It can also be used by a full screen window to prevent any other windows from being placed in its full screen tile. */
+	NSWindowCollectionBehaviorFullScreenAllowsTiling API_AVAILABLE(macos(10.11)) = 1 << 11,       // This window can be a full screen tile window. It does not have to have FullScreenPrimary set.
+	NSWindowCollectionBehaviorFullScreenDisallowsTiling API_AVAILABLE(macos(10.11)) = 1 << 12      // This window can NOT be made a full screen tile window; it still may be allowed to be a regular FullScreenPrimary window.
 } API_AVAILABLE(macos(10.5));
 
 
 typedef NS_ENUM(NSInteger, NSWindowAnimationBehavior) {
-    NSWindowAnimationBehaviorDefault = 0,       // let AppKit infer animation behavior for this window
-    NSWindowAnimationBehaviorNone = 2,          // suppress inferred animations (don't animate)
+	NSWindowAnimationBehaviorDefault = 0,       // let AppKit infer animation behavior for this window
+	NSWindowAnimationBehaviorNone = 2,          // suppress inferred animations (don't animate)
 
-    NSWindowAnimationBehaviorDocumentWindow = 3,
-    NSWindowAnimationBehaviorUtilityWindow = 4,
-    NSWindowAnimationBehaviorAlertPanel = 5
+	NSWindowAnimationBehaviorDocumentWindow = 3,
+	NSWindowAnimationBehaviorUtilityWindow = 4,
+	NSWindowAnimationBehaviorAlertPanel = 5
 } API_AVAILABLE(macos(10.7));
 
 
 /* Options used in +windowNumbersWithOptions:.  If no options are specified, the returned list contains window numbers for visible windows on the active space belonging to the calling application. */
 typedef NS_OPTIONS(NSUInteger, NSWindowNumberListOptions) {
-    NSWindowNumberListAllApplications = 1 << 0,
-    NSWindowNumberListAllSpaces = 1 << 4
+	NSWindowNumberListAllApplications = 1 << 0,
+	NSWindowNumberListAllSpaces = 1 << 4
 } API_AVAILABLE(macos(10.6));
 
 typedef NS_OPTIONS(NSUInteger, NSWindowOcclusionState) {
-    /* If set, at least part of the window is visible. If not set, the entire window is occluded. Windows with non-rectangular shapes may be completely occluded on screen but still count as visible, if their bounding box falls into a visible region. Windows that are completely transparent may also still count as visible. */
-    NSWindowOcclusionStateVisible = 1UL << 1,
+	/* If set, at least part of the window is visible. If not set, the entire window is occluded. Windows with non-rectangular shapes may be completely occluded on screen but still count as visible, if their bounding box falls into a visible region. Windows that are completely transparent may also still count as visible. */
+	NSWindowOcclusionStateVisible = 1UL << 1,
 } API_AVAILABLE(macos(10.9));
 
 static const NSInteger NSNormalWindowLevel = kCGNormalWindowLevel;
@@ -122,60 +120,60 @@ static const NSInteger NSPopUpMenuWindowLevel = kCGPopUpMenuWindowLevel;
 static const NSInteger NSScreenSaverWindowLevel = kCGScreenSaverWindowLevel;
 
 typedef NS_ENUM(NSUInteger, NSSelectionDirection) {
-    NSDirectSelection = 0,
-    NSSelectingNext,
-    NSSelectingPrevious
+	NSDirectSelection = 0,
+	NSSelectingNext,
+	NSSelectingPrevious
 };
 
 /* Standard window buttons */
 typedef NS_ENUM(NSUInteger, NSWindowButton) {
-    NSWindowCloseButton,
-    NSWindowMiniaturizeButton,
-    NSWindowZoomButton,
-    NSWindowToolbarButton,
-    NSWindowDocumentIconButton,
-    NSWindowDocumentVersionsButton API_AVAILABLE(macos(10.7)) = 6,
+	NSWindowCloseButton,
+	NSWindowMiniaturizeButton,
+	NSWindowZoomButton,
+	NSWindowToolbarButton,
+	NSWindowDocumentIconButton,
+	NSWindowDocumentVersionsButton API_AVAILABLE(macos(10.7)) = 6,
 };
 
 typedef NS_ENUM(NSInteger, NSWindowTitleVisibility) {
-    /* The default mode has a normal window title and titlebar buttons. */
-    NSWindowTitleVisible = 0,
-    /* The always hidden mode hides the title and moves the toolbar up into the area previously occupied by the title. */
-    NSWindowTitleHidden = 1,
+	/* The default mode has a normal window title and titlebar buttons. */
+	NSWindowTitleVisible = 0,
+	/* The always hidden mode hides the title and moves the toolbar up into the area previously occupied by the title. */
+	NSWindowTitleHidden = 1,
 } API_AVAILABLE(macos(10.10));
 
 typedef NS_ENUM(NSInteger, NSWindowToolbarStyle) {
-    // The default value. The style will be determined by the window's given configuration
-    NSWindowToolbarStyleAutomatic,
-    // The toolbar will appear below the window title
-    NSWindowToolbarStyleExpanded,
-    // The toolbar will appear below the window title and the items in the toolbar will attempt to have equal widths when possible
-    NSWindowToolbarStylePreference,
-    // The window title will appear inline with the toolbar when visible
-    NSWindowToolbarStyleUnified,
-    // Same as NSWindowToolbarStyleUnified, but with reduced margins in the toolbar allowing more focus to be on the contents of the window
-    NSWindowToolbarStyleUnifiedCompact
+	// The default value. The style will be determined by the window's given configuration
+	NSWindowToolbarStyleAutomatic,
+	// The toolbar will appear below the window title
+	NSWindowToolbarStyleExpanded,
+	// The toolbar will appear below the window title and the items in the toolbar will attempt to have equal widths when possible
+	NSWindowToolbarStylePreference,
+	// The window title will appear inline with the toolbar when visible
+	NSWindowToolbarStyleUnified,
+	// Same as NSWindowToolbarStyleUnified, but with reduced margins in the toolbar allowing more focus to be on the contents of the window
+	NSWindowToolbarStyleUnifiedCompact
 } API_AVAILABLE(macos(11.0));
 
 static const NSTimeInterval NSEventDurationForever = DBL_MAX;
 
 typedef NS_ENUM(NSInteger, NSWindowUserTabbingPreference) {
-    NSWindowUserTabbingPreferenceManual,
-    NSWindowUserTabbingPreferenceAlways,
-    NSWindowUserTabbingPreferenceInFullScreen,
+	NSWindowUserTabbingPreferenceManual,
+	NSWindowUserTabbingPreferenceAlways,
+	NSWindowUserTabbingPreferenceInFullScreen,
 } API_AVAILABLE(macos(10.12));
 
 typedef NS_ENUM(NSInteger, NSWindowTabbingMode) {
-    NSWindowTabbingModeAutomatic, // The system automatically prefers to tab this window when appropriate
-    NSWindowTabbingModePreferred, // The window explicitly should prefer to tab when shown
-    NSWindowTabbingModeDisallowed // The window explicitly should not prefer to tab when shown
+	NSWindowTabbingModeAutomatic, // The system automatically prefers to tab this window when appropriate
+	NSWindowTabbingModePreferred, // The window explicitly should prefer to tab when shown
+	NSWindowTabbingModeDisallowed // The window explicitly should not prefer to tab when shown
 }  API_AVAILABLE(macos(10.12));
 
 typedef NS_ENUM(NSInteger, NSTitlebarSeparatorStyle) {
-    NSTitlebarSeparatorStyleAutomatic,
-    NSTitlebarSeparatorStyleNone,
-    NSTitlebarSeparatorStyleLine,
-    NSTitlebarSeparatorStyleShadow
+	NSTitlebarSeparatorStyleAutomatic,
+	NSTitlebarSeparatorStyleNone,
+	NSTitlebarSeparatorStyleLine,
+	NSTitlebarSeparatorStyleShadow
 } API_AVAILABLE(macos(11.0));
 
 
@@ -230,9 +228,9 @@ APPKIT_EXTERN NSNotificationName const NSWindowDidExitVersionBrowserNotification
 APPKIT_EXTERN NSNotificationName const NSWindowDidChangeOcclusionStateNotification API_AVAILABLE(macos(10.9));
 
 typedef NS_ENUM(NSUInteger, NSWindowBackingLocation) {
-    NSWindowBackingLocationDefault = 0,        // System determines if window backing store is in VRAM or main memory
-    NSWindowBackingLocationVideoMemory = 1,        // Window backing store is in VRAM
-    NSWindowBackingLocationMainMemory = 2        // Window backing store is in main memory
+	NSWindowBackingLocationDefault = 0,        // System determines if window backing store is in VRAM or main memory
+	NSWindowBackingLocationVideoMemory = 1,        // Window backing store is in VRAM
+	NSWindowBackingLocationMainMemory = 2        // Window backing store is in main memory
 } API_DEPRECATED("", macos(10.5,10.14));
 
 

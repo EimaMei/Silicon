@@ -1,55 +1,52 @@
+/*
+Copyright (C) 2022-2023 EimaMei/Sacode
+
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+*/
+
 #include <AppKit/AppKit.h>
 #include <objc/runtime.h>
+#include <Availability.h>
+#include <string.h>
 
 #include <Silicon/mac_load.h>
 #include <Silicon/macros.h>
-
-#include <string.h>
-
-
-/* NSString / char* conversion functions. */
-#define char_to_NSString(text) [[NSString stringWithUTF8String:(text)] autorelease]
-#define NSString_to_char(text) [text UTF8String]
-
-/* Implementation functions*/
-/* Implements the Class property. */
-#define implement_property(class, type, name, uppercased_name, arg_name) \
-    type class##_##name(class* arg_name) { \
-        return [arg_name name]; \
-    } \
-    void class##_set##uppercased_name(class* arg_name, type name) { \
-        [arg_name set##uppercased_name:name]; \
-    }
-
-// Implement a property for a given class that returns a C string
-#define implement_str_property(class, type, name, uppercased_name, arg_name) \
-    type class##_##name(class* arg_name) { \
-        return NSString_to_char([arg_name name]); \
-    } \
-    void class##_set##uppercased_name(class* arg_name, type name) { \
-        [arg_name set##uppercased_name:([char_to_NSString(name) retain])]; \
-    }
+#include "implementation.h" /* All of the macros that aren't from 'Silicon/macros.h' reside here. */
 
 
 typedef bool format(void* self, ...);
 format* funcs[2];
 
 /* Key stuff. */
-char* NSKEYS[] = {
+const char* NSKEYS[] = {
 	"Up", "Down", "Left", "Right",
 	"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
 	"Delete", "Insert", "Home", "End", "PageUp", "PageDown",
 	"Backspace", "Tab", "Enter", "Return",
 	"Escape", "Space", "Shift", "CapsLock", "BackSpace"
 };
-unsigned short NSKEYI[sizeof(NSKEYS)] = {
+const unsigned short NSKEYI[sizeof(NSKEYS)] = {
 	NSUpArrowFunctionKey, NSDownArrowFunctionKey, NSLeftArrowFunctionKey, NSRightArrowFunctionKey,
 	NSF1FunctionKey, NSF2FunctionKey, NSF3FunctionKey, NSF4FunctionKey, NSF5FunctionKey, NSF6FunctionKey, NSF7FunctionKey, NSF8FunctionKey, NSF9FunctionKey, NSF10FunctionKey, NSF11FunctionKey, NSF12FunctionKey,
 	NSDeleteFunctionKey, NSInsertFunctionKey, NSHomeFunctionKey, NSEndFunctionKey, NSPageUpFunctionKey, NSPageDownFunctionKey,
 	NSBackspaceCharacter, NSTabCharacter, NSNewlineCharacter, NSCarriageReturnCharacter,
 	0x1B, 0x20, 0x56, 0x57, 0x51
 };
-unsigned char NSKEYCOUNT = sizeof(NSKEYS);
+const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 
 @interface WindowClass : NSWindow {}
 @end
@@ -76,6 +73,12 @@ unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 		   funcs[1](self, rect);
 	}
 @end
+
+
+/* Converts a traditional C array into a NSArray. */
+NSArray* convert_C_array_to_NSArray(void* c_array, NSUInteger size) {
+	return [[NSArray alloc] initWithObjects:(c_array) count:(size)];
+}
 
 
 /* ============ NSControl class ============ */
@@ -151,8 +154,9 @@ NSView* NSView_init() {
 	return [[ViewClass alloc] init];
 }
 /* */
-define_inherented_function(NSView, initWithFrame, NSRect frameRect)
-	implement_inherented_function(NSView, NSControl, initWithFrame, (void*)[ViewClass alloc], frameRect)
+define_inherented_function(NSView, initWithFrame, NSRect frameRect) {
+	implement_inherented_function(NSView, NSControl, initWithFrame, (void*)[ViewClass alloc], frameRect);
+}
 /* */
 void NSView_addSubview(NSView* view, NSView* subview) {
 	[view addSubview:(subview)];
@@ -178,8 +182,9 @@ implement_property(NSTextField, NSFont*, font, Font, field);
 
 /* ====== NSTextField functions ====== */
 /* Initializes a NSTextField handle. */
-define_inherented_function(NSTextField, init, NSRect frameRect)
-	implement_inherented_function(NSTextField, NSControl, initWithFrame, (void*)[[ViewClass alloc] label], frameRect)
+define_inherented_function(NSTextField, init, NSRect frameRect) {
+	implement_inherented_function(NSTextField, NSControl, initWithFrame, (void*)[[ViewClass alloc] label], frameRect);
+}
 
 
 /* ============ NSFontManager class ============ */
@@ -230,8 +235,9 @@ implement_property(NSButton, bool, allowsMixedState, AllowsMixedState, button);
 
 /* ====== NSButton functions ====== */
 /* */
-define_inherented_function(NSButton, init, NSRect frameRect)
-	implement_inherented_function(NSButton, NSControl, initWithFrame, (void*)[NSButton alloc], frameRect)
+define_inherented_function(NSButton, init, NSRect frameRect) {
+	implement_inherented_function(NSButton, NSControl, initWithFrame, (void*)[NSButton alloc], frameRect);
+}
 /* */
 void NSButton_setButtonType(NSButton* button, NSButtonType buttonType) {
 	return [button setButtonType:(buttonType)];
@@ -264,9 +270,9 @@ implement_property(NSComboBox, SEL, action, Action, comboBox);
 
 /* ====== NSComboBox functions ====== */
 /**/
-define_inherented_function(NSComboBox, init, NSRect frameRect)
-	implement_inherented_function(NSComboBox, NSControl, initWithFrame, (void*)[NSComboBox alloc], frameRect)
-
+define_inherented_function(NSComboBox, init, NSRect frameRect) {
+	implement_inherented_function(NSComboBox, NSControl, initWithFrame, (void*)[NSComboBox alloc], frameRect);
+}
 /* */
 void NSComboBox_addItem(NSComboBox* comboBox, const char* str) {
 	[comboBox addItemWithObjectValue:([char_to_NSString(str) retain])];
@@ -289,6 +295,8 @@ implement_property(NSApplication, NSMenu*, helpMenu, HelpMenu, application);
 implement_property(NSApplication, NSMenu*, windowsMenu, WindowsMenu, application);
 /* */
 implement_property(NSApplication, NSApplicationActivationPolicy, activationPolicy, ActivationPolicy, application);
+/* */
+implement_property(NSApplication, NSImage*, applicationIconImage, ApplicationIconImage, application);
 
 /* ====== NSApplication functions ====== */
 /* */
@@ -320,10 +328,6 @@ void NSApplication_sendEvent(NSApplication* application, NSEvent* event) {
 /* */
 void NSApplication_updateWindows(NSApplication* application) {
 	[application updateWindows];
-}
-/* */
-void NSApplication_setApplicationIconImage(NSApplication* application, NSImage* image){
-    return [NSApp setApplicationIconImage:image];
 }
 /* */
 void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool flag) {
@@ -368,30 +372,30 @@ NSPoint NSEvent_mouseLocation(NSEvent* event) {
 }
 /* */
 unsigned short NSEvent_keyCodeForChar(char* keyStr){
-    unsigned int i;
-    for (i = 0; i < NSKEYCOUNT; i++)
-        if (strcmp(keyStr, NSKEYS[i]))
-            return NSKEYI[i + 1];
-    NSString *keyString = char_to_NSString(keyStr);
-	unichar keyChar = [keyString characterAtIndex:(0)];
-	return keyChar;
+	for (NSUInteger i = 0; i < NSKEYCOUNT; i++) {
+		if (strcmp(keyStr, NSKEYS[i]))
+			return NSKEYI[i + 1];
+	}
+
+	NSString *keyString = char_to_NSString(keyStr);
+
+	return [keyString characterAtIndex:(0)];
 }
 /* */
 const char* NSEvent_characters(NSEvent* event) {
-    unichar keyCode = [[event charactersIgnoringModifiers] characterAtIndex:(0)];
-    NSUInteger flags = [event modifierFlags] & (NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand);
+	unichar keyCode = [[event charactersIgnoringModifiers] characterAtIndex:(0)];
+	NSUInteger flags = [event modifierFlags] & (NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand);
 
-    unsigned int i;
-    for (i = 0; i < NSKEYCOUNT; i++) {
-        if (keyCode == NSKEYI[i])
-            return NSKEYS[i];
+	for (NSUInteger i = 0; i < NSKEYCOUNT; i++) {
+		if (keyCode == NSKEYI[i])
+			return NSKEYS[i];
 	}
 
-    return NSString_to_char([event characters]);
+	return NSString_to_char([event characters]);
 }
 /* */
 CGFloat NSEvent_deltaY(NSEvent* event) {
-    return [event deltaY];
+	return [event deltaY];
 }
 
 
@@ -488,30 +492,39 @@ const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
 
 
 /* ============ NSImage class ============ */
+/* ====== NSImage functions ====== */
 /* */
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
-    return [[NSImage alloc] initWithData:([NSData dataWithBytes:(bitmapData) length:(length)])];
+	return [[NSImage alloc] initWithData:([NSData dataWithBytes:(bitmapData) length:(length)])];
 }
 
 /* ============ NSGraphicsContext class ============ */
+/* ====== NSGraphicsContext properties ====== */
+#if (OS_X_VERSION_MAX_ALLOWED < macos_version(10, 5)) /* 'currentContext' doesn't exist in OS X 10.5+. */
 /* */
-CGContextRef NSGraphicsContext_currentContext() {
-	return [[NSGraphicsContext currentContext] graphicsPort];
-}
+implement_deprecated_property(NSGraphicsContext, NSGraphicsContext*, currentContext, CurrentContext, context, macos(10.5));
+#endif
 
-/* =========== NSPasteBoard ============ */
-char* NSPasteboard_stringForType(NSPasteboard* pasteboard) {
-    return NSString_to_char([pasteboard stringForType:NSPasteboardTypeString]);
-}
+/* =========== NSPasteBoard class ============ */
+/* ====== NSPasteBoard functions ====== */
 /* */
 NSPasteboard* NSPasteboard_generalPasteboard() {
 	return [NSPasteboard generalPasteboard];
 }
+const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType) {
+	return NSString_to_char([pasteboard stringForType:(dataType)]);
+}
+/* TODO(EimaMei): This might cause a memory leak, should be looked into later. */
 /* */
-void NSPasteBoard_declareTypes(NSPasteboard* pasteboard) {
-    [pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:NULL];
+NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, NSPasteboard** newTypes, NSUInteger array_size, void* owner) {
+	NSArray* new_array = convert_C_array_to_NSArray(newTypes, array_size);
+
+	NSInteger res = [pasteboard declareTypes:(new_array) owner:(owner)];
+	[new_array release];
+
+	return res;
 }
 /* */
-void NSPasteBoard_setString(NSPasteboard* pasteboard, char* stringToWrite) {
-    [pasteboard setString:char_to_NSString(stringToWrite) forType:NSStringPboardType];
+bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType) {
+	return [pasteboard setString:char_to_NSString(stringToWrite) forType:(dataType)];
 }

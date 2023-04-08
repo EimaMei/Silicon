@@ -1,3 +1,23 @@
+/*
+Copyright (C) 2022-2023 EimaMei/Sacode
+
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+*/
+
 #pragma once
 #ifdef __cplusplus
 extern "C" {
@@ -202,6 +222,8 @@ define_property(NSApplication, NSMenu*, helpMenu, HelpMenu, application);
 define_property(NSApplication, NSMenu*, windowsMenu, WindowsMenu, application);
 /* */
 define_property(NSApplication, NSApplicationActivationPolicy, activationPolicy, ActivationPolicy, application);
+/* */
+define_property(NSApplication, NSImage*, applicationIconImage, ApplicationIconImage, application);
 
 /* ====== NSApplication functions ====== */
 /* */
@@ -220,8 +242,6 @@ void NSApplication_sendEvent(NSApplication* application, NSEvent* event);
 void NSApplication_updateWindows(NSApplication* application);
 /* */
 void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool flag);
-/* */
-void NSApplication_setApplicationIconImage(NSApplication* application, NSImage* image);
 /* */
 NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, int mode, bool deqFlag);
 
@@ -308,22 +328,34 @@ const char* NSProcessInfo_processName(NSProcessInfo* processInfo);
 
 
 /* ============ NSImage class ============ */
+/* ====== NSImage functions ====== */
+/* */
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length);
 
-/* ============ NSGraphicsContext class ============ */
-/* */
-CGContextRef NSGraphicsContext_currentContext();
 
-/* =========== NSPasteBoard ============ */
+/* ============ NSGraphicsContext class ============ */
+/* ====== NSGraphicsContext properties ====== */
+/* */
+#if (OS_X_VERSION_MAX_ALLOWED < macos_version(10, 5)) /* 'currentContext' doesn't exist in OS X 10.5+. */
+/* */
+implement_deprecated_property(NSGraphicsContext, NSGraphicsContext*, currentContext, CurrentContext, context, macos(10.5));
+#endif
+
+
+/* =========== NSPasteBoard class ============ */
+/* ====== NSPasteBoard functions ====== */
+/* */
 NSPasteboard* NSPasteboard_generalPasteboard();
 /* */
-char* NSPasteboard_stringForType(NSPasteboard* pasteboard);
+const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType);
 /* */
-void NSPasteBoard_setString(NSPasteboard* pasteBoard, char* stringToWrite);
+NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, NSPasteboard** newTypes, NSUInteger array_size, void* owner);
 /* */
-void NSPasteBoard_declareTypes(NSPasteboard* pasteboard);
+bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType);
 
-/* deprecated, kinda ignore it for now. */
+
+
+/* TODO(EimaMei): Add documentation & deprecations macros for the OpenGL functions. */
 NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs);
 NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format);
 void NSOpenGLView_prepareOpenGL(NSOpenGLView* view);

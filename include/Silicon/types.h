@@ -1,6 +1,24 @@
+/*
+Copyright (C) 2022-2023 EimaMei/Sacode
+
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+*/
+
 #pragma once
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -11,9 +29,9 @@ extern "C" {
 
 
 #if SILICON_TARGET_64BIT
-    typedef double CGFloat; /* The basic type for all floating-point values. */
+	typedef double CGFloat; /* The basic type for all floating-point values. */
 #else
-    typedef float CGFloat; /* The basic type for all floating-point values. */
+	typedef float CGFloat; /* The basic type for all floating-point values. */
 #endif
 
 
@@ -24,11 +42,11 @@ typedef CGPoint NSPoint; /* A structure that contains a point in a two-dimension
 
 /* New NS types. */
 #if SILICON_TARGET_64BIT
-    typedef long NSInteger; /* Describes an integer. When building 32-bit applications, NSInteger is a 32-bit integer. A 64-bit application treats NSInteger as a 64-bit integer. */
-    typedef unsigned long NSUInteger; /* Describes an unsigned integer. When building 32-bit applications, NSUInteger is a 32-bit unsigned integer. A 64-bit application treats NSUInteger as a 64-bit unsigned integer. */
+	typedef long NSInteger; /* Describes an integer. When building 32-bit applications, NSInteger is a 32-bit integer. A 64-bit application treats NSInteger as a 64-bit integer. */
+	typedef unsigned long NSUInteger; /* Describes an unsigned integer. When building 32-bit applications, NSUInteger is a 32-bit unsigned integer. A 64-bit application treats NSUInteger as a 64-bit unsigned integer. */
 #else
-    typedef int NSInteger; /* Describes an integer. When building 32-bit applications, NSInteger is a 32-bit integer. A 64-bit application treats NSInteger as a 64-bit integer. */
-    typedef unsigned int NSUInteger; /* Describes an unsigned integer. When building 32-bit applications, NSUInteger is a 32-bit unsigned integer. A 64-bit application treats NSUInteger as a 64-bit unsigned integer. */
+	typedef int NSInteger; /* Describes an integer. When building 32-bit applications, NSInteger is a 32-bit integer. A 64-bit application treats NSInteger as a 64-bit integer. */
+	typedef unsigned int NSUInteger; /* Describes an unsigned integer. When building 32-bit applications, NSUInteger is a 32-bit unsigned integer. A 64-bit application treats NSUInteger as a 64-bit unsigned integer. */
 #endif
 
 typedef NSInteger NSModalResponse;
@@ -55,6 +73,7 @@ mac_type_define(NSControl);
 mac_type_define(NSScreen);
 mac_type_define(NSImage);
 mac_type_define(NSPasteboard);
+mac_type_define(NSGraphicsContext);
 /* Deprecated*/
 mac_type_define(NSOpenGLPixelFormat);
 mac_type_define(NSOpenGLView);
