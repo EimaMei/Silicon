@@ -282,6 +282,7 @@ void NSComboBox_selectItem(NSComboBox* comboBox, NSInteger index) {
 	[comboBox selectItemAtIndex:(index)];
 }
 
+
 /* ============ NSApplication class ============ */
 NSApplication* _NSApp;
 /* ====== NSApplication properties ====== */
@@ -348,6 +349,7 @@ NSRect NSScreen_frame(NSScreen* screen) {
 	return [screen frame];
 }
 
+
 /* ============ NSEvent class ============ */
 /* ====== NSEvent functions ====== */
 /* */
@@ -409,10 +411,6 @@ NSWindow* NSEvent_window(NSEvent* event){
 NSMenu* NSMenu_init(const char* title) {
 	return [[NSMenu alloc] initWithTitle:(char_to_NSString(title))];
 }
-
-/* ============ NSMenu class ============ */
-/* ====== NSMenu functions ====== */
-/* */
 /* */
 void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem) {
 	[menu addItem:(newItem)];
@@ -483,6 +481,7 @@ NSDate* NSDate_distantFuture() {
 	return [NSDate distantFuture];
 }
 
+
 /* ============ NSProcessInfo class ============ */
 /* ====== NSProcessInfo functions ====== */
 /* */
@@ -499,8 +498,10 @@ const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
 /* ====== NSImage functions ====== */
 /* */
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
-	return [[NSImage alloc] initWithData:([NSData dataWithBytes:(bitmapData) length:(length)])];
+	NSData* data = [NSData dataWithBytes:(bitmapData) length:(length)];
+	return [[NSImage alloc] initWithData:(data)];
 }
+
 
 /* ============ NSGraphicsContext class ============ */
 /* ====== NSGraphicsContext properties ====== */
@@ -508,6 +509,7 @@ NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
 /* */
 implement_deprecated_property(NSGraphicsContext, NSGraphicsContext*, currentContext, CurrentContext, context, macos(10.5));
 #endif
+
 
 /* =========== NSPasteBoard class ============ */
 /* ====== NSPasteBoard functions ====== */
@@ -518,7 +520,6 @@ NSPasteboard* NSPasteboard_generalPasteboard() {
 const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType) {
 	return NSString_to_char([pasteboard stringForType:(dataType)]);
 }
-/* TODO(EimaMei): This might cause a memory leak, should be looked into later. */
 /* */
 NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, NSPasteboard** newTypes, NSUInteger array_size, void* owner) {
 	NSArray* new_array = convert_C_array_to_NSArray(newTypes, array_size);
