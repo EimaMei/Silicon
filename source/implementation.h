@@ -51,4 +51,4 @@ freely, subject to the following restrictions:
 
 /* Implements the inherented function. */
 #define implement_inherented_function(return_type, inherented_class, function, ...)	\
-	return (return_type*)inherented_class##_##function(__VA_ARGS__);		\
+	return (return_type*)inherented_class##_##function(__VA_ARGS__);		
