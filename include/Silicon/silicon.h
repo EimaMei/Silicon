@@ -17,7 +17,6 @@ freely, subject to the following restrictions:
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 */
-
 #pragma once
 #ifdef __cplusplus
 extern "C" {
@@ -271,7 +270,8 @@ CGFloat NSEvent_deltaY(NSEvent* event);
 unsigned short NSEvent_keyCodeForChar(char* keyStr);
 /* */
 NSPoint NSEvent_mouseLocation(NSEvent* event);
-
+/* */
+NSWindow* NSEvent_window(NSEvent* event);
 
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */

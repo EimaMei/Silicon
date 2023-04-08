@@ -397,7 +397,10 @@ const char* NSEvent_characters(NSEvent* event) {
 CGFloat NSEvent_deltaY(NSEvent* event) {
 	return [event deltaY];
 }
-
+/* */
+NSWindow* NSEvent_window(NSEvent* event){
+	return [event window];
+}
 
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */
