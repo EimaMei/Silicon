@@ -21,18 +21,18 @@ extern "C" {
  * Some traits are mutually exclusive such as NSExpanded and NSCondensed.
  */
 typedef NS_OPTIONS(NSUInteger, NSFontTraitMask) {
-    NSItalicFontMask			= 0x00000001,
-    NSBoldFontMask			= 0x00000002,
-    NSUnboldFontMask			= 0x00000004,
-    NSNonStandardCharacterSetFontMask	= 0x00000008,
-    NSNarrowFontMask			= 0x00000010,
-    NSExpandedFontMask			= 0x00000020,
-    NSCondensedFontMask			= 0x00000040,
-    NSSmallCapsFontMask			= 0x00000080,
-    NSPosterFontMask			= 0x00000100,
-    NSCompressedFontMask		= 0x00000200,
-    NSFixedPitchFontMask		= 0x00000400,
-    NSUnitalicFontMask			= 0x01000000
+	NSItalicFontMask			= 0x00000001,
+	NSBoldFontMask			= 0x00000002,
+	NSUnboldFontMask			= 0x00000004,
+	NSNonStandardCharacterSetFontMask	= 0x00000008,
+	NSNarrowFontMask			= 0x00000010,
+	NSExpandedFontMask			= 0x00000020,
+	NSCondensedFontMask			= 0x00000040,
+	NSSmallCapsFontMask			= 0x00000080,
+	NSPosterFontMask			= 0x00000100,
+	NSCompressedFontMask		= 0x00000200,
+	NSFixedPitchFontMask		= 0x00000400,
+	NSUnitalicFontMask			= 0x01000000
 };
 
 
@@ -44,14 +44,14 @@ typedef NS_OPTIONS(NSUInteger, NSFontCollectionOptions) {
 /* And these "actions" are really tag values in Font Menu cells which send any of the action messages listed above.  Normally, they're pre-defined in the font panel.
  */
 typedef NS_ENUM(NSUInteger, NSFontAction) {
-    NSNoFontChangeAction		= 0,
-    NSViaPanelFontAction		= 1,
-    NSAddTraitFontAction		= 2,
-    NSSizeUpFontAction			= 3,
-    NSSizeDownFontAction		= 4,
-    NSHeavierFontAction			= 5,
-    NSLighterFontAction			= 6,
-    NSRemoveTraitFontAction		= 7
+	NSNoFontChangeAction		= 0,
+	NSViaPanelFontAction		= 1,
+	NSAddTraitFontAction		= 2,
+	NSSizeUpFontAction			= 3,
+	NSSizeDownFontAction		= 4,
+	NSHeavierFontAction			= 5,
+	NSLighterFontAction			= 6,
+	NSRemoveTraitFontAction		= 7
 };
 
 #ifdef __cplusplus
