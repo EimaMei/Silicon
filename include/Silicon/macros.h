@@ -84,13 +84,13 @@ extern "C" {
 /* Defining common properties/methods macros. */
 /* */
 #define define_property(class, type, name, set_name, arg_name)	\
-	type class##_##name(class* arg_name);						\
+	type class##_##name(class* arg_name);			\
 	void class##_set##set_name(class* arg_name, type name)
 
 
 /* */
-#define define_deprecated_property(class, type, name, set_name, arg_name, macos_macro)	\
-	type class##_##name(class* arg_name) API_AVAILABLE(macos_macro);					\
+#define define_deprecated_property(class, type, name, set_name, arg_name, macos_macro)		\
+	type class##_##name(class* arg_name) API_AVAILABLE(macos_macro);			\
 	void class##_set##set_name(class* arg_name, type name)  API_AVAILABLE(macos_macro)
 
 

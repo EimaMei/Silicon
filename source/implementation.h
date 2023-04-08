@@ -27,11 +27,11 @@ freely, subject to the following restrictions:
 
 /* Implements the 'class' property. */
 #define implement_property(class, type, name, set_name, arg_name)	\
-	type class##_##name(class* arg_name) {							\
-		return [arg_name name];										\
-	}																\
-	void class##_set##set_name(class* arg_name, type name) {		\
-		[arg_name set##set_name:name];								\
+	type class##_##name(class* arg_name) {				\
+		return [arg_name name];					\
+	}								\
+	void class##_set##set_name(class* arg_name, type name) {	\
+		[arg_name set##set_name:name];				\
 	}
 
 
@@ -41,14 +41,14 @@ freely, subject to the following restrictions:
 
 
 /* Implements a property for a given class that requires a C string. */
-#define implement_str_property(class, type, name, set_name, arg_name)	\
-	type class##_##name(class* arg_name) {								\
-		return NSString_to_char([arg_name name]);						\
-	}																	\
-	void class##_set##set_name(class* arg_name, type name) {			\
-		[arg_name set##set_name:([char_to_NSString(name) retain])];		\
+#define implement_str_property(class, type, name, set_name, arg_name)		\
+	type class##_##name(class* arg_name) {					\
+		return NSString_to_char([arg_name name]);			\
+	}									\
+	void class##_set##set_name(class* arg_name, type name) {		\
+		[arg_name set##set_name:([char_to_NSString(name) retain])];	\
 	}
 
 /* Implements the inherented function. */
 #define implement_inherented_function(return_type, inherented_class, function, ...)	\
-	return (return_type*)inherented_class##_##function(__VA_ARGS__);				\
+	return (return_type*)inherented_class##_##function(__VA_ARGS__);		\
