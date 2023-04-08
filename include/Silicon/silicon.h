@@ -273,6 +273,7 @@ NSPoint NSEvent_mouseLocation(NSEvent* event);
 /* */
 NSWindow* NSEvent_window(NSEvent* event);
 
+
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */
 /* */

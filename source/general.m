@@ -402,6 +402,7 @@ NSWindow* NSEvent_window(NSEvent* event){
 	return [event window];
 }
 
+
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */
 /* */
