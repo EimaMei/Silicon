@@ -32,7 +32,7 @@ extern "C" {
 #include "implementation.h" /* All of the macros that aren't from 'Silicon/macros.h' reside here. */
 
 
-typedef bool format(void* self, ...);
+typedef void format(void* self, ...);
 format* funcs[6];
 
 /* Key stuff. */
