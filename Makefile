@@ -19,7 +19,7 @@ run:
 	./$(EXE)
 
 runExamples:
-	@for f in $(shell ls examples/*.c); do make SRC=$${f}; rm -rf $(EXE); done
+	@for f in $(shell ls examples/**/*.c); do make SRC=$${f}; rm -rf $(EXE); done
 
 clean:
 	rm $(BACKEND) $(EXE) $(BACKEND-OBJ)
@@ -40,6 +40,10 @@ $(OUTPUT):
 install: $(BACKEND)
 	sudo cp -r include/Silicon /usr/local/include/Silicon
 	sudo cp -r $(BACKEND) /usr/local/lib/libSilicon.a
+
+uninstall: /usr/local/include/Silicon /usr/local/lib/libSilicon.a
+	sudo rm -rf $^
+
 
 ICON=
 generateApp:

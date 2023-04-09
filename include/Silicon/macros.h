@@ -29,7 +29,8 @@ extern "C" {
 
 
 #ifndef nil
-#define nil                  ((void *)0) /* The NULL to C. */
+/* The NULL to C. */
+#define nil                  ((void *)0)
 #endif
 
 /* If our target OS is 64-bits. */
@@ -54,15 +55,20 @@ extern "C" {
 
 /* Declarations of enums macros. */
 #ifndef NS_OPTIONS
-#define NS_OPTIONS(type, name) type name; enum /* Used to declare structs with a specific type. */
-#define NS_ENUM(type, name) NS_OPTIONS(type, name) /* Used to declare structs with a specific type. */
+/* Used to declare structs with a specific type. */
+#define NS_OPTIONS(type, name) type name; enum
+/* Used to declare structs with a specific type. */
+#define NS_ENUM(type, name) NS_OPTIONS(type, name) 
 #endif
 
 
 /* Max/min integer value macros.*/
-#define NSIntegerMax    LONG_MAX  /* The minimum value for an NSInteger. */
-#define NSIntegerMin    LONG_MIN  /* The maximum value for an NSInteger. */
-#define NSUIntegerMax   ULONG_MAX /* The maximum value for an NSUInteger. */
+/* The minimum value for an NSInteger. */
+#define NSIntegerMax    LONG_MAX
+/* The maximum value for an NSInteger. */
+#define NSIntegerMin    LONG_MIN
+/* The maximum value for an NSUInteger. */
+#define NSUIntegerMax   ULONG_MAX
 
 
 /* MacOS version macros. */
@@ -70,33 +76,34 @@ extern "C" {
 #define macos_version(major, minor) major * 10000 + minor * 100
 
 
-/* Objective-C useful class macros. */
-#define objctype _ /* In cases where you need the actual Objective-C class type as a regular function argument. */
-#define sizeof_class(typename) class_getInstanceSize(class(typename)) /* Gets the size of the class. */
+/* Useful Objective-C class macros. */
+/* In cases where you need the actual Objective-C class type as a regular function argument. */
+#define objctype _
+/* Gets the size of the class. */
+#define sizeof_class(typename) class_getInstanceSize(class(typename))
 
-#define malloc_class(typename) init(alloc(_(typename))) /* Allocates memory for the provided class type. */
-#define malloc_class_var(variable) init(alloc(variable))   /* Allocates memory for the provided class VARIABLE. Note that you cannot provide a type with this macro. */
+/* Allocates memory for the provided class type. */
+#define malloc_class(typename) init(alloc(_(typename)))
+/* Allocates memory for the provided class VARIABLE. Note that you cannot provide a type with this macro. */
+#define malloc_class_var(variable) init(alloc(variable))
 
-#define func_to_SEL(function) class_addMethod(objc_getClass("NSObject"), sel_registerName(#function":"), (IMP)function, "v@:") /* Creates an Objective-C method (SEL) from a regular C function. */
-#define selector(function) sel_getUid(#function":") /* @selector() implementation in C. */
+/* Creates an Objective-C method (SEL) from a regular C function. */
+#define func_to_SEL(function) class_addMethod(objc_getClass("NSObject"), sel_registerName(#function":"), (IMP)function, "v@:")
+/* @selector() implementation in C. */
+#define selector(function) SEL_exists(#function":")
 
 
 /* Defining common properties/methods macros. */
-/* */
+/* Defines the `get` and `set` versions of the provided property. */
 #define define_property(class, type, name, set_name, arg_name)	\
 	type class##_##name(class* arg_name);			\
 	void class##_set##set_name(class* arg_name, type name)
 
 
-/* */
+/* Defines the `get` and `set` versions of the provided property with an API_AVAILABLE macro. */
 #define define_deprecated_property(class, type, name, set_name, arg_name, macos_macro)		\
 	type class##_##name(class* arg_name) API_AVAILABLE(macos_macro);			\
 	void class##_set##set_name(class* arg_name, type name)  API_AVAILABLE(macos_macro)
-
-
-/* */
-#define define_inherented_function(Class, function, ...)	\
-	Class* Class##_##function(__VA_ARGS__)
 
 
 

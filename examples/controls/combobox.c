@@ -34,14 +34,14 @@ int main(int argc, char* argv[]) {
  	NSWindow_setTitle(window, "ComboBox Example");
 
 	// Init our comboBoxes.
-	comboBox1 = NSComboBox_init(NSMakeRect(10, 260, 121, 26));
+	comboBox1 = NSComboBox_initWithFrame(NSMakeRect(10, 260, 121, 26));
 	NSComboBox_addItem(comboBox1, "item1");
 	NSComboBox_addItem(comboBox1, "item2");
 	NSComboBox_addItem(comboBox1, "item3");
 	NSComboBox_setTarget(comboBox1, (id)window);
 	NSComboBox_setAction(comboBox1, selector(OnComboBox1SelectedItemChange));
 
-	comboBox2 = NSComboBox_init(NSMakeRect(10, 220, 121, 26));
+	comboBox2 = NSComboBox_initWithFrame(NSMakeRect(10, 220, 121, 26));
 	NSComboBox_setEditable(comboBox2, false);
 	NSComboBox_addItem(comboBox2, "item1");
 	NSComboBox_addItem(comboBox2, "item2");

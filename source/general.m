@@ -18,6 +18,10 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <AppKit/AppKit.h>
 #include <objc/runtime.h>
 #include <Availability.h>
@@ -28,7 +32,7 @@ freely, subject to the following restrictions:
 #include "implementation.h" /* All of the macros that aren't from 'Silicon/macros.h' reside here. */
 
 
-typedef bool format(void* self, ...);
+typedef void* format(void* self, ...);
 format* funcs[2];
 
 /* Key stuff. */
@@ -75,6 +79,36 @@ const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 @end
 
 
+/* Checks if the provided selector exist. */
+SEL _SEL_exists(const char* name, const char* filename, int line) {
+	SEL selector = sel_getUid(name);
+
+    Class original_class = nil;
+    unsigned int class_count = 0;
+    Class* classL_list = objc_copyClassList(&class_count);
+
+	unsigned int i;
+    for (i = 0; i < class_count; i++) {
+        Class cls = classL_list[i];
+		if ([NSStringFromClass(cls) isEqual:(@"UINSServiceViewController")]) // For whatever reason, this class ruins everything.
+			continue;
+
+        if (class_getInstanceMethod(cls, selector)) {
+            original_class = cls;
+            break;
+        }
+    }
+    free(classL_list);
+
+    if (original_class == nil) {
+		printf("%s:%i: Method '%s' doesn't exist. If this is a C function, then make sure to convert it into a SEL method via 'func_to_SEL(<function>)' before this line.\n", filename, line, name);
+		return nil;
+	}
+
+	return selector;
+}
+
+
 /* Converts a traditional C array into a NSArray. */
 NSArray* convert_C_array_to_NSArray(void* c_array, NSUInteger size) {
 	return [[NSArray alloc] initWithObjects:(c_array) count:(size)];
@@ -89,11 +123,13 @@ implement_property(NSControl, id, target, Target, control);
 implement_property(NSControl, SEL, action, Action, control);
 /* */
 implement_property(NSControl, NSFont*, font, Font, control);
+/* */
+implement_property(NSControl, double, doubleValue, DoubleValue, control);
 
 /* ====== NSControl functions ======*/
 /**/
-NSControl* NSControl_initWithFrame(NSControl* control, NSRect frameRect) {
-	return [control initWithFrame:(frameRect)];
+NSControl* NSControl_initWithFrame(NSRect frameRect) {
+	return [[NSControl alloc] initWithFrame:(frameRect)];
 }
 
 
@@ -154,8 +190,8 @@ NSView* NSView_init() {
 	return [[ViewClass alloc] init];
 }
 /* */
-define_inherented_function(NSView, initWithFrame, NSRect frameRect) {
-	implement_inherented_function(NSView, NSControl, initWithFrame, (void*)[ViewClass alloc], frameRect);
+NSView* NSView_initWithFrame(NSRect frameRect) {
+	return [[ViewClass alloc] initWithFrame:(frameRect)];
 }
 /* */
 void NSView_addSubview(NSView* view, NSView* subview) {
@@ -182,8 +218,8 @@ implement_property(NSTextField, NSFont*, font, Font, field);
 
 /* ====== NSTextField functions ====== */
 /* Initializes a NSTextField handle. */
-define_inherented_function(NSTextField, init, NSRect frameRect) {
-	implement_inherented_function(NSTextField, NSControl, initWithFrame, (void*)[[ViewClass alloc] label], frameRect);
+NSTextField* NSTextField_initWithFrame(NSRect frameRect) {
+	return [[NSTextField alloc] initWithFrame:(frameRect)];
 }
 
 
@@ -235,8 +271,8 @@ implement_property(NSButton, bool, allowsMixedState, AllowsMixedState, button);
 
 /* ====== NSButton functions ====== */
 /* */
-define_inherented_function(NSButton, init, NSRect frameRect) {
-	implement_inherented_function(NSButton, NSControl, initWithFrame, (void*)[NSButton alloc], frameRect);
+NSButton* NSButton_initWithFrame(NSRect frameRect) {
+	return [[NSButton alloc] initWithFrame:(frameRect)];
 }
 /* */
 void NSButton_setButtonType(NSButton* button, NSButtonType buttonType) {
@@ -270,8 +306,8 @@ implement_property(NSComboBox, SEL, action, Action, comboBox);
 
 /* ====== NSComboBox functions ====== */
 /**/
-define_inherented_function(NSComboBox, init, NSRect frameRect) {
-	implement_inherented_function(NSComboBox, NSControl, initWithFrame, (void*)[NSComboBox alloc], frameRect);
+NSComboBox* NSComboBox_initWithFrame(NSRect frameRect) {
+	return [[NSComboBox alloc] initWithFrame:(frameRect)];
 }
 /* */
 void NSComboBox_addItem(NSComboBox* comboBox, const char* str) {
@@ -533,3 +569,46 @@ NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, NSPasteboard** new
 bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType) {
 	return [pasteboard setString:char_to_NSString(stringToWrite) forType:(dataType)];
 }
+
+
+/* ============ NSSlider class ============ */
+/* ====== NSSlider properties ====== */
+/**/
+implement_property(NSSlider, id, target, Target, slider);
+/**/
+implement_property(NSSlider, SEL, action, Action, slider);
+/**/
+implement_property(NSSlider, NSFont*, font, Font, slider);
+/* */
+implement_property(NSSlider, double, doubleValue, DoubleValue, slider);
+/* */
+implement_property(NSSlider, double, maxValue, MaxValue, slider);
+
+/* ====== NSSlider functions ====== */
+/* */
+NSSlider* NSSlider_initWithFrame(NSRect frameRect) {
+	return [[NSSlider alloc] initWithFrame:(frameRect)];
+}
+
+
+
+/* ============ NSProgressIndicator class ============ */
+/* ====== NSProgressIndicator properties ====== */
+/* */
+implement_property(NSProgressIndicator, double, doubleValue, DoubleValue, progressIndicator);
+/* */
+implement_property(NSProgressIndicator, double, maxValue, MaxValue, progressIndicator);
+/* */
+implement_property(NSProgressIndicator, bool, isIndeterminate, Indeterminate, progressIndicator);
+
+/* ====== NSProgressIndicator functions ====== */
+/* */
+NSProgressIndicator* NSProgressIndicator_init(NSRect frameRect) {
+	return [[NSProgressIndicator alloc] initWithFrame:(frameRect)];
+}
+
+
+
+#ifdef __cplusplus
+}
+#endif

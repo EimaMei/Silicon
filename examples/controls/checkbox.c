@@ -61,7 +61,7 @@ void OnCheckBox5Click(id sender) {
 
 
 NSButton* create_checkbox(checkBox checkbox) {
-	NSButton* result = autorelease(NSButton_init(checkbox.rect));
+	NSButton* result = autorelease(NSButton_initWithFrame(checkbox.rect));
 	NSButton_setTitle(result, checkbox.title);
 	NSButton_setAllowsMixedState(result, checkbox.allowMixedState);
 	NSButton_setButtonType(result, checkbox.type);

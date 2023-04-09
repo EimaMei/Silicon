@@ -18,6 +18,10 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* NSString / char* conversion functions. */
 /* 'const char*' to 'NSString'. */
 #define char_to_NSString(text) [[NSString stringWithUTF8String:(text)] autorelease]
@@ -49,6 +53,7 @@ freely, subject to the following restrictions:
 		[arg_name set##set_name:([char_to_NSString(name) retain])];	\
 	}
 
-/* Implements the inherented function. */
-#define implement_inherented_function(return_type, inherented_class, function, ...)	\
-	return (return_type*)inherented_class##_##function(__VA_ARGS__);		
+
+#ifdef __cplusplus
+}
+#endif

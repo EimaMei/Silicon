@@ -137,9 +137,8 @@ In most cases, you'll be required to go into the `/Library/Developer/CommandLine
 ```
 - All C implemented methods and properties must follow the naming scheme of `<NSClass>_<name>()`.
 - There are certain macros you must be aware of each time you're implementing something from the Cocoa API to C:
-	- `define_property(class, type, name, set_name, arg_name)` - using this macro you will both define the `get` and `set` versions in one line.
+	- `define_property(class, type, name, set_name, arg_name)` - defines the `get` and `set` versions of the provided property.
 	- `define_deprecated_property(class, type, name, set_name, arg_name, macos_macro)` - same as before except you must provide `macos(<<major>.<minor> float>)` at the end.
-	- `define_inherented_function(Class, function, ...)` - **should be removed and not used.**
 - Make sure you don't confuse yourself with what's a property and what's a medthod, and placing them in the wrong spots when implementing them in C. It just causes headaches and makes things more confusing.
 - Be as accurate to the Cocoa's method/property declarations as possible. The only time when shortening names is allowed is when you're sure it won't cause any confusion or problems. As an example, it's allowed to implement `NSWindow initWithContentRect: styleMask: backing: defer:` as `NSWindow_init(...)`, as there's no real reason to specify that you need to init with a content rect. However, something like `NSView` can both have a regular `NSView_init` but also a `NSView_initWithFrame`, so you cannot shorten the names here.
 - Replace all mentions of `NSString*` with `const char*`
