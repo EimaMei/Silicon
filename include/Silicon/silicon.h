@@ -105,6 +105,8 @@ define_inherented_function(NSView, initWithFrame, NSRect frameRect);
 void NSView_addSubview(NSView* view, NSView* subview);
 /* */
 void NSView_release(NSView* view);
+/* */
+void NSView_registerForDraggedTypes(NSView* view, NSPasteboard** newTypes, NSUInteger array_size);
 
 
 /* ============ NSTextField class ============ */
@@ -332,7 +334,6 @@ const char* NSProcessInfo_processName(NSProcessInfo* processInfo);
 /* ====== NSImage functions ====== */
 /* */
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length);
-
 
 /* ============ NSGraphicsContext class ============ */
 /* ====== NSGraphicsContext properties ====== */

@@ -29,7 +29,7 @@ freely, subject to the following restrictions:
 
 
 typedef bool format(void* self, ...);
-format* funcs[2];
+format* funcs[6];
 
 /* Key stuff. */
 const char* NSKEYS[] = {
@@ -46,7 +46,9 @@ const unsigned short NSKEYI[sizeof(NSKEYS)] = {
 	NSBackspaceCharacter, NSTabCharacter, NSNewlineCharacter, NSCarriageReturnCharacter,
 	0x1B, 0x20, 0x56, 0x57, 0x51
 };
+
 const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
+bool validFileType = false;
 
 @interface WindowClass : NSWindow {}
 @end
@@ -71,6 +73,35 @@ const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 	- (void)drawRect:(NSRect)rect {
 		if (funcs[1] != NULL)
 		   funcs[1](self, rect);
+	}
+
+	// Drag 'n drop
+	- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {
+		if (funcs[2] != NULL)
+			funcs[2](sender);
+			
+		return NSDragOperationCopy;	
+	}
+
+	- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
+		if (funcs[3] != NULL)
+			funcs[3](sender);
+
+		return NSDragOperationCopy;
+	}
+
+	- (bool)prepareForDragOperation:(id<NSDraggingInfo>)sender {
+		if (funcs[4] != NULL)
+			funcs[4](sender);
+
+		return true;
+	}
+
+	- (bool)performDragOperation:(id<NSDraggingInfo>)sender {
+		if (funcs[5] != NULL)
+			funcs[5](sender);
+			
+		return true;
 	}
 @end
 
@@ -160,6 +191,13 @@ define_inherented_function(NSView, initWithFrame, NSRect frameRect) {
 /* */
 void NSView_addSubview(NSView* view, NSView* subview) {
 	[view addSubview:(subview)];
+}
+/* */
+void NSView_registerForDraggedTypes(NSView* view, NSPasteboard** newTypes, NSUInteger array_size){
+    NSArray* new_array = convert_C_array_to_NSArray(newTypes, array_size);
+
+    [view registerForDraggedTypes:([NSArray arrayWithObject:(new_array)])];
+    [new_array release];
 }
 
 
@@ -501,6 +539,7 @@ const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
 	return [[NSImage alloc] initWithData:([NSData dataWithBytes:(bitmapData) length:(length)])];
 }
+
 
 /* ============ NSGraphicsContext class ============ */
 /* ====== NSGraphicsContext properties ====== */
