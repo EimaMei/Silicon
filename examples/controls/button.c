@@ -47,27 +47,27 @@ int main(int argc, char* argv[]) {
 	button2Clicked = 0;
 
 
-	button1 = NSButton_init(NSMakeRect(50, 225, 90, 25)); // [[[NSButton alloc] initWithFrame:NSMakeRect(50, 225, 90, 25)] autorelease];
+	button1 = NSButton_initWithFrame(NSMakeRect(50, 225, 90, 25)); // [[[NSButton alloc] initWithFrame:NSMakeRect(50, 225, 90, 25)] autorelease];
 	NSButton_setTitle(button1, "button1");
 	NSButton_setBezelStyle(button1, NSBezelStyleRounded);
 	NSButton_setTarget(button1, (id)window);
 	NSButton_setAction(button1, selector(OnButton1Click));
 	NSButton_setAutoresizingMask(button1, NSViewMaxXMargin | NSViewMinYMargin);
 
-	button2 = NSButton_init(NSMakeRect(50, 125, 200, 75));
+	button2 = NSButton_initWithFrame(NSMakeRect(50, 125, 200, 75));
 	NSButton_setTitle(button2, "button2");
 	NSButton_setBezelStyle(button2, NSBezelStyleRegularSquare);
 	NSButton_setTarget(button2, (id)window);
 	NSButton_setAction(button2, selector(OnButton2Click));
 	NSButton_setAutoresizingMask(button2, NSViewMaxXMargin | NSViewMinYMargin);
 
-	label1 = NSTextField_init(NSMakeRect(50, 80, 150, 20));
+	label1 = NSTextField_initWithFrame(NSMakeRect(50, 80, 150, 20));
 	NSTextField_setStringValue(label1, "button1 clicked 0 times");
 	NSTextField_setBezeled(label1, false);
 	NSTextField_setDrawsBackground(label1, false);
 	NSTextField_setEditable(label1, false);
 
-  	label2 = NSTextField_init(NSMakeRect(50, 50, 150, 20));
+  	label2 = NSTextField_initWithFrame(NSMakeRect(50, 50, 150, 20));
 	NSTextField_setStringValue(label2, "button2 clicked 0 times");
 	NSTextField_setBezeled(label2, false);
 	NSTextField_setDrawsBackground(label2, false);

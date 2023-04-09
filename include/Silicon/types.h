@@ -74,6 +74,8 @@ mac_type_define(NSScreen);
 mac_type_define(NSImage);
 mac_type_define(NSPasteboard);
 mac_type_define(NSGraphicsContext);
+mac_type_define(NSSlider);
+mac_type_define(NSProgressIndicator);
 /* Deprecated*/
 mac_type_define(NSOpenGLPixelFormat);
 mac_type_define(NSOpenGLView);

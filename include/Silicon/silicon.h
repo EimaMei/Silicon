@@ -17,6 +17,7 @@ freely, subject to the following restrictions:
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 */
+
 #pragma once
 #ifdef __cplusplus
 extern "C" {
@@ -32,6 +33,11 @@ extern "C" {
 #include "enums.h"
 #include "mac_load.h"
 
+
+/* Linking C functions to Window and View classes. */
+extern void* funcs[2];
+
+
 /* Objective-C class methods. */
 mac_function_define(Class, class);
 mac_function_define(void*, init);
@@ -40,13 +46,46 @@ mac_function_define(void*, release);
 mac_function_define(void*, retain);
 mac_function_define(void*, autorelease);
 
+SEL _SEL_exists(const char* name, const char* filename, int line);
+/* Checks if the provided selector exist. */
+#define SEL_exists(name) _SEL_exists(name, __FILE__, __LINE__)
 
-/* Linking C functions to Window and View classes. */
-typedef bool format(void* self, ...);
-extern format* funcs[2];
 
-/* */
+/* ============ Geometry functions ============ */
+/* Creates a new NSRect from the specified values. */
 NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h);
+/* Creates a new NSPoint from the specified values. */
+NSPoint NSMakePoint(CGFloat x, CGFloat y);
+/* Returns a new NSSize from the specified values. */
+NSSize NSMakeSize(CGFloat w, CGFloat h);
+/* Returns the largest x coordinate of a given rectangle. */
+CGFloat NSMaxX(NSRect aRect);
+/* Returns the largest y coordinate of a given rectangle. */
+CGFloat NSMaxY(NSRect aRect);
+/* Returns the x coordinate of a given rectangle’s midpoint. */
+CGFloat NSMidX(NSRect aRect);
+/* Returns the y coordinate of a given rectangle’s midpoint. */
+CGFloat NSMidY(NSRect aRect);
+/* Returns the smallest x coordinate of a given rectangle. */
+CGFloat NSMinX(NSRect aRect);
+/* Returns the smallest y coordinate of a given rectangle. */
+CGFloat NSMinY(NSRect aRect);
+/* Returns the width of the specified rectangle. */
+CGFloat NSWidth(NSRect aRect);
+/* Returns the height of a given rectangle. */
+CGFloat NSHeight(NSRect aRect);
+/* Returns an NSRect typecast from a CGRect. */
+NSRect NSRectFromCGRect(CGRect cgrect);
+/* Returns a CGRect typecast from an NSRect. */
+CGRect NSRectToCGRect(NSRect nsrect);
+/* Returns an NSPoint typecast from a CGPoint. */
+NSPoint NSPointFromCGPoint(CGPoint cgpoint);
+/* Returns a CGPoint typecast from an NSPoint. */
+CGPoint NSPointToCGPoint(NSPoint nspoint);
+/* Returns an NSSize typecast from a CGSize. */
+NSSize NSSizeFromCGSize(CGSize cgsize);
+/* Returns a CGSize typecast from an NSSize. */
+CGSize NSSizeToCGSize(NSSize nssize);
 
 
 /* ============ NSControl class ============ */
@@ -57,10 +96,12 @@ define_property(NSControl, id, target, Target, control);
 define_property(NSControl, SEL, action, Action, control);
 /**/
 define_property(NSControl, NSFont*, font, Font, control);
+/* */
+define_property(NSControl, double, doubleValue, DoubleValue, control);
 
 /* ====== NSControl functions ======*/
 /**/
-NSControl* NSControl_initWithFrame(NSControl* control, NSRect frameRect);
+NSControl* NSControl_initWithFrame(NSRect frameRect);
 
 
 /* ============ NSWindow class ============ */
@@ -100,7 +141,7 @@ void NSWindow_makeMainWindow(NSWindow* window);
 /* */
 NSView* NSView_init();
 /* */
-define_inherented_function(NSView, initWithFrame, NSRect frameRect);
+NSView* NSView_initWithFrame(NSRect frameRect);
 /* */
 void NSView_addSubview(NSView* view, NSView* subview);
 /* */
@@ -128,7 +169,7 @@ define_property(NSTextField, NSFont*, font, Font, field);
 
 /* ====== NSTextField functions ====== */
 /* Initializes a NSTextField handle. */
-define_inherented_function(NSTextField, init, NSRect frameRect);
+NSTextField* NSTextField_initWithFrame(NSRect frameRect);
 
 
 /* ============ NSFontManager class ============ */
@@ -168,7 +209,7 @@ define_property(NSButton, bool, allowsMixedState, AllowsMixedState, button);
 
 /* ====== NSButton functions ====== */
 /* */
-define_inherented_function(NSButton, init, NSRect frameRect);
+NSButton* NSButton_initWithFrame(NSRect frameRect);
 /* */
 void NSButton_setButtonType(NSButton* button, NSButtonType buttonType);
 
@@ -201,7 +242,7 @@ define_property(NSComboBox, NSFont*, font, Font, field);
 
 /* ====== NSComboBox functions ====== */
 /**/
-define_inherented_function(NSComboBox, init, NSRect frameRect);
+NSComboBox* NSComboBox_initWithFrame(NSRect frameRect);
 /* */
 void NSComboBox_addItem(NSComboBox* comboBox, void* item);
 /* */
@@ -354,6 +395,40 @@ const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardTyp
 NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, NSPasteboard** newTypes, NSUInteger array_size, void* owner);
 /* */
 bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType);
+
+
+/* ============ NSSlider class ============ */
+/* ====== NSSlider properties ====== */
+/**/
+define_property(NSSlider, id, target, Target, slider);
+/**/
+define_property(NSSlider, SEL, action, Action, slider);
+/**/
+define_property(NSSlider, NSFont*, font, Font, slider);
+/* */
+define_property(NSSlider, double, doubleValue, DoubleValue, slider);
+/* */
+define_property(NSSlider, double, maxValue, MaxValue, slider);
+
+/* ====== NSSlider functions ====== */
+/* */
+NSSlider* NSSlider_initWithFrame(NSRect frameRect);
+
+
+
+/* ============ NSProgressIndicator class ============ */
+/* ====== NSProgressIndicator properties ====== */
+/* */
+define_property(NSProgressIndicator, double, doubleValue, DoubleValue, progressIndicator);
+/* */
+define_property(NSProgressIndicator, double, maxValue, MaxValue, progressIndicator);
+/* */
+define_property(NSProgressIndicator, bool, isIndeterminate, Indeterminate, progressIndicator);
+
+/* ====== NSProgressIndicator functions ====== */
+/* */
+NSProgressIndicator* NSProgressIndicator_init(NSRect frameRect);
+
 
 
 

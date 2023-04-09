@@ -5,7 +5,6 @@ source/test
 games/
 res
 build
-scripts/
 
 # Files 
 *.exe
@@ -17,3 +16,4 @@ test.cpp
 *.7z
 *.zip
 main.c
+script.py

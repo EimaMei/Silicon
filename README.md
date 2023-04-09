@@ -19,14 +19,21 @@ Silicon is also very unfinished as an implementation of a giant library like Coc
 
 
 # Examples
-- [hello-word.c](examples/hello-word.c) - a simple application with a "Hello world" text field.
-- [mac-load.c](examples/mac-load.c) - a Silicon port of [hidefromkgb's original Obj-C/C example](https://github.com/hidefromkgb/mac_load#objective-c-gui-app-example)
-- [events.c](examples/events.c) - utilizes the use of the NSEvent type to get the required events.
-- [opengl.c](examples/opengl.c) - a continuation from the previous example, as well as showing how to setup an OpenGL environment.
-- [menu.c](examples/menu.c) - demonstrates how to create menu bars in OS X.
-- [button.c](examples/button.c) - shows how to create and utilize buttons using the Cocoa API.
-- [checkbox.c](examples/checkbox.c) - similar to the previous example from above, however instead they're checkboxes instead of regular buttons.
-- [combobox.c](examples/combobox.c) - an example on how to utilize the NSComboBox class.
+To compile and run all of the examples in a row, you can use `make runExamples` to test out everything at once.
+## [General](examples/general)
+- [hello-word.c](examples/general/hello-word.c) - a simple application with a "Hello world" text field.
+- [events.c](examples/general/events.c) - utilizes the use of the NSEvent type to get the required events.
+- [mac-load.c](examples/general/mac-load.c) - a Silicon port of [hidefromkgb's original Obj-C/C example](https://github.com/hidefromkgb/mac_load#objective-c-gui-app-example)
+
+## [Controls](examples/controls)
+- [menu.c](examples/controls/menu.c) - demonstrates how to create menu bars in OS X.
+- [button.c](examples/controls/button.c) - shows how to create and utilize buttons using the Cocoa API.
+- [checkbox.c](examples/controls/checkbox.c) - similar to the previous example from above, however instead they're checkboxes instead of regular buttons.
+- [combobox.c](examples/controls/combobox.c) - an example on how to utilize the NSComboBox class.
+- [trackbar.c](examples/controls/trackbar.c) - demonstrates how to create & utilize a track bar and progress bar.
+
+## [Graphics](examples/graphics)
+- [opengl.c](examples/graphics/opengl.c) - shows how to setup an OpenGL environment with an event loop.
 
 
 # Documentation
