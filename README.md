@@ -18,6 +18,25 @@ As with any new project, Silicon is subjected to major changes (be it the source
 Silicon is also very unfinished as an implementation of a giant library like Cocoa will take awhile. As of now Silicon will firstly focus on implementing the Cocoa essentials as well as common code examples and functions used in the API.
 
 
+# Silicon on iOS (Beta)
+As of Aprill 11th, it's possible to compile basic C code easily with Silicon's `Makefile`. While GUI support isn't nowhere near implemented, it's already possible to print something in the terminal with the [print.c](examples/iphone/print.c) example.
+
+## Prerequisites
+- Xcode:
+    - iOS SDK.
+    - iOS simulator.
+- Silicon's `Makefile`.
+- Setting said `Makefile`'s `TARGET_iOS` to true at line 6.
+
+## Building
+To build, install and launch the app all at once, you'll have to run the command `make iosBuild`. This'll first compile the source file, then generate an `.app` for it, install it on the currently opened iOS simulator and launch it with a console terminal.
+
+## Other noteworthy things to mention
+If you want to set the icon, you have to either run `make iosBuild ICON=<filename>.png`, or `make generateApp ICON=<filename>.png` to only generate the app with the icon.
+
+If you only want to install or launch the app, then you can use the command `make iosInstall` and `make iosLaunch` respectively.
+
+
 # Examples
 To compile and run all of the examples in a row, you can use `make runExamples` to test out everything at once.
 ## [General](examples/general)
@@ -34,6 +53,9 @@ To compile and run all of the examples in a row, you can use `make runExamples` 
 
 ## [Graphics](examples/graphics)
 - [opengl.c](examples/graphics/opengl.c) - shows how to setup an OpenGL environment with an event loop.
+
+## [iPhone (Beta)](examples/iphone)
+- [print.c](examples/graphics/opengl.c) - an example of how to enable print debugging on iOS.
 
 
 # Documentation

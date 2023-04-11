@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 	NSTextField_setEditable(label, false);
 	NSTextField_setSelectable(label, false);
 
- 	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, NO);
+ 	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
 	NSView* view = NSWindow_contentView(window);
 
 	NSWindow_setTitle(window, "TrackBar Example");
