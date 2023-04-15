@@ -24,8 +24,9 @@ extern "C" {
 #endif
 
 #include <limits.h>
-#include "macros.h"
-#include "mac_load.h"
+
+#include "../macros.h"
+#include "../mac_load.h"
 
 
 #if SILICON_TARGET_64BIT
@@ -34,11 +35,6 @@ extern "C" {
 	typedef float CGFloat; /* The basic type for all floating-point values. */
 #endif
 
-
-/* CG -> NS typedefs. */
-typedef CGRect  NSRect;  /* A structure that contains the location and dimensions of a rectangle. */
-typedef CGSize  NSSize;  /* A structure that contains width and height values. */
-typedef CGPoint NSPoint; /* A structure that contains a point in a two-dimensional coordinate system. */
 
 /* New NS types. */
 #if SILICON_TARGET_64BIT
@@ -49,46 +45,25 @@ typedef CGPoint NSPoint; /* A structure that contains a point in a two-dimension
 	typedef unsigned int NSUInteger; /* Describes an unsigned integer. When building 32-bit applications, NSUInteger is a 32-bit unsigned integer. A 64-bit application treats NSUInteger as a 64-bit unsigned integer. */
 #endif
 
-typedef NSInteger NSModalResponse;
-typedef double NSTimeInterval;
-typedef NSInteger NSWindowLevel;
-typedef char* NSNotificationName; /* Note: originally this was NSString* */
 
 /* Objective-C classes. */
 mac_type_define(NSAutoreleasePool);
-mac_type_define(NSWindow);
-mac_type_define(NSView);
-mac_type_define(NSApplication);
-mac_type_define(NSColor);
-mac_type_define(NSNotification);
-mac_type_define(NSEvent);
-mac_type_define(NSTextField);
-mac_type_define(NSFontManager);
-mac_type_define(NSProcessInfo);
-mac_type_define(NSMenu);
-mac_type_define(NSMenuItem);
-mac_type_define(NSButton);
-mac_type_define(NSComboBox);
-mac_type_define(NSControl);
-mac_type_define(NSScreen);
-mac_type_define(NSImage);
-mac_type_define(NSPasteboard);
-mac_type_define(NSGraphicsContext);
-mac_type_define(NSSlider);
+mac_type_define(UIWindow);
 mac_type_define(UIView);
-mac_type_define(NSProgressIndicator);
-/* Deprecated*/
-mac_type_define(NSOpenGLPixelFormat);
-mac_type_define(NSOpenGLView);
-mac_type_define(NSOpenGLContext);
-
-typedef void NSDraggingInfo;
-
-#ifndef __OBJC__ /* These are already defined in Objective-C. */
-mac_type_define(NSFont);
-mac_type_define(NSDate);
-mac_type_define(NSURL);
-#endif
+mac_type_define(UIViewController);
+mac_type_define(UIApplication);
+mac_type_define(UIColor);
+mac_type_define(UIEvent);
+mac_type_define(UITextField);
+mac_type_define(UIFont);
+mac_type_define(UIMenu);
+mac_type_define(UIMenuItem);
+mac_type_define(UIButton);
+mac_type_define(UIControl);
+mac_type_define(UIScreen);
+mac_type_define(UIImage);
+mac_type_define(UIPasteboard);
+mac_type_define(UISlider);
 
 #ifdef __cplusplus
 }
