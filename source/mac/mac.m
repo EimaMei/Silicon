@@ -33,8 +33,6 @@ extern "C" {
 #include "../implementation.h" /* All of the macros that aren't from 'Silicon/macros.h' reside here. */
 
 
-typedef void* format(void* self, ...);
-format* funcs[6];
 const NSSize _NSZeroSize = {0, 0};
 
 /* Key stuff. */
@@ -45,14 +43,14 @@ const char* NSKEYS[] = {
 	"Backspace", "Tab", "Enter", "Return",
 	"Escape", "Space", "Shift", "CapsLock", "BackSpace"
 };
-const unsigned short NSKEYI[sizeof(NSKEYS)] = {
+const unsigned short NSKEYI[si_sizeof(NSKEYS)] = {
 	NSUpArrowFunctionKey, NSDownArrowFunctionKey, NSLeftArrowFunctionKey, NSRightArrowFunctionKey,
 	NSF1FunctionKey, NSF2FunctionKey, NSF3FunctionKey, NSF4FunctionKey, NSF5FunctionKey, NSF6FunctionKey, NSF7FunctionKey, NSF8FunctionKey, NSF9FunctionKey, NSF10FunctionKey, NSF11FunctionKey, NSF12FunctionKey,
 	NSDeleteFunctionKey, NSInsertFunctionKey, NSHomeFunctionKey, NSEndFunctionKey, NSPageUpFunctionKey, NSPageDownFunctionKey,
 	NSBackspaceCharacter, NSTabCharacter, NSNewlineCharacter, NSCarriageReturnCharacter,
 	0x1B, 0x20, 0x56, 0x57, 0x51
 };
-const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
+const unsigned char NSKEYCOUNT = si_sizeof(NSKEYS);
 
 
 @interface WindowClass : NSWindow {}
@@ -61,41 +59,6 @@ const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 @implementation WindowClass
 	- (instancetype) returnWin {
 		return self;
-	}
-	- (bool)windowShouldClose:(NSWindow*)sender {
-		if (funcs[0] != NULL)
-		   funcs[0](sender);
-
-		return true;
-	}
-
-	/* Drag 'n drop. */
-    - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {
-        if (funcs[2] != NULL)
-            funcs[2](sender);
-
-        return NSDragOperationCopy;
-    }
-
-    - (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
-        if (funcs[3] != NULL)
-            funcs[3](sender);
-
-        return NSDragOperationCopy;
-    }
-
-    - (bool)prepareForDragOperation:(id<NSDraggingInfo>)sender {
-        if (funcs[4] != NULL)
-            funcs[4](sender);
-
-        return true;
-    }
-
-    - (bool)performDragOperation:(id<NSDraggingInfo>)sender {
-        if (funcs[5] != NULL)
-            funcs[5](sender);
-
-        return true;
 	}
 @end
 
@@ -107,27 +70,33 @@ const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 	- (NSTextField*)label {
 		return [NSTextField alloc];
 	}
-	- (void)drawRect:(NSRect)rect {
-		if (funcs[1] != NULL)
-		   funcs[1](self, rect);
-	}
 @end
 
 
 /* Converts siArray to a NSArray. */
-NSArray* si_array_to_NSArray(siArray array) {
+NSArray* si_array_to_NSArray(siArray(void) array) {
 	size_t len = si_array_len(array);
-	return [[NSArray alloc] initWithObjects:((void*)array) count:(len)];
+	return [[NSArray alloc] initWithObjects:(array) count:(len)];
 }
 
 
+/* Returns the logon name of the current user. */
+const char* _NSUserName() {
+	return NSString_to_char(NSUserName());
+}
+
+/* Returns the path to either the user’s or application’s home directory, depending on the platform. */
+const char* _NSHomeDirectory() {
+	return NSString_to_char(NSHomeDirectory());
+}
+
 /* Creates a list of directory search paths. */
-siArray _NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, bool expandTilde) {
+siArray(const char*) _NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, bool expandTilde) {
 	NSArray<NSString*>* output = NSSearchPathForDirectoriesInDomains(directory, domainMask, expandTilde); /* wtf is this C++ faker doing in Objective-C??? */
-	siArray res = si_array_init(output.count);
+	siArray(const char*) res = si_array_init_reserve(si_sizeof(const char*), output.count);
 
     for (NSUInteger i = 0; i < output.count; i++)
-        res[i] = (char*)NSString_to_char([output objectAtIndex:(i)]);
+        res[i] = NSString_to_char([output objectAtIndex:(i)]);
 
 	return res;
 }
@@ -217,7 +186,7 @@ void NSView_addSubview(NSView* view, NSView* subview) {
 	[view addSubview:(subview)];
 }
 /* */
-void NSView_registerForDraggedTypes(NSView* view, siArray newTypes) {
+void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newTypes) {
 	NSArray* new_array = si_array_to_NSArray(newTypes);
 
 	[view registerForDraggedTypes:(new_array)];
@@ -406,12 +375,18 @@ NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEvent
 
 
 /* ============ NSScreen class ============*/
+/* ====== NSScreen properties ====== */
+/* Returns the screen object containing the window with the keyboard focus. */
 NSScreen* NSScreen_mainScreen() {
 	return [NSScreen mainScreen];
 }
-/* */
+/* The dimensions and location of the screen. */
 NSRect NSScreen_frame(NSScreen* screen) {
 	return [screen frame];
+}
+/* The current location and dimensions of the visible screen. */
+NSRect NSScreen_visibleFrame(NSScreen* screen) {
+	return [screen visibleFrame];
 }
 
 
@@ -444,9 +419,11 @@ unsigned short NSEvent_keyCodeForChar(char* keyStr){
 			return NSKEYI[i + 1];
 	}
 
-	NSString *keyString = char_to_NSString(keyStr);
+	NSString* keyString = char_to_NSString(keyStr);
+	unichar keyCode = [keyString characterAtIndex:(0)];
 
-	return [keyString characterAtIndex:(0)];
+	[keyString release];
+	return keyCode;
 }
 /* */
 const char* NSEvent_characters(NSEvent* event) {
@@ -498,14 +475,15 @@ NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEqui
 	return  [[NSMenuItem alloc] initWithTitle:(menu_title) action:(selector) keyEquivalent:(key)];
 }
 /* */
-NSMenuItem** NSMenu_itemArray(NSMenu* menu) {
-	NSArray* item_array = [menu itemArray];
-	NSMenuItem** result = malloc(sizeof(*result) * item_array.count);
+siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu) {
+	NSArray<NSMenuItem*>* item_array = [menu itemArray];
+	siArray(NSMenuItem*) result = si_array_init_reserve(si_sizeof(*result), item_array.count);
 
-	for (size_t i = 0; i < item_array.count; i++) {
+	for (NSUInteger i = 0; i < item_array.count; i++) {
 		result[i] = [item_array objectAtIndex:(i)];
 		[result[i] retain];
 	}
+	/* TODO(EimaMei): Maybe release item_array here? */
 
 	return result;
 }
@@ -601,7 +579,7 @@ const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardTyp
 	return NSString_to_char([pasteboard stringForType:(dataType)]);
 }
 /* */
-NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, siArray newTypes, void* owner) {
+NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, siArray(NSPasteboardType) newTypes, void* owner) {
 	NSArray* new_array = si_array_to_NSArray(newTypes);
 
 	NSInteger res = [pasteboard declareTypes:(new_array) owner:(owner)];
@@ -614,16 +592,15 @@ bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite,
 	return [pasteboard setString:(char_to_NSString(stringToWrite)) forType:(dataType)];
 }
 /* */
-const char** NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard, siArray classArray, void* options) {
+siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard, siArray(Class) classArray, void* options) {
     NSArray* new_array = si_array_to_NSArray(classArray);
     NSArray* filenames = [pasteboard readObjectsForClasses:(new_array) options:(options)];
 
-	const char** output = malloc(filenames.count * sizeof(*output));
+	siArray(const char*) output = si_array_init_reserve(si_sizeof(*output), filenames.count);
 
-    for (NSUInteger i = 0; i < filenames.count; i++)
+    for (NSUInteger i = 0; i < si_array_len(output); i++)
         output[i] = NSString_to_char([[filenames objectAtIndex:(i)] path]);
 
-	/* Free everything useless before we go. */
 	[new_array release];
 
 	return output;
@@ -691,7 +668,7 @@ NSWindow* NSDraggingInfo_draggingDestinationWindow(id<NSDraggingInfo> info) {
 
 /* ============ NSColorPanel class ============ */
 /* ====== NSColorPanel properties ====== */
-define_property(NSColorPanel, NSColor*, color, setColor, colorPanel);
+implement_property(NSColorPanel, NSColor*, color, Color, colorPanel);
 
 
 /* ============ NSBitmapImageRep class ============ */
@@ -724,22 +701,29 @@ NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NS
 /* A Boolean value that indicates whether the panel displays UI for creating directories. */
 implement_property(NSSavePanel, bool, canCreateDirectories, CanCreateDirectories, savePanel);
 /* (Deprecated!) An array of filename extensions or UTIs that represent the allowed file types for the panel. */
-const char** NSSavePanel_allowedFileTypes(NSSavePanel* savePanel) {
+siArray(const char*) NSSavePanel_allowedFileTypes(NSSavePanel* savePanel) {
 	NSArray<NSString*>* output = [savePanel allowedFileTypes];
-	siArray res = si_array_init(output.count);
+	siArray(const char*) res = si_array_init_reserve(si_sizeof(const char*), output.count);
 
-    for (NSUInteger i = 0; i < output.count; i++)
-        res[i] = (void*)NSString_to_char([output objectAtIndex:(i)]);
+    for (NSUInteger i = 0; i < output.count; i++) {
+        res[i] = NSString_to_char([output objectAtIndex:(i)]);
+	}
 
-	return (const char**)res;
+	return res;
 }
-void NSSavePanel_setAllowedFileTypes(NSSavePanel* savePanel, const char** allowedFileTypes) {
-	siArray copy = si_array_init(si_array_len((void*)allowedFileTypes));
+/* */
+void NSSavePanel_setAllowedFileTypes(NSSavePanel* savePanel, siArray(const char*) allowedFileTypes) {
+	siArray(NSString*) copy = si_array_init_reserve(si_sizeof(*copy), si_array_len(allowedFileTypes));
 
-	for (NSUInteger i = 0; i < si_array_len(copy); i++)
+	for (usize i = 0; i < si_array_len(copy); i++) {
 		copy[i] = char_to_NSString(allowedFileTypes[i]);
+	}
 
-	[savePanel setAllowedFileTypes:(si_array_to_NSArray(copy))];
+	NSArray* array = si_array_to_NSArray(copy);
+	[savePanel setAllowedFileTypes:(array)];
+
+	si_array_free(copy);
+	[array release];
 }
 /* The current directory shown in the panel. */
 implement_property(NSSavePanel, NSURL*, directoryURL, DirectoryURL, savePanel);
@@ -767,7 +751,9 @@ const char* NSURL_path(NSURL* url) {
 /* Initializes and returns a newly created NSURL object as a file URL with a specified path. */
 NSURL* NSURL_fileURLWithPath(const char* path) {
 	NSString* txt = char_to_NSString(path);
-	return [NSURL fileURLWithPath:(txt)];
+	NSURL* res = [NSURL fileURLWithPath:(txt)];
+
+	return res;
 }
 
 
@@ -786,22 +772,22 @@ implement_property(NSOpenPanel, bool, allowsMultipleSelection, AllowsMultipleSel
 /* A Boolean value that indicates whether the panel's accessory view is visible. */
 implement_property(NSOpenPanel, bool, isAccessoryViewDisclosed, AccessoryViewDisclosed, openPanel);
 /* An array of URLs, each of which contains the fully specified location of a selected file or directory. */
-NSURL** NSOpenPanel_URLs(NSOpenPanel* openPanel) {
+siArray(NSURL*) NSOpenPanel_URLs(NSOpenPanel* openPanel) {
 	NSArray<NSURL*>* output = [openPanel URLs];
-	siArray res = si_array_init(output.count);
+	siArray(NSURL*) res = si_array_init_reserve(si_sizeof(NSURL*), output.count);
 
 	for (NSUInteger i = 0; i < output.count; i++)
 		res[i] = [output objectAtIndex:(i)];
 
-	return (NSURL**)res;
+	return res;
 }
 /* A Boolean value that indicates how the panel responds to iCloud documents that aren't fully downloaded locally. */
 implement_property(NSOpenPanel, bool, canDownloadUbiquitousContents, CanDownloadUbiquitousContents, openPanel);
 /* A Boolean value that indicates whether the panel's accessory view is visible. */
 implement_property(NSOpenPanel, bool, canResolveUbiquitousConflicts, CanResolveUbiquitousConflicts, openPanel);
 /* (Deprecated!) An array of filename extensions or UTIs that represent the allowed file types for the panel. */
-const char** NSOpenPanel_allowedFileTypes(NSOpenPanel* savePanel) { return NSSavePanel_allowedFileTypes((NSSavePanel*)savePanel); }
-void NSOpenPanel_setAllowedFileTypes(NSOpenPanel* savePanel, const char** allowedFileTypes) { NSSavePanel_setAllowedFileTypes((NSSavePanel*)savePanel, allowedFileTypes);}
+siArray(const char*) NSOpenPanel_allowedFileTypes(NSOpenPanel* savePanel) { return NSSavePanel_allowedFileTypes((NSSavePanel*)savePanel); }
+void NSOpenPanel_setAllowedFileTypes(NSOpenPanel* savePanel, siArray(const char*) allowedFileTypes) { NSSavePanel_setAllowedFileTypes((NSSavePanel*)savePanel, allowedFileTypes);}
 /* The current directory shown in the panel. */
 implement_property(NSOpenPanel, NSURL*, directoryURL, DirectoryURL, openPanel);
 /* The user-editable filename currently shown in the name field. */

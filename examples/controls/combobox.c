@@ -21,10 +21,9 @@ bool windowShouldClose(id sender) {
 }
 
 int main(int argc, char* argv[]) {
-	funcs[0] = windowShouldClose;
-
-	// Convert functions to C.
-	func_to_SEL(OnComboBox1SelectedItemChange);
+	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
+	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
+	si_func_to_SEL(SI_DEFAULT, OnComboBox1SelectedItemChange);
 
 	NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);

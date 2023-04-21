@@ -39,8 +39,17 @@ extern const NSSize _NSZeroSize;
 #define NSZeroSize _NSZeroSize
 
 
+/* Returns the logon name of the current user. */
+#define NSUserName _NSUserName
+const char* NSUserName();
+
+/* Returns the path to either the user’s or application’s home directory, depending on the platform. */
+#define NSHomeDirectory _NSHomeDirectory
+const char* NSHomeDirectory();
+
 /* Creates a list of directory search paths. */
-siArray _NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, bool expandTilde);
+#define NSSearchPathForDirectoriesInDomains _NSSearchPathForDirectoriesInDomains
+siArray(const char*) NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, bool expandTilde);
 
 
 /* ============ Geometry functions ============ */
@@ -143,9 +152,7 @@ NSView* NSView_initWithFrame(NSRect frameRect);
 /* */
 void NSView_addSubview(NSView* view, NSView* subview);
 /* */
-void NSView_release(NSView* view);
-/* */
-void NSView_registerForDraggedTypes(NSView* view, NSPasteboardType* newTypes);
+void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newTypes);
 
 
 /* ============ NSTextField class ============ */
@@ -287,10 +294,13 @@ NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEvent
 
 
 /* ============ NSScreen class ============ */
-/* */
+/* ====== NSScreen properties ====== */
+/* Returns the screen object containing the window with the keyboard focus. */
 NSScreen* NSScreen_mainScreen();
-/* */
+/* The dimensions and location of the screen. */
 NSRect NSScreen_frame(NSScreen* screen);
+/* The current location and dimensions of the visible screen. */
+NSRect NSScreen_visibleFrame(NSScreen* screen);
 
 
 /* ============ NSEvent class ============ */
@@ -334,7 +344,7 @@ define_property(NSMenuItem, const char*, title, Title, item);
 /* */
 NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEquivalent);
 /* */
-NSMenuItem** NSMenu_itemArray(NSMenu* menu);
+siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu);
 /* */
 NSMenuItem* NSMenuItem_separatorItem();
 
@@ -397,11 +407,11 @@ NSPasteboard* NSPasteboard_generalPasteboard();
 /* */
 const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType);
 /* */
-NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, NSPasteboardType* newTypes, void* owner);
+NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, siArray(NSPasteboardType) newTypes, void* owner);
 /* */
 bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType);
 /* */
-const char** NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard, siArray classArray, void* options);
+siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard, siArray(Class) classArray, void* options);
 
 
 
@@ -469,7 +479,7 @@ NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NS
 /* A Boolean value that indicates whether the panel displays UI for creating directories. */
 define_property(NSSavePanel, bool, canCreateDirectories, CanCreateDirectories, savePanel);
 /* (Deprecated!) An array of filename extensions or UTIs that represent the allowed file types for the panel. */
-define_property(NSSavePanel, const char**, allowedFileTypes, AllowedFileTypes, savePanel);
+define_property(NSSavePanel, siArray(const char*), allowedFileTypes, AllowedFileTypes, savePanel);
 /* The current directory shown in the panel. */
 define_property(NSSavePanel, NSURL*, directoryURL, DirectoryURL, savePanel);
 /* The user-editable filename currently shown in the name field. */
@@ -506,13 +516,13 @@ define_property(NSOpenPanel, bool, allowsMultipleSelection, AllowsMultipleSelect
 /* A Boolean value that indicates whether the panel's accessory view is visible. */
 define_property(NSOpenPanel, bool, accessoryViewDisclosed, AccessoryViewDisclosed, openPanel);
 /* An array of URLs, each of which contains the fully specified location of a selected file or directory. */
-NSURL** NSOpenPanel_URLs(NSOpenPanel* openPanel);
+siArray(NSURL*) NSOpenPanel_URLs(NSOpenPanel* openPanel);
 /* A Boolean value that indicates how the panel responds to iCloud documents that aren't fully downloaded locally. */
 define_property(NSOpenPanel, bool, canDownloadUbiquitousContents, CanDownloadUbiquitousContents, openPanel);
 /* A Boolean value that indicates whether the panel's accessory view is visible. */
 define_property(NSOpenPanel, bool, canResolveUbiquitousConflicts, CanResolveUbiquitousConflicts, openPanel);
 /* (Deprecated!) An array of filename extensions or UTIs that represent the allowed file types for the panel. */
-define_property(NSOpenPanel, const char**, allowedFileTypes, AllowedFileTypes, openPanel);
+define_property(NSOpenPanel, siArray(const char*), allowedFileTypes, AllowedFileTypes, openPanel);
 /* The current directory shown in the panel. */
 define_property(NSOpenPanel, NSURL*, directoryURL, DirectoryURL, openPanel);
 /* The user-editable filename currently shown in the name field. */

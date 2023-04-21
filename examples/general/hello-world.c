@@ -12,12 +12,13 @@ bool windowShouldClose(void* self, id sender)  {
 
 
 int main() {
-	funcs[0] = windowShouldClose;
+	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
+	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 
 	NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
-	NSTextField* label = NSTextField_init(NSMakeRect(5, 100, 290, 100));
+	NSTextField* label = NSTextField_initWithFrame(NSMakeRect(5, 100, 290, 100));
 	NSTextField_setStringValue(label, "Hello, World!");
 	NSTextField_setBezeled(label, false);
 	NSTextField_setDrawsBackground(label, false);

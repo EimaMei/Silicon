@@ -33,10 +33,10 @@ void OnButton2Click(id sender) {
 
 
 int main(int argc, char* argv[]) {
-	func_to_SEL(OnButton1Click);
-	func_to_SEL(OnButton2Click);
-
-	funcs[0] = windowShouldClose;
+	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
+	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
+	si_func_to_SEL(SI_DEFAULT, OnButton1Click);
+	si_func_to_SEL(SI_DEFAULT, OnButton2Click);
 
 	NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);

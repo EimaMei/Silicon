@@ -25,27 +25,8 @@ bool windowShouldClose(id sender) {
 }
 
 /*
-	C's function pointers and Objective-C's class methods (SELs) are different. While they are 'pointers' at their core, SELs are class functions and as such, sending a regular function pointer will not work.
-	The way to fix this is to use the 'func_to_SEL' macro, which takes a function and adds it as a method to a NSObject class. With this you can now do selector(<function name>), which finds the SEL pointer
-	to the provided function and use it as a valid argument.
-*/
-void convert_functions_to_SEL() {
-	func_to_SEL(fileNew);
-	func_to_SEL(fileOpen);
-	func_to_SEL(fileClose);
-
-	func_to_SEL(editUndo);
-	func_to_SEL(editRedo);
-	func_to_SEL(editCut);
-	func_to_SEL(editCopy);
-	func_to_SEL(editPaste);
-	func_to_SEL(editDelete);
-	func_to_SEL(editSelectAll);
-}
-
-/*
 	This is just a quick 'n dirty way to achieve the same result as [NSString stringWithFormat:(...)]
-	Note that the usage of 'sprintf_output' in this code doesn't free the pointers allocated to memory, however since this a simple example it doesn't matter.
+	Note that after each usage of 'sprintf_output' in this file, the returned string does not get freed, which in production code should obviously
 */
 const char* sprintf_output(const char* text, ...) {
 	va_list args;
@@ -86,10 +67,24 @@ NSMenu* create_submenu(NSMenu* main_menu, const char* title, NSMenuItem** items,
 
 
 int main() {
-	funcs[0] = windowShouldClose;
+	/*
+		C's function pointers and Objective-C's class methods (SELs) are different. While they are 'pointers' at their core, SELs are class functions and as such, sending a regular function pointer will not work.
+		The way to fix this is to use the 'si_func_to_SEL' function, which takes a function and adds it as a method to the provided class (default being SI_DEFAULT). With this you can now do selector(<function name>),
+		which finds the SEL pointer to the provided function and use it as a valid argument.
+	*/
+	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 
-	// Convert C functions to Objective-C methods.
-	convert_functions_to_SEL();
+	si_func_to_SEL(SI_DEFAULT, fileNew);
+	si_func_to_SEL(SI_DEFAULT, fileOpen);
+	si_func_to_SEL(SI_DEFAULT, fileClose);
+
+	si_func_to_SEL(SI_DEFAULT, editUndo);
+	si_func_to_SEL(SI_DEFAULT, editRedo);
+	si_func_to_SEL(SI_DEFAULT, editCut);
+	si_func_to_SEL(SI_DEFAULT, editCopy);
+	si_func_to_SEL(SI_DEFAULT, editPaste);
+	si_func_to_SEL(SI_DEFAULT, editDelete);
+	si_func_to_SEL(SI_DEFAULT, editSelectAll);
 
 	// Get the executable name.
 	const char* process_name = NSProcessInfo_processName(NSProcessInfo_processInfo());

@@ -26,10 +26,9 @@ bool windowShouldClose(id sender) {
 
 
 int main(int argc, char* argv[]) {
-	funcs[0] = windowShouldClose;
-
-	// Convert the C function to an Objective-C method.
-	func_to_SEL(valueChanged);
+	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
+	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
+	si_func_to_SEL(SI_DEFAULT, valueChanged);
 
 	// Ever since MacOS 10.6, Mac applications require a 'NSApplicationActivationPolicyRegular' type policy to properly show applications on dock.
 	NSApplication_sharedApplication();

@@ -3,7 +3,7 @@
 */
 
 #include <Silicon/silicon.h>
-#define local_array_size(array) sizeof(array) / sizeof(*array) // For convenience sake.
+#define local_array_size(array) si_sizeof(array) / si_sizeof(*array) // For convenience sake.
 
 
 typedef struct checkBox {
@@ -77,14 +77,13 @@ NSButton* create_checkbox(checkBox checkbox) {
 }
 
 int main(int argc, char* argv[]) {
-	funcs[0] = windowShouldClose;
-
-	// Convert C functions to Objective-C methods (refer to the convert_functions_to_SEL() comment from 'examples/menu.c' for more).
-	func_to_SEL(OnCheckBox1Click);
-	func_to_SEL(OnCheckBox2Click);
-	func_to_SEL(OnCheckBox3Click);
-	func_to_SEL(OnCheckBox4Click);
-	func_to_SEL(OnCheckBox5Click);
+	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
+	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
+	si_func_to_SEL(SI_DEFAULT, OnCheckBox1Click);
+	si_func_to_SEL(SI_DEFAULT, OnCheckBox2Click);
+	si_func_to_SEL(SI_DEFAULT, OnCheckBox3Click);
+	si_func_to_SEL(SI_DEFAULT, OnCheckBox4Click);
+	si_func_to_SEL(SI_DEFAULT, OnCheckBox5Click);
 
 	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
 	NSWindow_setTitle(window, "CheckBox example");
@@ -97,13 +96,14 @@ int main(int argc, char* argv[]) {
 		{"Checked",   NSMakeRect(30, 160, 105, 25),     false,      NSButtonTypeOnOff,  NSBezelStyleRounded, (id)window, selector(OnCheckBox4Click), NSViewMaxXMargin | NSViewMinYMargin, NSControlStateValueOn},
 		{"Unchecked", NSMakeRect(30, 130, 105, 20),     false,      NSButtonTypeOnOff,  NSBezelStyleRounded, (id)window, selector(OnCheckBox5Click), NSViewMaxXMargin | NSViewMinYMargin, NSControlStateValueOff},
 	};
-
 	NSView* view = NSWindow_contentView(window);
+
 	for (size_t i = 0; i < local_array_size(array_of_checkboxes); i++) {
 		// We create the checkboxes, set them as the pointers to the selector functions, and also add them to the NSView as subviews to make them visible.
 		created_checkboxes[i] = create_checkbox(array_of_checkboxes[i]);
 		NSView_addSubview(view, (NSView*)created_checkboxes[i]);
 	}
+
 	NSWindow_setIsVisible(window, true);
 	NSWindow_makeMainWindow(window);
 

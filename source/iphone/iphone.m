@@ -31,8 +31,6 @@ extern "C" {
 #include "../implementation.h" /* All of the macros that aren't from 'Silicon/macros.h' reside here. */
 
 
-typedef void* format(void* self, ...);
-format* funcs[6];
 os_log_t os_log_system;
 
 
@@ -40,12 +38,6 @@ os_log_t os_log_system;
 @end
 
 @implementation AppDelegate
-	-(BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(id)options {
-		if (funcs[0] != NULL)
-			return funcs[0](application, options);
-
-		return true;
-	}
 @end
 
 

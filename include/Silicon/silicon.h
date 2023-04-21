@@ -25,13 +25,10 @@ extern "C" {
 
 
 #define GL_SILENCE_DEPRECATION
-#include "macros.h"
 #include "mac_load.h"
 #include "siArray.h"
 
 
-/* Linking C functions to Window and View classes. */
-extern void* funcs[6];
 #define SILICON_CLASS "SILICON_CLASS"
 
 /* Objective-C class methods. */
@@ -42,9 +39,11 @@ mac_function_define(void*, release);
 mac_function_define(void*, retain);
 mac_function_define(void*, autorelease);
 
-SEL _SEL_exists(const char* name, const char* filename, int line);
+
 /* Checks if the provided selector exist. */
-#define SEL_exists(name) _SEL_exists(name, __FILE__, __LINE__)
+SEL si_impl_SEL_exists(const char* name, const char* filename, int line);
+/* Creates an Objective-C method (SEL) from a regular C function with the option to set the register name.*/
+void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function);
 
 /* Returns the name of a class as a string. */
 const char* CharFromClass(Class aClass);

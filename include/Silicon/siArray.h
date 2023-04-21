@@ -26,27 +26,37 @@ extern "C" {
 #include <stddef.h>
 
 
+#ifndef usize
+typedef size_t    usize;
+typedef ptrdiff_t isize;
+#endif
+
+#ifndef si_sizeof
+#define si_sizeof(type) (isize)sizeof(type)
+#endif
+
+
 /* Silicon array type. */
-typedef void** siArray;
+#define siArray(type) type*
 
 /* Header for the array. */
 typedef struct siArrayHeader {
-	size_t capacity;
+	usize count;
+	/* TODO(EimaMei): Add a `type_width` later on. */
 } siArrayHeader;
 
+/* Gets the header of the siArray. */
 #define SI_ARRAY_HEADER(s) ((siArrayHeader*)s - 1)
 
 
 /* Initializes a Silicon array. */
-siArray si_array_init(size_t capacity);
-/* Initializes a Silicon array, with its content being replaced with the provided array. */
-siArray si_array_init_with_array(void** array, size_t element_count, size_t sizeof_array);
-/* Initializes a Silicon array, with its content being copied into from the provided array. */
-siArray si_array_copy_from_array(void* array, size_t element_count, size_t sizeof_array);
-/* Gets the length of the array. */
-size_t si_array_len(siArray array);
+void* si_array_init(void* allocator, isize sizeof_element, isize count);
+/* Reserves a Silicon array with the provided element count. */
+void* si_array_init_reserve(isize sizeof_element, isize count);
+/* Gets the element count of the array. */
+#define si_array_len(array) (SI_ARRAY_HEADER(array)->count)
 /* Frees the array from memory. */
-void si_array_free(siArray array);
+void si_array_free(siArray(void) array);
 
 
 #ifdef SI_ARRAY_IMPLEMENTATION
@@ -54,59 +64,31 @@ void si_array_free(siArray array);
 #include <string.h>
 
 
-siArray si_array_init(size_t capacity) {
-	void* ptr = malloc(sizeof(siArrayHeader) + sizeof(void*) * capacity);
+void* si_array_init(void* allocator, isize sizeof_element, isize count)  {
+	void* array = si_array_init_reserve(sizeof_element, count);
+	memcpy(array, allocator, sizeof_element * count);
 
-	if (ptr == NULL)
-		return NULL;
-
-	siArray res = ptr + sizeof(siArrayHeader);
-
-	siArrayHeader* header = SI_ARRAY_HEADER(res);
-	header->capacity = capacity;
-
-	return res;
+	return array;
 }
 
+void* si_array_init_reserve(isize sizeof_element, isize count) {
+	void* ptr = malloc(si_sizeof(siArrayHeader) + (sizeof_element * count));
+	siArray(void) array = ptr + si_sizeof(siArrayHeader);
 
-siArray si_array_init_with_array(void** array, size_t element_count, size_t sizeof_array) {
-	void* ptr = malloc(sizeof(siArrayHeader) + sizeof_array);
-
-	siArray res = ptr + sizeof(siArrayHeader);
-	res = array;
-
-	siArrayHeader* header = SI_ARRAY_HEADER(res);
-	header->capacity = element_count;
-
-	return res;
-}
-
-
-siArray si_array_copy_from_array(void* array, size_t element_count, size_t sizeof_array) {
-	void* ptr = malloc(sizeof(siArrayHeader) + sizeof_array);
-	memcpy(ptr, array, sizeof_array);
-
-	siArray res = ptr + sizeof(siArrayHeader);
-
-	siArrayHeader* header = SI_ARRAY_HEADER(res);
-	header->capacity = element_count;
-
-	return res;
-}
-
-
-size_t si_array_len(siArray array) {
 	siArrayHeader* header = SI_ARRAY_HEADER(array);
-	return header->capacity;
+	header->count = count;
+
+	return array;
 }
 
 
-void si_array_free(siArray array) {
+void si_array_free(siArray(void) array) {
 	if (array == NULL)
 		return ;
 
 	free(SI_ARRAY_HEADER(array));
 }
+
 #endif
 
 #ifdef __cplusplus

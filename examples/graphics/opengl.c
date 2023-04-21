@@ -7,14 +7,15 @@ CVReturn displayCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow,
 
 bool is_running = true;
 
-bool OnClose(void* self)  {
+bool windowShouldClose(void* self)  {
 	is_running = false;
 	return true;
 }
 
 
 int main() {
-	funcs[0] = OnClose;
+	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
+	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 
 	NSWindow* win = NSWindow_init(NSMakeRect(100, 100, 512, 512), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable, NSBackingStoreBuffered, false);
 	NSWindow_setTitle(win, "OpenGL example");
@@ -76,9 +77,8 @@ int main() {
 
 	CVDisplayLinkStop(displayLink);
 	CVDisplayLinkRelease(displayLink);
-	NSView_release((NSView*)view);
+	release(view);
 	NSApplication_terminate(NSApp, (id)win);
-
 
 	return 0;
 }

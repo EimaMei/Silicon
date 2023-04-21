@@ -40,22 +40,25 @@ If you only want to install or launch the app, then you can use the command `mak
 # Examples
 To compile and run all of the examples in a row, you can use `make runExamples` to test out everything at once.
 ## [General](examples/general)
-- [hello-word.c](examples/general/hello-word.c) - a simple application with a "Hello world" text field.
-- [events.c](examples/general/events.c) - utilizes the use of the NSEvent type to get the required events.
+- [hello-world.c](examples/general/hello-world.c) - a simple application with a "Hello world" text field.
+- [events.c](examples/general/events.c) - shows the use of the NSEvent type to get the required events.
 - [mac-load.c](examples/general/mac-load.c) - a Silicon port of [hidefromkgb's original Obj-C/C example](https://github.com/hidefromkgb/mac_load#objective-c-gui-app-example)
 
 ## [Controls](examples/controls)
-- [menu.c](examples/controls/menu.c) - demonstrates how to create menu bars in OS X.
+- [menu.c](examples/controls/menu.c) - shows how to create menu bars in OS X.
 - [button.c](examples/controls/button.c) - shows how to create and utilize buttons using the Cocoa API.
 - [checkbox.c](examples/controls/checkbox.c) - similar to the previous example from above, however instead they're checkboxes instead of regular buttons.
-- [combobox.c](examples/controls/combobox.c) - an example on how to utilize the NSComboBox class.
-- [trackbar.c](examples/controls/trackbar.c) - demonstrates how to create & utilize a track bar and progress bar.
+- [combobox.c](examples/controls/combobox.c) - shows an example on how to utilize the NSComboBox class.
+- [trackbar.c](examples/controls/trackbar.c) - shows how to create & utilize a track bar and progress bar.
+
+## [Dialogs](examples/dialogs)
+- [save-file.c](examples/dialogs/save-file.c) - shows how to create a SaveFileDialog.
 
 ## [Graphics](examples/graphics)
 - [opengl.c](examples/graphics/opengl.c) - shows how to setup an OpenGL environment with an event loop.
 
 ## [iPhone (Beta)](examples/iphone)
-- [print.c](examples/graphics/opengl.c) - an example of how to enable print debugging on iOS.
+- [print.c](examples/graphics/opengl.c) - shows how to enable print debugging on iOS.
 
 
 # Documentation
