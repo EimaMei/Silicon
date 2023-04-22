@@ -79,6 +79,11 @@ install: $(SILICON_LIB)
 	sudo cp -r include/Silicon /usr/local/include/Silicon
 	sudo cp -r $(SILICON_LIB) /usr/local/lib/libSilicon.a
 
+# Updates Silicon.
+update: /usr/local/include/Silicon /usr/local/lib/libSilicon.a
+	@make uninstall
+	@make install
+
 # Uninstalls Silicon (if it's even installed in the first place).
 uninstall: /usr/local/include/Silicon /usr/local/lib/libSilicon.a
 	sudo rm -rf $^

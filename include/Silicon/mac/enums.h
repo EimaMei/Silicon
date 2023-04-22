@@ -35,6 +35,7 @@ extern "C" {
 #include "headers/NSButtonCell.h"
 #include "headers/NSPasteboard.h"
 #include "headers/NSBitmapImageRep.h"
+#include "headers/NSDragging.h"
 
 #include "headers/NSPathUtilities.h"
 

@@ -462,7 +462,7 @@ NSWindow* NSDraggingInfo_draggingDestinationWindow(NSDraggingInfo* info);
 
 /* ============ NSColorPanel class ============ */
 /* ====== NSColorPanel properties ====== */
-define_property(NSColorPanel, NSColor*, color, setColor, colorPanel);
+define_property(NSColorPanel, NSColor*, color, Color, colorPanel);
 
 
 /* ============ NSBitmapImageRep class ============ */
