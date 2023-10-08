@@ -1,7 +1,7 @@
 /*
 TODO:
 
-release getClass objects
+method to release objects
 */
 
 #ifndef SILICON_H
@@ -62,64 +62,69 @@ SICDEF NSRect NSRect_init(CGFloat x, CGFloat y, CGFloat w, CGFloat h);
 typedef void* (*objc_send_type)(id, SEL, ...);
 objc_send_type objc_func = (objc_send_type)objc_msgSend;
 
-#define NS_APPLICATION_CODE 0
-#define NS_APPLICATION_SAPP_CODE 0
-void* SI_NS_CLASSES[8];
-void* SI_NS_FUNCTIONS[12];
+enum {
+	NS_APPLICATION_CODE = 0,
+	NS_RECT_CODE,
+	NS_WINDOW_CODE,
+};
 
-void si_initNS() {
+enum {
+	NS_APPLICATION_SAPP_CODE = 0,
+	NS_APPLICATION_RUN_CODE,
+	NS_APPLICATION_FL_CODE,
+	NS_RECT_INIT_CODE,
+	NS_WINDOW_INITR_CODE,
+	NS_WINDOW_MAKEKO_CODE,
+};
+
+void* SI_NS_CLASSES[4];
+void* SI_NS_FUNCTIONS[6];
+
+void si_initNS(void) {
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
-	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = objc_getClass("sharedApplication");
+	SI_NS_CLASSES[NS_RECT_CODE] = objc_getClass("NSRect");
+	SI_NS_CLASSES[NS_WINDOW_CODE] = objc_getClass("NSWindow");
+
+	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_getUid("sharedApplication");
+	SI_NS_FUNCTIONS[NS_APPLICATION_RUN_CODE] = sel_getUid("run");	
+	SI_NS_FUNCTIONS[NS_APPLICATION_FL_CODE] = sel_getUid("finishLaunching:");
+	SI_NS_FUNCTIONS[NS_RECT_INIT_CODE] = sel_getUid("init");
+	SI_NS_FUNCTIONS[NS_WINDOW_INITR_CODE] = sel_getUid("initWithContentRect");
+	SI_NS_FUNCTIONS[NS_WINDOW_MAKEKO_CODE] = sel_getUid("makeKeyAndOrderFront");
 }
 
-
 NSApplication NSApplication_sharedApplication(void) {
-	SEL nsclass = SI_NS_CLASSES[NS_APPLICATION_CODE];
+	void* nsclass = SI_NS_CLASSES[NS_APPLICATION_CODE];
 	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE];
 
-	//id _NSApp = class_createInstance(nsclass, 0);
 	return objc_func(nsclass, func);
 }
 
 void NSApplication_setActivationPolicy(NSApplication application, ActivationPolicy policy) {
-	static void* func = NULL;
-		
-	if (func == NULL)
-		func = sel_getUid("setActivationPolicy");
+	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE];
 
 	objc_func(application, func, policy);
 }
 
 
 void NSApplication_run(NSApplication application) {
-	static void* func = NULL;
-		
-	if (func == NULL)
-		func = sel_getUid("run");
+	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_RUN_CODE];
 
 	objc_func(application, func);
 }
 
 
 void NSApplication_finishLaunching(NSApplication application) {
-	static void* func = NULL;
-		
-	if (func == NULL)
-		func = sel_getUid("finishLaunching:");
+	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_FL_CODE];
 
 	objc_func(application, func);
 }
 
 NSRect NSRect_init(CGFloat x, CGFloat y, CGFloat w, CGFloat h) {
-	static void* objc_NSRect = NULL;
-	static void* func = NULL;
+	void* nsclass = SI_NS_CLASSES[NS_RECT_CODE];
+	void* func = SI_NS_FUNCTIONS[NS_RECT_INIT_CODE];
 
-	if (objc_NSRect == NULL) {
-		objc_NSRect = objc_getClass("NSRect:");
-		func = sel_getUid("init");
-	}
-
-    NSRect r = class_createInstance(objc_NSRect, 0);
+    NSRect r = class_createInstance(nsclass, 0);
 
 	objc_func(r, func, x, y, w, h);
 
@@ -127,25 +132,17 @@ NSRect NSRect_init(CGFloat x, CGFloat y, CGFloat w, CGFloat h) {
 }
 
 NSWindow NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingStoreType backingStoreType, bool flag) {
-    static void* objc_NSWindow = NULL;
-	static void* func = NULL;
+    void* nsclass = SI_NS_CLASSES[NS_WINDOW_CODE];
+	void* func = SI_NS_FUNCTIONS[NS_WINDOW_INITR_CODE];
 
-	if (objc_NSWindow == NULL) {
-		objc_NSWindow = objc_getClass("NSWindow:");
-		func = sel_getUid("initWithContentRect");
-	}
-
-	NSWindow window = class_createInstance(objc_NSWindow, 0);
+	NSWindow window = class_createInstance(nsclass, 0);
     objc_func(window, func, contentRect, style, backingStoreType, flag);
 
 	return window;
 }
 
 void NSWindow_makeKeyAndOrderFront(NSWindow window, SEL s) {
-	static void* func = NULL;
-
-	if (func == NULL)
-		func = sel_getUid("makeKeyAndOrderFront");
+	void* func = SI_NS_FUNCTIONS[NS_WINDOW_MAKEKO_CODE];
 
     objc_func(window, func, s);
 }
