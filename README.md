@@ -1,4 +1,4 @@
-# Silicon-h
+# Silicon.h
 An alternative, pure C-focused wrapper to Apple's Cocoa API for OS X app development. Requires little to no Objective-C knowledge to use.
 
 Heavily based on the original silicon but rewritten in pure-C as a single-header-file!
