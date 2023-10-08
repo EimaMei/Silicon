@@ -2,6 +2,8 @@
 #include "silicon.h"
 
 int main() {
+    si_initNS();
+    
 	NSApplication NSApp = NSApplication_sharedApplication();
 	
     NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
