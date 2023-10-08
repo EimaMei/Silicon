@@ -1,15 +1,8 @@
-/*
-TODO:
-
-method to release objects
-*/
-
 #ifndef SILICON_H
 #include <CoreVideo/CVDisplayLink.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <objc/runtime.h>
-
-#include <stdbool.h>
+#include <objc/message.h>
 
 #define SILICON_H
 #define SICDEF static inline
@@ -17,8 +10,8 @@ method to release objects
 #define NS_ENUM(type, name) type name; enum
 
 typedef CGRect NSRect;
-typedef id NSWindow;
-typedef id NSApplication;
+typedef void NSWindow;
+typedef void NSApplication;
 
 typedef unsigned long NSUInteger;
 
@@ -50,15 +43,40 @@ typedef enum ActivationPolicy {
     NSApplicationActivationPolicyProhibited
 } ActivationPolicy;
 
-NSWindow NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingStoreType backingStoreType, bool flag);
+SICDEF void si_initNS(void); /* init function, this function is run by `NSApplication_sharedApplication` */
+
+/* NSGeometry */
 SICDEF NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h); 
+
+/* NSApplication* */
+SICDEF NSApplication* NSApplication_sharedApplication(void);
+SICDEF void NSApplication_setActivationPolicy(NSApplication* application, ActivationPolicy policy);
+SICDEF void NSApplication_run(NSApplication* application);
+SICDEF void NSApplication_finishLaunching(NSApplication* application);
+
+/* NSWindow* */
+SICDEF NSWindow* NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingStoreType backingStoreType, bool flag);
+SICDEF void NSWindow_makeKeyAndOrderFront(NSWindow* window, SEL s);
+
+SICDEF void NSRelease(id object);
 
 #endif /* ndef SILICON_H */
 
 #ifdef SILICON_IMPLEMENTATION
-#include <objc/message.h>
 
-/*  */
+/* Defining common properties/methods macros. */
+/* Defines the `get` and `set` versions of the provided property. */
+
+#define si_define_single(class, type, name, func)	\
+	type class##_##name(class* obj) { \
+		return (type)objc_func(obj, SI_NS_FUNCTIONS[func]); \
+	}
+
+#define si_define_double(class, type, name, func, arg_type) \
+	type class##_##name(class* obj, arg_type d) { \
+		return (type)objc_func(obj, SI_NS_FUNCTIONS[func], d); \
+	}
+
 typedef void* (*objc_send_type)(id, SEL, ...);
 objc_send_type objc_func = (objc_send_type)objc_msgSend;
 
@@ -79,10 +97,11 @@ enum {
 	NS_WINDOW_INITR_CODE,
 	NS_WINDOW_MAKEKO_CODE,
 	NS_VALUE_RECT_CODE,
+	NS_RELEASE_CODE,
 };
 
 void* SI_NS_CLASSES[6] = {NULL};
-void* SI_NS_FUNCTIONS[7];
+void* SI_NS_FUNCTIONS[8];
 
 void si_initNS(void) {
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
@@ -99,36 +118,7 @@ void si_initNS(void) {
 	SI_NS_FUNCTIONS[NS_WINDOW_INITR_CODE] = sel_registerName("initWithContentRect:styleMask:backing:defer:");
 	SI_NS_FUNCTIONS[NS_WINDOW_MAKEKO_CODE] = sel_getUid("makeKeyAndOrderFront:");
 	SI_NS_FUNCTIONS[NS_VALUE_RECT_CODE] = sel_registerName("valueWithRect:");
-}
-
-NSApplication NSApplication_sharedApplication(void) {
-	if (SI_NS_CLASSES[0] == NULL)
-		si_initNS();
-
-	void* nsclass = SI_NS_CLASSES[NS_APPLICATION_CODE];
-	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE];
-
-	return objc_func(nsclass, func);
-}
-
-void NSApplication_setActivationPolicy(NSApplication application, ActivationPolicy policy) {
-	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SETPOLICY];
-
-	objc_func(application, func, policy);
-}
-
-
-void NSApplication_run(NSApplication application) {
-	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_RUN_CODE];
-
-	objc_func(application, func);
-}
-
-
-void NSApplication_finishLaunching(NSApplication application) {
-	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_FL_CODE];
-
-	objc_func(application, func);
+	SI_NS_FUNCTIONS[NS_RELEASE_CODE] = sel_registerName("release");
 }
 
 NSRect NSMakeRect(double x, double y, double width, double height) {
@@ -141,7 +131,21 @@ NSRect NSMakeRect(double x, double y, double width, double height) {
     return r;
 }
 
-NSWindow NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingStoreType backingStoreType, bool flag) {
+NSApplication* NSApplication_sharedApplication(void) {
+	if (SI_NS_CLASSES[0] == NULL)
+		si_initNS();
+
+	void* nsclass = SI_NS_CLASSES[NS_APPLICATION_CODE];
+	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE];
+
+	return objc_func(nsclass, func);
+}
+
+si_define_double(NSApplication, void, setActivationPolicy, NS_APPLICATION_SETPOLICY, ActivationPolicy)
+si_define_single(NSApplication, void, run, NS_APPLICATION_RUN_CODE)
+si_define_single(NSApplication, void, finishLaunching, NS_APPLICATION_FL_CODE)
+
+NSWindow* NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingStoreType backingStoreType, bool flag) {
     void* nsclass = SI_NS_CLASSES[NS_WINDOW_CODE];
 	void* func = SI_NS_FUNCTIONS[NS_WINDOW_INITR_CODE];
 
@@ -149,10 +153,8 @@ NSWindow NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingSto
     return objc_func(windowAlloc, func, contentRect, style, backingStoreType, flag);
 }
 
-void NSWindow_makeKeyAndOrderFront(NSWindow window, SEL s) {
-	void* func = SI_NS_FUNCTIONS[NS_WINDOW_MAKEKO_CODE];
+si_define_double(NSWindow, void, makeKeyAndOrderFront, NS_WINDOW_MAKEKO_CODE, SEL)
 
-    objc_func(window, func, s);
-}
+void NSRelease(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RELEASE_CODE]); }
 
 #endif /* SILICON_IMPLEMENTATION */
