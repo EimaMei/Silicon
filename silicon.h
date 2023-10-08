@@ -16,7 +16,7 @@ method to release objects
 
 #define NS_ENUM(type, name) type name; enum
 
-typedef void* NSRect;
+typedef CGRect NSRect;
 typedef id NSWindow;
 typedef id NSApplication;
 
@@ -51,7 +51,7 @@ typedef enum ActivationPolicy {
 } ActivationPolicy;
 
 NSWindow NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingStoreType backingStoreType, bool flag);
-SICDEF NSRect NSRect_init(CGFloat x, CGFloat y, CGFloat w, CGFloat h); 
+SICDEF NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h); 
 
 #endif /* ndef SILICON_H */
 
@@ -66,34 +66,45 @@ enum {
 	NS_APPLICATION_CODE = 0,
 	NS_RECT_CODE,
 	NS_WINDOW_CODE,
+	NS_ALLOC_CODE,
+	NS_VALUE_CODE,
+	NS_MAKE_RECT_CODE,
 };
 
 enum {
-	NS_APPLICATION_SAPP_CODE = 0,
+	NS_APPLICATION_SETPOLICY = 0,
+	NS_APPLICATION_SAPP_CODE,
 	NS_APPLICATION_RUN_CODE,
 	NS_APPLICATION_FL_CODE,
-	NS_RECT_INIT_CODE,
 	NS_WINDOW_INITR_CODE,
 	NS_WINDOW_MAKEKO_CODE,
+	NS_VALUE_RECT_CODE,
 };
 
-void* SI_NS_CLASSES[4];
-void* SI_NS_FUNCTIONS[6];
+void* SI_NS_CLASSES[6] = {NULL};
+void* SI_NS_FUNCTIONS[7];
 
 void si_initNS(void) {
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
 	SI_NS_CLASSES[NS_RECT_CODE] = objc_getClass("NSRect");
 	SI_NS_CLASSES[NS_WINDOW_CODE] = objc_getClass("NSWindow");
+	SI_NS_CLASSES[NS_ALLOC_CODE] = sel_registerName("alloc");
+	SI_NS_CLASSES[NS_VALUE_CODE] = objc_getClass("NSValue");
+	SI_NS_CLASSES[NS_MAKE_RECT_CODE] = objc_getClass("NSMakeRect");
 
+	SI_NS_FUNCTIONS[NS_APPLICATION_SETPOLICY] = sel_getUid("setActivationPolicy:");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_getUid("sharedApplication");
-	SI_NS_FUNCTIONS[NS_APPLICATION_RUN_CODE] = sel_getUid("run");	
-	SI_NS_FUNCTIONS[NS_APPLICATION_FL_CODE] = sel_getUid("finishLaunching:");
-	SI_NS_FUNCTIONS[NS_RECT_INIT_CODE] = sel_getUid("init");
-	SI_NS_FUNCTIONS[NS_WINDOW_INITR_CODE] = sel_getUid("initWithContentRect");
-	SI_NS_FUNCTIONS[NS_WINDOW_MAKEKO_CODE] = sel_getUid("makeKeyAndOrderFront");
+	SI_NS_FUNCTIONS[NS_APPLICATION_RUN_CODE] = sel_registerName("run");	
+	SI_NS_FUNCTIONS[NS_APPLICATION_FL_CODE] = sel_getUid("finishLaunching");
+	SI_NS_FUNCTIONS[NS_WINDOW_INITR_CODE] = sel_registerName("initWithContentRect:styleMask:backing:defer:");
+	SI_NS_FUNCTIONS[NS_WINDOW_MAKEKO_CODE] = sel_getUid("makeKeyAndOrderFront:");
+	SI_NS_FUNCTIONS[NS_VALUE_RECT_CODE] = sel_registerName("valueWithRect:");
 }
 
 NSApplication NSApplication_sharedApplication(void) {
+	if (SI_NS_CLASSES[0] == NULL)
+		si_initNS();
+
 	void* nsclass = SI_NS_CLASSES[NS_APPLICATION_CODE];
 	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE];
 
@@ -101,7 +112,7 @@ NSApplication NSApplication_sharedApplication(void) {
 }
 
 void NSApplication_setActivationPolicy(NSApplication application, ActivationPolicy policy) {
-	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE];
+	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SETPOLICY];
 
 	objc_func(application, func, policy);
 }
@@ -120,25 +131,22 @@ void NSApplication_finishLaunching(NSApplication application) {
 	objc_func(application, func);
 }
 
-NSRect NSRect_init(CGFloat x, CGFloat y, CGFloat w, CGFloat h) {
-	void* nsclass = SI_NS_CLASSES[NS_RECT_CODE];
-	void* func = SI_NS_FUNCTIONS[NS_RECT_INIT_CODE];
+NSRect NSMakeRect(double x, double y, double width, double height) {
+    NSRect r;
+    r.origin.x = x;
+    r.origin.y = y;
+    r.size.width = width;
+    r.size.height = height;
 
-    NSRect r = class_createInstance(nsclass, 0);
-
-	objc_func(r, func, x, y, w, h);
-
-	return r;
+    return r;
 }
 
 NSWindow NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingStoreType backingStoreType, bool flag) {
     void* nsclass = SI_NS_CLASSES[NS_WINDOW_CODE];
 	void* func = SI_NS_FUNCTIONS[NS_WINDOW_INITR_CODE];
 
-	NSWindow window = class_createInstance(nsclass, 0);
-    objc_func(window, func, contentRect, style, backingStoreType, flag);
-
-	return window;
+    void* windowAlloc = objc_func(nsclass, SI_NS_CLASSES[NS_ALLOC_CODE]);
+    return objc_func(windowAlloc, func, contentRect, style, backingStoreType, flag);
 }
 
 void NSWindow_makeKeyAndOrderFront(NSWindow window, SEL s) {
