@@ -1,6 +1,9 @@
 LIBS = -framework Cocoa
 all:
 	gcc main.c $(LIBS) -Wall
+
+debug:
+	gcc main.c $(LIBS) -Wall
 	./a.out
 
 objc:
