@@ -23,7 +23,7 @@
 
 /*
     define args
-    (MAKE SURE SILICON_IMPLEMENTATION is in at least one header or you use -D SILICON_IMPLEMENTATION)
+    (MAKE SURE ** #define SILICON_IMPLEMENTATION ** is in at least one header or you use -D SILICON_IMPLEMENTATION)
 */
 
 #ifndef SILICON_H
@@ -51,17 +51,72 @@
 #define NS_OPENGL_CLASS_DEPRECATED(message, minVers, maxVers) API_AVAILABLE(macos(minVers))
 #endif
 
+#ifdef __cplusplus
+#define APPKIT_EXTERN		extern "C"
+#else
+#define APPKIT_EXTERN		extern
+#endif
+
 #define macos_version(major, minor) major * 10000 + minor * 100
 
 #define si_define_property(class, type, name, set_name, arg_name)	\
 	SICDEF type class##_##name(class* arg_name);			\
 	SICDEF void class##_set##set_name(class* arg_name, type name)
 
+/* Useful Objective-C class macros. */
+/* In cases where you need the actual Objective-C class type as a regular function argument. */
+#define _MAC_CAT0(a, b) a##b
+#define _MAC_CAT(a, b) _MAC_CAT0(a, b)
+#define _(callable) _MAC_CAT(__, callable)()
+#define objctype _
+/* Gets the size of the class. */
+#define sizeof_class(typename) class_getInstanceSize(class(typename))
+
 #define NSUIntegerMax 4294967295 
 
 #ifndef siArray
-#define siArray(x) x*
+#define SILICON_ARRAY_IMPLEMENTATION
+
+#ifndef usize
+typedef size_t    usize;
+typedef ptrdiff_t isize;
 #endif
+
+#ifndef si_sizeof
+#define si_sizeof(type) (isize)sizeof(type)
+#endif
+
+#define SI_DEFAULT "NSObject"
+
+/* Silicon array type. */
+#define siArray(type) type*
+
+/* Header for the array. */
+typedef struct siArrayHeader {
+	isize count;
+	/* TODO(EimaMei): Add a `type_width` later on. */
+} siArrayHeader;
+
+/* Gets the header of the siArray. */
+#define SI_ARRAY_HEADER(s) ((siArrayHeader*)s - 1)
+
+
+/* Initializes a Silicon array. */
+void* si_array_init(void* allocator, isize sizeof_element, isize count);
+/* Reserves a Silicon array with the provided element count. */
+void* si_array_init_reserve(isize sizeof_element, isize count);
+/* Gets the element count of the array. */
+#define si_array_len(array) (SI_ARRAY_HEADER(array)->count)
+/* Frees the array from memory. */
+void si_array_free(siArray(void) array);
+#endif
+
+void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function);
+/* Creates an Objective-C method (SEL) from a regular C function. */
+#define si_func_to_SEL(class_name, function) si_impl_func_to_SEL_with_name(class_name, #function":", function)
+/* Creates an Objective-C method (SEL) from a regular C function with the option to set the register name.*/
+#define si_func_to_SEL_with_name(class_name, register_name, function) si_impl_func_to_SEL_with_name(class_name, register_name":", function)
+
 
 typedef CGRect NSRect;
 typedef CGPoint NSPoint;
@@ -85,10 +140,11 @@ typedef void NSMenuItem;
 typedef void NSDraggingInfo;
 typedef void NSImageRep;
 typedef void NSGraphicsContext;
+typedef void NSBitmapImageRep;
 
 typedef NSView NSOpenGLView;
-typedef NSString* NSPasteboardType;
 
+typedef const char* NSPasteboardType;
 typedef unsigned long NSUInteger;
 typedef long NSInteger;
 
@@ -233,6 +289,84 @@ typedef NS_ENUM(NSUInteger, NSEventModifierFlags) {
 	// Used to retrieve only the device-independent modifier flags, allowing applications to mask off the device-dependent modifier flags, including event coalescing information.
 	NSEventModifierFlagDeviceIndependentFlagsMask    = 0xffff0000UL
 };
+
+typedef NS_ENUM(NSUInteger, NSDragOperation) {
+    NSDragOperationNone		= 0,
+    NSDragOperationCopy		= 1,
+    NSDragOperationLink		= 2,
+    NSDragOperationGeneric	= 4,
+    NSDragOperationPrivate	= 8,
+    NSDragOperationMove		= 16,
+    NSDragOperationDelete	= 32,
+    NSDragOperationEvery	= NSUIntegerMax,
+    
+    //NSDragOperationAll_Obsolete	API_DEPRECATED("", macos(10.0,10.10)) = 15, // Use NSDragOperationEvery
+    //NSDragOperationAll API_DEPRECATED("", macos(10.0,10.10)) = NSDragOperationAll_Obsolete, // Use NSDragOperationEvery
+};
+
+typedef NS_ENUM(NSUInteger, NSBitmapFormat) {
+    NSBitmapFormatAlphaFirst            = 1 << 0,       // 0 means is alpha last (RGBA, CMYKA, etc.)
+    NSBitmapFormatAlphaNonpremultiplied = 1 << 1,       // 0 means is premultiplied
+    NSBitmapFormatFloatingPointSamples  = 1 << 2,  // 0 is integer
+
+    NSBitmapFormatSixteenBitLittleEndian API_AVAILABLE(macos(10.10)) = (1 << 8),
+    NSBitmapFormatThirtyTwoBitLittleEndian API_AVAILABLE(macos(10.10)) = (1 << 9),
+    NSBitmapFormatSixteenBitBigEndian API_AVAILABLE(macos(10.10)) = (1 << 10),
+    NSBitmapFormatThirtyTwoBitBigEndian API_AVAILABLE(macos(10.10)) = (1 << 11)
+};
+
+/*
+ ** Attribute names for [NSOpenGLPixelFormat initWithAttributes]
+ ** and [NSOpenGLPixelFormat getValues:forAttribute:forVirtualScreen].
+ */
+enum {
+    NSOpenGLPFAAllRenderers          NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =   1,	/* choose from all available renderers          */
+    NSOpenGLPFATripleBuffer          NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =   3,	/* choose a triple buffered pixel format        */
+    NSOpenGLPFADoubleBuffer          NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =   5,	/* choose a double buffered pixel format        */
+    NSOpenGLPFAAuxBuffers            NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =   7,	/* number of aux buffers                        */
+    NSOpenGLPFAColorSize             NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =   8,	/* number of color buffer bits                  */
+    NSOpenGLPFAAlphaSize             NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  11,	/* number of alpha component bits               */
+    NSOpenGLPFADepthSize             NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  12,	/* number of depth buffer bits                  */
+    NSOpenGLPFAStencilSize           NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  13,	/* number of stencil buffer bits                */
+    NSOpenGLPFAAccumSize             NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  14,	/* number of accum buffer bits                  */
+    NSOpenGLPFAMinimumPolicy         NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  51,	/* never choose smaller buffers than requested  */
+    NSOpenGLPFAMaximumPolicy         NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  52,	/* choose largest buffers of type requested     */
+    NSOpenGLPFASampleBuffers         NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  55,	/* number of multi sample buffers               */
+    NSOpenGLPFASamples               NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  56,	/* number of samples per multi sample buffer    */
+    NSOpenGLPFAAuxDepthStencil       NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  57,	/* each aux buffer has its own depth stencil    */
+    NSOpenGLPFAColorFloat            NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  58,	/* color buffers store floating point pixels    */
+    NSOpenGLPFAMultisample           NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  59,    /* choose multisampling                         */
+    NSOpenGLPFASupersample           NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  60,    /* choose supersampling                         */
+    NSOpenGLPFASampleAlpha           NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  61,    /* request alpha filtering                      */
+    NSOpenGLPFARendererID            NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  70,	/* request renderer by ID                       */
+    NSOpenGLPFANoRecovery            NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  72,	/* disable all failure recovery systems         */
+    NSOpenGLPFAAccelerated           NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  73,	/* choose a hardware accelerated renderer       */
+    NSOpenGLPFAClosestPolicy         NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  74,	/* choose the closest color buffer to request   */
+    NSOpenGLPFABackingStore          NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  76,	/* back buffer contents are valid after swap    */
+    NSOpenGLPFAScreenMask            NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  84,	/* bit mask of supported physical screens       */
+    NSOpenGLPFAAllowOfflineRenderers NS_OPENGL_ENUM_DEPRECATED(10.5, 10.14)  =  96,  /* allow use of offline renderers               */
+    NSOpenGLPFAAcceleratedCompute    NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  97,	/* choose a hardware accelerated compute device */
+    
+    NSOpenGLPFAOpenGLProfile         NS_OPENGL_ENUM_DEPRECATED(10.7, 10.14)  =  99,    /* specify an OpenGL Profile to use             */
+    NSOpenGLProfileVersion3_2Core    NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  = 0x3200, /* The 3.2 Profile of OpenGL */
+    NSOpenGLProfileVersion4_1Core    NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  = 0x3200, /* The 4.1 profile of OpenGL */
+
+    NSOpenGLPFAVirtualScreenCount    NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  = 128,	/* number of virtual screens in this format     */
+
+    NSOpenGLPFAStereo                API_DEPRECATED("", macos(10.0,10.12))     =   6,
+    NSOpenGLPFAOffScreen             API_DEPRECATED("", macos(10.0,10.7))      =  53,
+    NSOpenGLPFAFullScreen            API_DEPRECATED("", macos(10.0,10.6))      =  54,
+    NSOpenGLPFASingleRenderer        API_DEPRECATED("", macos(10.0,10.9))      =  71,
+    NSOpenGLPFARobust                API_DEPRECATED("", macos(10.0,10.5))      =  75,
+    NSOpenGLPFAMPSafe                API_DEPRECATED("", macos(10.0,10.5))      =  78,
+    NSOpenGLPFAWindow                API_DEPRECATED("", macos(10.0,10.9))      =  80,
+    NSOpenGLPFAMultiScreen           API_DEPRECATED("", macos(10.0,10.5))      =  81,
+    NSOpenGLPFACompliant             API_DEPRECATED("", macos(10.0,10.9))      =  83,
+    NSOpenGLPFAPixelBuffer           API_DEPRECATED("", macos(10.3,10.7))      =  90,
+    NSOpenGLPFARemotePixelBuffer     API_DEPRECATED("", macos(10.3,10.7))      =  91,
+};
+
+typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
 
 typedef enum NSApplicationActivationPolicy {
     NSApplicationActivationPolicyRegular,
@@ -593,6 +727,14 @@ SICDEF siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu);
 /* */
 SICDEF NSMenuItem* NSMenuItem_separatorItem();
 
+/* ============ NSBitmapImageRep class ============ */
+/* ====== NSBitmapImageRep properties ====== */
+SICDEF unsigned char* NSBitmapImageRep_bitmapData(NSBitmapImageRep* imageRep);
+
+/* ====== NSBitmapImageRep functions ====== */
+/* Initializes a newly allocated bitmap image representation so it can render the specified image. */
+SICDEF NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NSInteger width, NSInteger height, NSInteger bps, NSInteger spp, bool alpha, bool isPlanar, const char* colorSpaceName, NSBitmapFormat bitmapFormat, NSInteger rowBytes, NSInteger pixelBits);
+
 /* ============ OpenGL ============ */
 /* TODO(EimaMei): Add documentation & deprecations macros for the OpenGL functions. */
 SICDEF NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs);
@@ -602,6 +744,23 @@ SICDEF NSOpenGLContext* NSOpenGLView_openGLContext(NSOpenGLView* view);
 SICDEF void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpenGLContextParameter param);
 SICDEF void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context);
 SICDEF void NSOpenGLContext_flushBuffer(NSOpenGLContext* context);
+
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeString	 		API_AVAILABLE(macos(10.6)); // Replaces NSStringPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypePDF			API_AVAILABLE(macos(10.6)); // Replaces NSPDFPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeTIFF	 		API_AVAILABLE(macos(10.6)); // Replaces NSTIFFPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypePNG	 		API_AVAILABLE(macos(10.6));
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeRTF	 		API_AVAILABLE(macos(10.6)); // Replaces NSRTFPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeRTFD	 		API_AVAILABLE(macos(10.6)); // Replaces NSRTFDPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeHTML	 		API_AVAILABLE(macos(10.6)); // Replaces NSHTMLPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeTabularText 		API_AVAILABLE(macos(10.6)); // Replaces NSTabularTextPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeFont 			API_AVAILABLE(macos(10.6)); // Replaces NSFontPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeRuler 			API_AVAILABLE(macos(10.6)); // Replaces NSRulerPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeColor 			API_AVAILABLE(macos(10.6)); // Replaces NSColorPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeSound 			API_AVAILABLE(macos(10.6)); // Replaces NSSoundPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeMultipleTextSelection 	API_AVAILABLE(macos(10.6)); // Replaces NSMultipleTextSelectionPboardType
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeTextFinderOptions		API_AVAILABLE(macos(10.7)); // Replaces NSPasteboardTypeFindPanelSearchOptions
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeURL                        API_AVAILABLE(macos(10.13)); // Equivalent to kUTTypeURL
+APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeFileURL                    API_AVAILABLE(macos(10.13)); // Equivalent to kUTTypeFileURL
 
 #endif /* ndef SILICON_H */
 
@@ -642,7 +801,7 @@ const unsigned short NSKEYI[sizeof(NSKEYS) / sizeof(char*)] = {
 };
 const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 
-enum {
+enum { /* classes */
 	NS_APPLICATION_CODE = 0,
 	NS_WINDOW_CODE,
 	NS_ALLOC_CODE,
@@ -662,10 +821,9 @@ enum {
 	NS_MENUITEM_CODE,
 	NS_DRAG_INFO_CODE,
 	NS_IMAGE_REP_CODE,
-	NS_GRAPHICS_CONTEXT_CODE
-};
-
-enum {
+	NS_GRAPHICS_CONTEXT_CODE,
+	NS_BITMAPIMAGEREP_CODE,
+	/* functions */
 	NS_APPLICATION_SETPOLICY = 0,
 	NS_APPLICATION_SAPP_CODE,
 	NS_APPLICATION_RUN_CODE,
@@ -716,7 +874,7 @@ enum {
     NS_WINDOW_BACKGROUND_COLOR_CODE,
     NS_WINDOW_SET_BACKGROUND_COLOR_CODE,
     NS_WINDOW_IS_OPAQUE_CODE,
-    NS_WINDOW_SET_IS_OPAQUE_CODE,
+    NS_WINDOW_SET_OPAQUE_CODE,
     NS_WINDOW_ALPHA_VALUE_CODE,
     NS_WINDOW_SET_ALPHA_VALUE_CODE,
     NS_WINDOW_ACCEPTS_MOUSE_MOVED_EVENTS_CODE,
@@ -786,11 +944,13 @@ enum {
     NS_OPENGL_VIEW_PREPARE_OPENGL_CODE,
     NS_OPENGL_VIEW_OPENGL_CONTEXT_CODE,
     NS_OPENGL_CONTEXT_SET_VALUES_CODE,
-    NS_OPENGL_CONTEXT_MAKE_CURRENT_CONTEXT_CODE
+    NS_OPENGL_CONTEXT_MAKE_CURRENT_CONTEXT_CODE,
+	NS_BITMAPIMAGEREP_BITMAP_CODE,
+	NS_BITMAPIMAGEREP_INIT_BITMAP_CODE
 };
 
-void* SI_NS_CLASSES[21] = {NULL};
-void* SI_NS_FUNCTIONS[147];
+void* SI_NS_CLASSES[22] = {NULL};
+void* SI_NS_FUNCTIONS[149];
 
 void si_initNS(void) {
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
@@ -813,6 +973,7 @@ void si_initNS(void) {
 	SI_NS_CLASSES[NS_DRAG_INFO_CODE] = objc_getClass("NSDraggingInfo");
 	SI_NS_CLASSES[NS_IMAGE_REP_CODE] = objc_getClass("NSImageRep");
 	SI_NS_CLASSES[NS_GRAPHICS_CONTEXT_CODE] = objc_getClass("NSGraphicsContext");
+	SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE] = objc_getClass("NSBitmapImageRep");
 
 	SI_NS_FUNCTIONS[NS_APPLICATION_SETPOLICY] = sel_getUid("setActivationPolicy:");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_getUid("sharedApplication");
@@ -846,7 +1007,7 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_WINDOW_BACKGROUND_COLOR_CODE] = sel_getUid("backgroundColor");
     SI_NS_FUNCTIONS[NS_WINDOW_SET_BACKGROUND_COLOR_CODE] = sel_getUid("setBackgroundColor:");
     SI_NS_FUNCTIONS[NS_WINDOW_IS_OPAQUE_CODE] = sel_getUid("isOpaque");
-    SI_NS_FUNCTIONS[NS_WINDOW_SET_IS_OPAQUE_CODE] = sel_getUid("setIsOpaque:");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_OPAQUE_CODE] = sel_getUid("setOpaque:");
     SI_NS_FUNCTIONS[NS_WINDOW_ALPHA_VALUE_CODE] = sel_getUid("alphaValue");
     SI_NS_FUNCTIONS[NS_WINDOW_SET_ALPHA_VALUE_CODE] = sel_getUid("setAlphaValue:");
     SI_NS_FUNCTIONS[NS_WINDOW_ACCEPTS_MOUSE_MOVED_EVENTS_CODE] = sel_getUid("acceptsMouseMovedEvents");
@@ -917,6 +1078,24 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_OPENGL_VIEW_OPENGL_CONTEXT_CODE] = sel_getUid("openGLContext");
     SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_SET_VALUES_CODE] = sel_getUid("setValues:forParameter:");
     SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_MAKE_CURRENT_CONTEXT_CODE] = sel_getUid("makeCurrentContext");
+	SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_BITMAP_CODE] = sel_getUid("bitmapData:");
+	SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_INIT_BITMAP_CODE] = sel_getUid("initWithBitmapData:planes:width:height:bps:spp:hasAlpha:isPlanar:colorSpaceName:bitmapFormat:bytesPerRow:bitsPerPixel:");
+}
+
+void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function) {
+    Class selected_class;
+
+    if (strcmp(class_name, "NSView") == 0) {
+        selected_class = objc_getClass("ViewClass");
+    }
+    else if (strcmp(class_name, "NSWindow") == 0) {
+        selected_class = objc_getClass("WindowClass");
+    }
+    else {
+        selected_class = objc_getClass(class_name);
+    }
+
+    class_addMethod(selected_class, sel_registerName(register_name), (IMP)function, 0);
 }
 
 NSRect NSMakeRect(double x, double y, double width, double height) {
@@ -1194,8 +1373,8 @@ bool NSWindow_isOpaque(NSWindow* window) {
     return (bool)objc_func(window, func);
 }
 
-void NSWindow_setIsOpaque(NSWindow* window, bool isOpaque) {
-    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_IS_OPAQUE_CODE];
+void NSWindow_setOpaque(NSWindow* window, bool isOpaque) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_OPAQUE_CODE];
     objc_func(window, func, isOpaque);
 }
 
@@ -1521,6 +1700,16 @@ NSMenuItem* NSMenuItem_separatorItem() {
     return (NSMenuItem*)objc_func(nclass, func);
 }
 
+unsigned char* NSBitmapImageRep_bitmapData(NSBitmapImageRep* imageRep) {
+    void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_BITMAP_CODE];
+    return (unsigned char*)objc_func(imageRep, func);
+}
+
+NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NSInteger width, NSInteger height, NSInteger bps, NSInteger spp, bool alpha, bool isPlanar, const char* colorSpaceName, NSBitmapFormat bitmapFormat, NSInteger rowBytes, NSInteger pixelBits) {
+	void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_INIT_BITMAP_CODE];
+    return (NSBitmapImageRep*)objc_func(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE], func, planes, width, height, bps, spp, alpha, isPlanar, colorSpaceName, bitmapFormat, rowBytes, pixelBits);
+}
+
 void NSRelease(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RELEASE_CODE]); }
 
 /* ======== OpenGL ======== */
@@ -1556,5 +1745,34 @@ void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context) {
 
 si_declare_single(NSOpenGLContext, void, flushBuffer, NS_OPENGL_CONTEXT_FLUSH_BUFFER_CODE)
 
+#if defined(SILICON_ARRAY_IMPLEMENTATION) || !defined(siArray)
+#include <stdlib.h>
+#include <string.h>
+
+void* si_array_init(void* allocator, isize sizeof_element, isize count)  {
+	void* array = si_array_init_reserve(sizeof_element, count);
+	memcpy(array, allocator, sizeof_element * count);
+
+	return array;
+}
+
+void* si_array_init_reserve(isize sizeof_element, isize count) {
+	void* ptr = malloc(si_sizeof(siArrayHeader) + (sizeof_element * count));
+	siArray(void) array = ptr + si_sizeof(siArrayHeader);
+
+	siArrayHeader* header = SI_ARRAY_HEADER(array);
+	header->count = count;
+
+	return array;
+}
+
+
+void si_array_free(siArray(void) array) {
+	if (array == NULL)
+		return ;
+
+	free(SI_ARRAY_HEADER(array));
+}
+#endif
 
 #endif /* SILICON_IMPLEMENTATION */
