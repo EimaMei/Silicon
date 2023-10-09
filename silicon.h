@@ -24,6 +24,7 @@
 /*
     define args
     (MAKE SURE ** #define SILICON_IMPLEMENTATION ** is in at least one header or you use -D SILICON_IMPLEMENTATION)
+    #define SI_NO_RELEASE - do not define release (just use NSRelease)
 */
 
 #ifndef SILICON_H
@@ -462,6 +463,10 @@ SICDEF void si_initNS(void);
 
 /* release objects */
 SICDEF void NSRelease(id object);
+
+#ifndef SI_NO_RELEASE
+#define release NSRelease
+#endif
 
 /* ============ Geometry functions ============ */
 /* Creates a new NSRect from the specified values. */
