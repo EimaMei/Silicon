@@ -50,8 +50,8 @@
 #define macos_version(major, minor) major * 10000 + minor * 100
 
 #define si_define_property(class, type, name, set_name, arg_name)	\
-	type class##_##name(class* arg_name);			\
-	void class##_set##set_name(class* arg_name, type name)
+	SICDEF type class##_##name(class* arg_name);			\
+	SICDEF void class##_set##set_name(class* arg_name, type name)
 
 #define NSUIntegerMax 4294967295 
 
@@ -241,58 +241,58 @@ SICDEF void si_initNS(void);
 
 /* ============ Geometry functions ============ */
 /* Creates a new NSRect from the specified values. */
-NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h);
+SICDEF NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h);
 /* Creates a new NSPoint from the specified values. */
-NSPoint NSMakePoint(CGFloat x, CGFloat y);
+SICDEF NSPoint NSMakePoint(CGFloat x, CGFloat y);
 /* Returns a new NSSize from the specified values. */
-NSSize NSMakeSize(CGFloat w, CGFloat h);
+SICDEF NSSize NSMakeSize(CGFloat w, CGFloat h);
 /* Returns the largest x coordinate of a given rectangle. */
-CGFloat NSMaxX(NSRect aRect);
+SICDEF CGFloat NSMaxX(NSRect aRect);
 /* Returns the largest y coordinate of a given rectangle. */
-CGFloat NSMaxY(NSRect aRect);
+SICDEF CGFloat NSMaxY(NSRect aRect);
 /* Returns the x coordinate of a given rectangle’s midpoint. */
-CGFloat NSMidX(NSRect aRect);
+SICDEF CGFloat NSMidX(NSRect aRect);
 /* Returns the y coordinate of a given rectangle’s midpoint. */
-CGFloat NSMidY(NSRect aRect);
+SICDEF CGFloat NSMidY(NSRect aRect);
 /* Returns the smallest x coordinate of a given rectangle. */
-CGFloat NSMinX(NSRect aRect);
+SICDEF CGFloat NSMinX(NSRect aRect);
 /* Returns the smallest y coordinate of a given rectangle. */
-CGFloat NSMinY(NSRect aRect);
+SICDEF CGFloat NSMinY(NSRect aRect);
 /* Returns the width of the specified rectangle. */
-CGFloat NSWidth(NSRect aRect);
+SICDEF CGFloat NSWidth(NSRect aRect);
 /* Returns the height of a given rectangle. */s
-CGFloat NSHeight(NSRect aRect);
+SICDEF CGFloat NSHeight(NSRect aRect);
 /* Returns an NSRect typecast from a CGRect. */
-NSRect NSRectFromCGRect(CGRect cgrect);
+SICDEF NSRect NSRectFromCGRect(CGRect cgrect);
 /* Returns a CGRect typecast from an NSRect. */
-CGRect NSRectToCGRect(NSRect nsrect);
+SICDEF CGRect NSRectToCGRect(NSRect nsrect);
 /* Returns an NSPoint typecast from a CGPoint. */
-NSPoint NSPointFromCGPoint(CGPoint cgpoint);
+SICDEF NSPoint NSPointFromCGPoint(CGPoint cgpoint);
 /* Returns a CGPoint typecast from an NSPoint. */
-CGPoint NSPointToCGPoint(NSPoint nspoint);
+SICDEF CGPoint NSPointToCGPoint(NSPoint nspoint);
 /* Returns an NSSize typecast from a CGSize. */
-NSSize NSSizeFromCGSize(CGSize cgsize);
+SICDEF NSSize NSSizeFromCGSize(CGSize cgsize);
 /* Returns a CGSize typecast from an NSSize. */
-CGSize NSSizeToCGSize(NSSize nssize);
+SICDEF CGSize NSSizeToCGSize(NSSize nssize);
 /* Returns a Boolean value that indicates whether a given point is in a given rectangle. */
-bool NSPointInRect(NSPoint aPoint, NSRect aRect);
+SICDEF bool NSPointInRect(NSPoint aPoint, NSRect aRect);
 
 /* ============ NSColor class ============ */
 /* ====== NSColor properties ====== */
 /* */
-NSColor* NSColor_clearColor();
+SICDEF NSColor* NSColor_clearColor();
 /* */
-NSColor* NSColor_keyboardFocusIndicatorColor();
+SICDEF NSColor* NSColor_keyboardFocusIndicatorColor();
 
 /* ====== NSColor functions ====== */
 /* */
-void NSColor_set(NSColor* color);
+SICDEF void NSColor_set(NSColor* color);
 /* */
-NSColor* NSColor_colorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
+SICDEF NSColor* NSColor_colorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
 /* */
-NSColor* NSColor_colorWithSRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
+SICDEF NSColor* NSColor_colorWithSRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
 /* Creates a color object using the given opacity and grayscale values. */
-NSColor* NSColor_colorWithCalibrated(CGFloat white, CGFloat alpha);
+SICDEF NSColor* NSColor_colorWithCalibrated(CGFloat white, CGFloat alpha);
 
 /* ============ NSApplication class ============ */
 /* ====== NSApplication properties ====== */
@@ -333,11 +333,11 @@ SICDEF NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, 
 /* ============ NSScreen class ============ */
 /* ====== NSScreen properties ====== */
 /* Returns the screen object containing the window with the keyboard focus. */
-NSScreen* NSScreen_mainScreen();
+SICDEF NSScreen* NSScreen_mainScreen();
 /* The dimensions and location of the screen. */
-NSRect NSScreen_frame(NSScreen* screen);
+SICDEF NSRect NSScreen_frame(NSScreen* screen);
 /* The current location and dimensions of the visible screen. */
-NSRect NSScreen_visibleFrame(NSScreen* screen);
+SICDEF NSRect NSScreen_visibleFrame(NSScreen* screen);
 
 /* ============ NSWindow class ============ */
 /* ====== NSWindow properties ====== */
@@ -358,7 +358,7 @@ si_define_property(NSWindow, CGFloat, alphaValue, AlphaValue, window);
 /* A Boolean value that indicates whether the window accepts mouse-moved events. */
 si_define_property(NSWindow, bool, acceptsMouseMovedEvents, AcceptsMouseMovedEvents, window);
 /* Get/Set the frame of the window. */
-NSRect NSWindow_frame(NSWindow* window);
+SICDEF NSRect NSWindow_frame(NSWindow* window);
 
 /* ====== NSWindow functions ====== */
 /* Initializes a NSWindow handle. */
@@ -387,60 +387,60 @@ SICDEF void NSWindow_contentView_wantsLayer(NSWindow* window, bool wantsLayer) ;
 /* ============ NSView class ============ */
 /* ====== NSView functions ====== */
 /* */
-NSView* NSView_init();
+SICDEF NSView* NSView_init();
 /* */
-NSView* NSView_initWithFrame(NSRect frameRect);
+SICDEF NSView* NSView_initWithFrame(NSRect frameRect);
 /* */
-void NSView_addSubview(NSView* view, NSView* subview);
+SICDEF void NSView_addSubview(NSView* view, NSView* subview);
 /* */
-void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newTypes);
+SICDEF void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newTypes);
 
 /* ============ NSEvent class ============ */
 /* ====== NSEvent functions ====== */
 /* */
-NSEventType NSEvent_type(NSEvent* event);
+SICDEF NSEventType NSEvent_type(NSEvent* event);
 /* */
-NSPoint NSEvent_locationInWindow(NSEvent* event);
+SICDEF NSPoint NSEvent_locationInWindow(NSEvent* event);
 /* */
-NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event);
+SICDEF NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event);
 /* */
-unsigned short NSEvent_keyCode(NSEvent* event);
+SICDEF unsigned short NSEvent_keyCode(NSEvent* event);
 /* */
-const char* NSEvent_characters(NSEvent* event);
+SICDEF const char* NSEvent_characters(NSEvent* event);
 /* */
-CGFloat NSEvent_deltaY(NSEvent* event);
+SICDEF CGFloat NSEvent_deltaY(NSEvent* event);
 /* */
-unsigned short NSEvent_keyCodeForChar(char* keyStr);
+SICDEF unsigned short NSEvent_keyCodeForChar(char* keyStr);
 /* */
-NSPoint NSEvent_mouseLocation(NSEvent* event);
+SICDEF NSPoint NSEvent_mouseLocation(NSEvent* event);
 /* */
-NSWindow* NSEvent_window(NSEvent* event);
+SICDEF NSWindow* NSEvent_window(NSEvent* event);
 
 /* ============ NSDraggingInfo class ============ */
 /* ====== NSDraggingInfo properties ====== */
 /* */
-NSPasteboard* NSDraggingInfo_draggingPasteboard(NSDraggingInfo* info);
+SICDEF NSPasteboard* NSDraggingInfo_draggingPasteboard(NSDraggingInfo* info);
 /* */
-NSPoint NSDraggingInfo_draggingLocation(NSDraggingInfo* info);
+SICDEF NSPoint NSDraggingInfo_draggingLocation(NSDraggingInfo* info);
 /* */
 si_define_property(NSDraggingInfo, NSInteger, numberOfValidItemsForDrop, NumberOfValidItemsForDrop, info);
 /* */
-NSWindow* NSDraggingInfo_draggingDestinationWindow(NSDraggingInfo* info);
+SICDEF NSWindow* NSDraggingInfo_draggingDestinationWindow(NSDraggingInfo* info);
 
 /* ============ NSImage class ============ */
 /* ====== NSImage functions ====== */
 /* Initializes and returns an image object with the specified dimensions. */
-NSImage* NSImage_initWithSize(NSSize size);
+SICDEF NSImage* NSImage_initWithSize(NSSize size);
 /* */
-NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length);
+SICDEF NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length);
 /* Initializes a data object with the content of the file at a given path. */
-NSImage* NSImage_initWithFile(const char* path);
+SICDEF NSImage* NSImage_initWithFile(const char* path);
 /* */
 NSImage* NSImage_initWithCGImage(CGImageRef cgImage, NSSize size);
 /* Adds the specified image representation object to the image. */
-void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep);
+SICDEF void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep);
 /* Returns the application’s current cursor. */
-NSCursor* NSCursor_currentCursor();
+SICDEF NSCursor* NSCursor_currentCursor();
 
 /* ============ NSGraphicsContext class ============ */
 /* ====== NSGraphicsContext properties ====== */
@@ -453,43 +453,43 @@ si_define_property(NSGraphicsContext, NSGraphicsContext*, currentContext, Curren
 /* ============ NSCursor class ============ */
 /* ====== NSCursor properties ====== */
 /* The cursor’s image. */
-NSImage* NSCursor_image(NSCursor* cursor);
+SICDEF NSImage* NSCursor_image(NSCursor* cursor);
 /* The position of the cursor's hot spot. */
-NSPoint NSCursor_hotSpot(NSCursor* cursor);
+SICDEF NSPoint NSCursor_hotSpot(NSCursor* cursor);
 /* Returns the default cursor, the arrow cursor. */
-NSCursor* NSCursor_arrowCursor();
+SICDEF NSCursor* NSCursor_arrowCursor();
 /* Initializes a cursor with the given image and hot spot. */
-NSCursor* NSCursor_initWithImage(NSImage* newImage, NSPoint aPoint);
+SICDEF NSCursor* NSCursor_initWithImage(NSImage* newImage, NSPoint aPoint);
 /* Makes the current cursor invisible. */
-void NSCursor_hide();
+SICDEF void NSCursor_hide();
 /* Makes the current cursor invisible. */
-void NSCursor_unhide();
+SICDEF void NSCursor_unhide();
 /* Pops the current cursor off the top of the stack. */
-void NSCursor_pop(NSCursor* cursor);
+SICDEF void NSCursor_pop(NSCursor* cursor);
 /* Puts the receiver on top of the cursor stack and makes it the current cursor. */
-void NSCursor_push(NSCursor* cursor);
+SICDEF void NSCursor_push(NSCursor* cursor);
 /* Makes the receiver the current cursor. */
-void NSCursor_set(NSCursor* cursor);
+SICDEF void NSCursor_set(NSCursor* cursor);
 
 /* =========== NSPasteboard class ============ */
 /* ====== NSPasteboard functions ====== */
 /* */
-NSPasteboard* NSPasteboard_generalPasteboard();
+SICDEF NSPasteboard* NSPasteboard_generalPasteboard();
 /* */
-const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType);
+SICDEF const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType);
 /* */
-NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, siArray(NSPasteboardType) newTypes, void* owner);
+SICDEF NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, siArray(NSPasteboardType) newTypes, void* owner);
 /* */
-bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType);
+SICDEF bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType);
 /* */
-siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard, siArray(Class) classArray, void* options);
+SICDEF siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard, siArray(Class) classArray, void* options);
 
 /* ============ NSMenu class ============ */
 /* ====== NSMenu functions ====== */
 /* */
-NSMenu* NSMenu_init(const char* title);
+SICDEF NSMenu* NSMenu_init(const char* title);
 /* */
-void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem);
+SICDEF void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem);
 
 
 /* ============ NSMenuItem class ============ */
@@ -501,21 +501,21 @@ si_define_property(NSMenuItem, const char*, title, Title, item);
 
 /* ====== NSMenuItem functions ====== */
 /* */
-NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEquivalent);
+SICDEF NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEquivalent);
 /* */
-siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu);
+SICDEF siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu);
 /* */
-NSMenuItem* NSMenuItem_separatorItem();
+SICDEF NSMenuItem* NSMenuItem_separatorItem();
 
 
 /* TODO(EimaMei): Add documentation & deprecations macros for the OpenGL functions. */
-NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs);
-NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format);
-void NSOpenGLView_prepareOpenGL(NSOpenGLView* view);
-NSOpenGLContext* NSOpenGLView_openGLContext(NSOpenGLView* view);
-void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpenGLContextParameter param);
-void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context);
-void NSOpenGLContext_flushBuffer(NSOpenGLContext* context);
+SICDEF NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs);
+SICDEF NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format);
+SICDEF void NSOpenGLView_prepareOpenGL(NSOpenGLView* view);
+SICDEF NSOpenGLContext* NSOpenGLView_openGLContext(NSOpenGLView* view);
+SICDEF void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpenGLContextParameter param);
+SICDEF void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context);
+SICDEF void NSOpenGLContext_flushBuffer(NSOpenGLContext* context);
 
 SICDEF void NSRelease(id object);
 
