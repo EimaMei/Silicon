@@ -16,6 +16,9 @@ bool windowShouldClose(void* self)  {
 
 
 int main() {
+	NSApplication* NSApp = NSApplication_sharedApplication();
+	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
+
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 
@@ -52,13 +55,11 @@ int main() {
 	NSWindow_setIsVisible(win, true);
 	NSWindow_makeMainWindow(win);
 
-	NSApplication_sharedApplication();
-	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 	NSApplication_finishLaunching(NSApp);
 
 	while (is_running) {
 		// Get the Windows events.
-		NSEvent* e = NSApplication_nextEventMatchingMask(NSApp, NSEventMaskAny, NSDate_distantFuture(), 0, true);
+		NSEvent* e = NSApplication_nextEventMatchingMask(NSApp, NSEventMaskAny, 0, 0, true);
 		NSApplication_sendEvent(NSApp, e);
 		NSApplication_updateWindows(NSApp);
 
