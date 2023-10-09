@@ -72,7 +72,7 @@
 /* Gets the size of the class. */
 #define sizeof_class(typename) class_getInstanceSize(class(typename))
 
-#define NSUIntegerMax 4294967295 
+#define NSUIntegerMax ULONG_MAX
 
 #ifndef siArray
 #define SILICON_ARRAY_IMPLEMENTATION
@@ -125,22 +125,26 @@ typedef CGSize NSSize;
 typedef void NSWindow;
 typedef void NSApplication;
 typedef void NSEvent;
-typedef void NSDate;
-typedef void NSView;
 typedef void NSScreen;
 typedef void NSColor;
 typedef void NSCursor;
 typedef void NSPasteboard;
-typedef void NSString;
 typedef void NSOpenGLContext;
 typedef void NSOpenGLPixelFormat;
-typedef void NSImage;
-typedef void NSMenu;
-typedef void NSMenuItem;
 typedef void NSDraggingInfo;
 typedef void NSImageRep;
 typedef void NSGraphicsContext;
 typedef void NSBitmapImageRep;
+typedef void NSMenu;
+typedef void NSMenuItem;
+typedef void NSImage;
+typedef void NSView;
+#ifndef __OBJC__
+typedef void NSDate;
+typedef void NSString;
+#else
+
+#endif
 
 typedef NSView NSOpenGLView;
 
