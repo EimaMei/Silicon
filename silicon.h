@@ -260,7 +260,7 @@ SICDEF CGFloat NSMinX(NSRect aRect);
 SICDEF CGFloat NSMinY(NSRect aRect);
 /* Returns the width of the specified rectangle. */
 SICDEF CGFloat NSWidth(NSRect aRect);
-/* Returns the height of a given rectangle. */s
+/* Returns the height of a given rectangle. */
 SICDEF CGFloat NSHeight(NSRect aRect);
 /* Returns an NSRect typecast from a CGRect. */
 SICDEF NSRect NSRectFromCGRect(CGRect cgrect);
