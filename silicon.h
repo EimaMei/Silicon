@@ -33,7 +33,11 @@
 #include <objc/message.h>
 
 #define SILICON_H
+#ifdef SICDEF_STATIC
+#define SICDEF static /* I have this so I can get warnings for functions that aren't defined */
+#else
 #define SICDEF static inline
+#endif
 
 #define NS_ENUM(type, name) type name; enum
 
@@ -236,8 +240,90 @@ typedef enum NSApplicationActivationPolicy {
     NSApplicationActivationPolicyProhibited
 } NSApplicationActivationPolicy;
 
+enum {
+	NSUpArrowFunctionKey        = 0xF700,
+	NSDownArrowFunctionKey      = 0xF701,
+	NSLeftArrowFunctionKey      = 0xF702,
+	NSRightArrowFunctionKey     = 0xF703,
+	NSF1FunctionKey             = 0xF704,
+	NSF2FunctionKey             = 0xF705,
+	NSF3FunctionKey             = 0xF706,
+	NSF4FunctionKey             = 0xF707,
+	NSF5FunctionKey             = 0xF708,
+	NSF6FunctionKey             = 0xF709,
+	NSF7FunctionKey             = 0xF70A,
+	NSF8FunctionKey             = 0xF70B,
+	NSF9FunctionKey             = 0xF70C,
+	NSF10FunctionKey            = 0xF70D,
+	NSF11FunctionKey            = 0xF70E,
+	NSF12FunctionKey            = 0xF70F,
+	NSF13FunctionKey            = 0xF710,
+	NSF14FunctionKey            = 0xF711,
+	NSF15FunctionKey            = 0xF712,
+	NSF16FunctionKey            = 0xF713,
+	NSF17FunctionKey            = 0xF714,
+	NSF18FunctionKey            = 0xF715,
+	NSF19FunctionKey            = 0xF716,
+	NSF20FunctionKey            = 0xF717,
+	NSF21FunctionKey            = 0xF718,
+	NSF22FunctionKey            = 0xF719,
+	NSF23FunctionKey            = 0xF71A,
+	NSF24FunctionKey            = 0xF71B,
+	NSF25FunctionKey            = 0xF71C,
+	NSF26FunctionKey            = 0xF71D,
+	NSF27FunctionKey            = 0xF71E,
+	NSF28FunctionKey            = 0xF71F,
+	NSF29FunctionKey            = 0xF720,
+	NSF30FunctionKey            = 0xF721,
+	NSF31FunctionKey            = 0xF722,
+	NSF32FunctionKey            = 0xF723,
+	NSF33FunctionKey            = 0xF724,
+	NSF34FunctionKey            = 0xF725,
+	NSF35FunctionKey            = 0xF726,
+	NSInsertFunctionKey         = 0xF727,
+	NSDeleteFunctionKey         = 0xF728,
+	NSHomeFunctionKey           = 0xF729,
+	NSBeginFunctionKey          = 0xF72A,
+	NSEndFunctionKey            = 0xF72B,
+	NSPageUpFunctionKey         = 0xF72C,
+	NSPageDownFunctionKey       = 0xF72D,
+	NSPrintScreenFunctionKey    = 0xF72E,
+	NSScrollLockFunctionKey     = 0xF72F,
+	NSPauseFunctionKey          = 0xF730,
+	NSSysReqFunctionKey         = 0xF731,
+	NSBreakFunctionKey          = 0xF732,
+	NSResetFunctionKey          = 0xF733,
+	NSStopFunctionKey           = 0xF734,
+	NSMenuFunctionKey           = 0xF735,
+	NSUserFunctionKey           = 0xF736,
+	NSSystemFunctionKey         = 0xF737,
+	NSPrintFunctionKey          = 0xF738,
+	NSClearLineFunctionKey      = 0xF739,
+	NSClearDisplayFunctionKey   = 0xF73A,
+	NSInsertLineFunctionKey     = 0xF73B,
+	NSDeleteLineFunctionKey     = 0xF73C,
+	NSInsertCharFunctionKey     = 0xF73D,
+	NSDeleteCharFunctionKey     = 0xF73E,
+	NSPrevFunctionKey           = 0xF73F,
+	NSNextFunctionKey           = 0xF740,
+	NSSelectFunctionKey         = 0xF741,
+	NSExecuteFunctionKey        = 0xF742,
+	NSUndoFunctionKey           = 0xF743,
+	NSRedoFunctionKey           = 0xF744,
+	NSFindFunctionKey           = 0xF745,
+	NSHelpFunctionKey           = 0xF746,
+	NSModeSwitchFunctionKey     = 0xF747,
+	NSBackspaceCharacter 		= 0x0008, 
+	NSTabCharacter 				= 0x0009,
+	NSNewlineCharacter 			= 0x000a,
+	NSCarriageReturnCharacter 	= 0x000d
+};
+
 /* init function, this function is run by `NSApplication_sharedApplication` */
 SICDEF void si_initNS(void);
+
+/* release objects */
+SICDEF void NSRelease(id object);
 
 /* ============ Geometry functions ============ */
 /* Creates a new NSRect from the specified values. */
@@ -507,7 +593,7 @@ SICDEF siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu);
 /* */
 SICDEF NSMenuItem* NSMenuItem_separatorItem();
 
-
+/* ============ OpenGL ============ */
 /* TODO(EimaMei): Add documentation & deprecations macros for the OpenGL functions. */
 SICDEF NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs);
 SICDEF NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format);
@@ -516,8 +602,6 @@ SICDEF NSOpenGLContext* NSOpenGLView_openGLContext(NSOpenGLView* view);
 SICDEF void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpenGLContextParameter param);
 SICDEF void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context);
 SICDEF void NSOpenGLContext_flushBuffer(NSOpenGLContext* context);
-
-SICDEF void NSRelease(id object);
 
 #endif /* ndef SILICON_H */
 
@@ -539,13 +623,46 @@ SICDEF void NSRelease(id object);
 typedef void* (*objc_send_type)(id, SEL, ...);
 objc_send_type objc_func = (objc_send_type)objc_msgSend;
 
+const NSSize _NSZeroSize = {0, 0};
+
+/* Key stuff. */
+const char* NSKEYS[] = {
+	"Up", "Down", "Left", "Right",
+	"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+	"Delete", "Insert", "Home", "End", "PageUp", "PageDown",
+	"Backspace", "Tab", "Enter", "Return",
+	"Escape", "Space", "Shift", "CapsLock", "BackSpace"
+};
+const unsigned short NSKEYI[sizeof(NSKEYS) / sizeof(char*)] = {
+	NSUpArrowFunctionKey, NSDownArrowFunctionKey, NSLeftArrowFunctionKey, NSRightArrowFunctionKey,
+	NSF1FunctionKey, NSF2FunctionKey, NSF3FunctionKey, NSF4FunctionKey, NSF5FunctionKey, NSF6FunctionKey, NSF7FunctionKey, NSF8FunctionKey, NSF9FunctionKey, NSF10FunctionKey, NSF11FunctionKey, NSF12FunctionKey,
+	NSDeleteFunctionKey, NSInsertFunctionKey, NSHomeFunctionKey, NSEndFunctionKey, NSPageUpFunctionKey, NSPageDownFunctionKey,
+	NSBackspaceCharacter, NSTabCharacter, NSNewlineCharacter, NSCarriageReturnCharacter,
+	0x1B, 0x20, 0x56, 0x57, 0x51
+};
+const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
+
 enum {
 	NS_APPLICATION_CODE = 0,
-	NS_RECT_CODE,
 	NS_WINDOW_CODE,
 	NS_ALLOC_CODE,
 	NS_VALUE_CODE,
-	NS_MAKE_RECT_CODE,
+	NS_EVENT_CODE,
+	NS_DATE_CODE,
+	NS_VIEW_CODE,
+	NS_SCREEN_CODE,
+	NS_COLOR_CODE,
+	NS_CURSOR_CODE,
+	NS_PASTEBOARD_CODE,
+	NS_STRING_CODE,
+	NS_OPENGL_CONTEXT_CODE,
+	NS_OPENGL_PF_CODE,
+	NS_IMAGE_CODE,
+	NS_MENU_CODE,
+	NS_MENUITEM_CODE,
+	NS_DRAG_INFO_CODE,
+	NS_IMAGE_REP_CODE,
+	NS_GRAPHICS_CONTEXT_CODE
 };
 
 enum {
@@ -559,18 +676,143 @@ enum {
 	NS_RELEASE_CODE,
 	NS_WINDOW_MAKEOF_CODE,
 	NS_WINDOW_MAKEKW_CODE,
+	NS_OPENGL_FB_CODE,
+    NS_COLOR_CLEAR_CODE,
+    NS_COLOR_KEYBOARD_FOCUS_INDICATOR_CODE,
+    NS_COLOR_SET_CODE,
+    NS_COLOR_WITH_RGB_CODE,
+    NS_COLOR_WITH_SRGB_CODE,
+    NS_COLOR_WITH_CALIBRATED_CODE,
+    NS_APPLICATION_MAIN_MENU_CODE,
+    NS_APPLICATION_SET_MAIN_MENU_CODE,
+    NS_APPLICATION_SERVICES_MENU_CODE,
+    NS_APPLICATION_SET_SERVICES_MENU_CODE,
+    NS_APPLICATION_HELP_MENU_CODE,
+    NS_APPLICATION_SET_HELP_MENU_CODE,
+    NS_APPLICATION_WINDOWS_MENU_CODE,
+    NS_APPLICATION_SET_WINDOWS_MENU_CODE,
+    NS_APPLICATION_ACTIVATION_POLICY_CODE,
+    NS_APPLICATION_SET_ACTIVATION_POLICY_CODE,
+    NS_APPLICATION_APPLICATION_ICON_IMAGE_CODE,
+    NS_APPLICATION_SET_APPLICATION_ICON_IMAGE_CODE,
+    NS_APPLICATION_STOP_CODE,
+    NS_APPLICATION_TERMINATE_CODE,
+    NS_APPLICATION_SEND_EVENT_CODE,
+    NS_APPLICATION_UPDATE_WINDOWS_CODE,
+    NS_APPLICATION_ACTIVATE_IGNORING_OTHER_APPS_CODE,
+    NS_APPLICATION_NEXT_EVENT_MATCHING_MASK_CODE,
+    NS_SCREEN_MAIN_SCREEN_CODE,
+    NS_SCREEN_FRAME_CODE,
+    NS_SCREEN_VISIBLE_FRAME_CODE,
+    NS_WINDOW_TITLE_CODE,
+    NS_WINDOW_SET_TITLE_CODE,
+    NS_WINDOW_CONTENT_VIEW_CODE,
+    NS_WINDOW_SET_CONTENT_VIEW_CODE,
+    NS_OPENGL_CONTEXT_FLUSH_BUFFER_CODE,
+    NS_WINDOW_DELEGATE_CODE,
+    NS_WINDOW_SET_DELEGATE_CODE,
+    NS_WINDOW_IS_VISIBLE_CODE,
+    NS_WINDOW_SET_IS_VISIBLE_CODE,
+    NS_WINDOW_BACKGROUND_COLOR_CODE,
+    NS_WINDOW_SET_BACKGROUND_COLOR_CODE,
+    NS_WINDOW_IS_OPAQUE_CODE,
+    NS_WINDOW_SET_IS_OPAQUE_CODE,
+    NS_WINDOW_ALPHA_VALUE_CODE,
+    NS_WINDOW_SET_ALPHA_VALUE_CODE,
+    NS_WINDOW_ACCEPTS_MOUSE_MOVED_EVENTS_CODE,
+    NS_WINDOW_SET_ACCEPTS_MOUSE_MOVED_EVENTS_CODE,
+    NS_GRAPHICS_CONTEXT_CURRENT_CONTEXT_CODE,
+    NS_MENU_ITEM_SET_SUBMENU_CODE,
+    NS_MENU_ITEM_TITLE_CODE,
+    NS_WINDOW_FRAME_CODE,
+    NS_WINDOW_INIT_CODE,
+    NS_WINDOW_ORDER_FRONT_CODE,
+    NS_WINDOW_MAKE_KEY_AND_ORDER_FRONT_CODE,
+    NS_WINDOW_MAKE_KEY_WINDOW_CODE,
+    NS_WINDOW_IS_KEY_WINDOW_CODE,
+    NS_WINDOW_CENTER_CODE,
+    NS_WINDOW_MAKE_MAIN_WINDOW_CODE,
+    NS_WINDOW_SET_FRAME_AND_DISPLAY_CODE,
+    NS_WINDOW_CONVERT_POINT_FROM_SCREEN_CODE,
+    NS_WINDOW_DISPLAY_CODE,
+    NS_VIEW_INIT_CODE,
+    NS_VIEW_INIT_WITH_FRAME_CODE,
+    NS_VIEW_ADD_SUBVIEW_CODE,
+    NS_VIEW_REGISTER_FOR_DRAGGED_TYPES_CODE,
+    NS_EVENT_TYPE_CODE,
+    NS_EVENT_LOCATION_IN_WINDOW_CODE,
+    NS_EVENT_MODIFIER_FLAGS_CODE,
+    NS_EVENT_KEY_CODE_CODE,
+    NS_EVENT_CHARACTERS_CODE,
+    NS_EVENT_DELTA_Y_CODE,
+    NS_EVENT_KEY_CODE_FOR_CHAR_CODE,
+    NS_EVENT_MOUSE_LOCATION_CODE,
+    NS_EVENT_WINDOW_CODE,
+    NS_DRAGGING_INFO_DRAGGING_PASTEBOARD_CODE,
+    NS_DRAGGING_INFO_DRAGGING_LOCATION_CODE,
+    NS_DRAGGING_INFO_NUMBER_OF_VALID_ITEMS_FOR_DROP_CODE,
+    NS_DRAGGING_INFO_SET_NUMBER_OF_VALID_ITEMS_FOR_DROP_CODE,
+    NS_DRAGGING_INFO_DRAGGING_DESTINATION_WINDOW_CODE,
+    NS_IMAGE_INIT_WITH_SIZE_CODE,
+    NS_IMAGE_INIT_WITH_DATA_CODE,
+    NS_IMAGE_INIT_WITH_FILE_CODE,
+    NS_IMAGE_INIT_WITH_CGIMAGE_CODE,
+    NS_IMAGE_ADD_REPRESENTATION_CODE,
+    NS_CURSOR_CURRENT_CURSOR_CODE,
+    NS_GRAPHICS_CONTEXT_SET_CURRENT_CONTEXT_CODE,
+    NS_CURSOR_IMAGE_CODE,
+    NS_CURSOR_HOT_SPOT_CODE,
+    NS_CURSOR_ARROW_CURSOR_CODE,
+    NS_CURSOR_INIT_WITH_IMAGE_CODE,
+    NS_CURSOR_HIDE_CODE,
+    NS_CURSOR_UNHIDE_CODE,
+    NS_CURSOR_POP_CODE,
+    NS_CURSOR_PUSH_CODE,
+    NS_CURSOR_SET_CODE,
+    NS_PASTEBOARD_GENERAL_PASTEBOARD_CODE,
+    NS_PASTEBOARD_STRING_FOR_TYPE_CODE,
+    NS_PASTEBOARD_DECLARE_TYPES_CODE,
+    NS_PASTEBOARD_SET_STRING_CODE,
+    NS_PASTEBOARD_READ_OBJECTS_FOR_CLASSES_CODE,
+    NS_MENU_INIT_CODE,
+    NS_MENU_ADD_ITEM_CODE,
+    NS_MENU_ITEM_SET_TITLE_CODE,
+    NS_MENU_ITEM_SUBMENU_CODE,
+    NS_MENU_ITEM_INIT_CODE,
+    NS_MENU_ITEM_ARRAY_CODE,
+    NS_MENU_ITEM_SEPARATOR_ITEM_CODE,
+    NS_OPENGL_PIXEL_FORMAT_INIT_WITH_ATTRIBUTES_CODE,
+    NS_OPENGL_VIEW_INIT_WITH_FRAME_CODE,
+    NS_OPENGL_VIEW_PREPARE_OPENGL_CODE,
+    NS_OPENGL_VIEW_OPENGL_CONTEXT_CODE,
+    NS_OPENGL_CONTEXT_SET_VALUES_CODE,
+    NS_OPENGL_CONTEXT_MAKE_CURRENT_CONTEXT_CODE
 };
 
-void* SI_NS_CLASSES[6] = {NULL};
-void* SI_NS_FUNCTIONS[10];
+void* SI_NS_CLASSES[21] = {NULL};
+void* SI_NS_FUNCTIONS[147];
 
 void si_initNS(void) {
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
-	SI_NS_CLASSES[NS_RECT_CODE] = objc_getClass("NSRect");
 	SI_NS_CLASSES[NS_WINDOW_CODE] = objc_getClass("NSWindow");
 	SI_NS_CLASSES[NS_ALLOC_CODE] = sel_registerName("alloc");
 	SI_NS_CLASSES[NS_VALUE_CODE] = objc_getClass("NSValue");
-	SI_NS_CLASSES[NS_MAKE_RECT_CODE] = objc_getClass("NSMakeRect");
+	SI_NS_CLASSES[NS_EVENT_CODE] = objc_getClass("NSEvent");
+	SI_NS_CLASSES[NS_DATE_CODE] = objc_getClass("NSDate");
+	SI_NS_CLASSES[NS_VIEW_CODE] = objc_getClass("NSView");
+	SI_NS_CLASSES[NS_SCREEN_CODE] = objc_getClass("NSScreen");
+	SI_NS_CLASSES[NS_COLOR_CODE] = objc_getClass("NSColor");
+	SI_NS_CLASSES[NS_CURSOR_CODE] = objc_getClass("NSCursor");
+	SI_NS_CLASSES[NS_PASTEBOARD_CODE] = objc_getClass("NSPasteboard");
+	SI_NS_CLASSES[NS_STRING_CODE] = objc_getClass("NSString");
+	SI_NS_CLASSES[NS_OPENGL_CONTEXT_CODE] = objc_getClass("NSOpenGLContext");
+	SI_NS_CLASSES[NS_OPENGL_PF_CODE] = objc_getClass("NSOpenGLPixelFormat");
+	SI_NS_CLASSES[NS_IMAGE_CODE] = objc_getClass("NSImage");
+	SI_NS_CLASSES[NS_MENU_CODE] = objc_getClass("NSMenu");
+	SI_NS_CLASSES[NS_MENUITEM_CODE] = objc_getClass("NSMenuItem");
+	SI_NS_CLASSES[NS_DRAG_INFO_CODE] = objc_getClass("NSDraggingInfo");
+	SI_NS_CLASSES[NS_IMAGE_REP_CODE] = objc_getClass("NSImageRep");
+	SI_NS_CLASSES[NS_GRAPHICS_CONTEXT_CODE] = objc_getClass("NSGraphicsContext");
 
 	SI_NS_FUNCTIONS[NS_APPLICATION_SETPOLICY] = sel_getUid("setActivationPolicy:");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_getUid("sharedApplication");
@@ -582,6 +824,99 @@ void si_initNS(void) {
 	SI_NS_FUNCTIONS[NS_VALUE_RECT_CODE] = sel_registerName("valueWithRect:");
 	SI_NS_FUNCTIONS[NS_RELEASE_CODE] = sel_registerName("release");
 	SI_NS_FUNCTIONS[NS_WINDOW_MAKEKW_CODE] = sel_getUid("makeKeyWindow:");
+	SI_NS_FUNCTIONS[NS_OPENGL_FB_CODE] = sel_getUid("flushBuffer");
+    SI_NS_FUNCTIONS[NS_COLOR_CLEAR_CODE] = sel_getUid("clearColor");
+    SI_NS_FUNCTIONS[NS_COLOR_KEYBOARD_FOCUS_INDICATOR_CODE] = sel_getUid("keyboardFocusIndicatorColor");
+    SI_NS_FUNCTIONS[NS_COLOR_SET_CODE] = sel_getUid("set:");
+    SI_NS_FUNCTIONS[NS_COLOR_WITH_RGB_CODE] = sel_getUid("colorWithRed:green:blue:alpha:");
+    SI_NS_FUNCTIONS[NS_COLOR_WITH_SRGB_CODE] = sel_getUid("colorWithSRGBRed:green:blue:alpha:");
+    SI_NS_FUNCTIONS[NS_COLOR_WITH_CALIBRATED_CODE] = sel_getUid("colorWithCalibratedWhite:alpha:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_MAIN_MENU_CODE] = sel_getUid("mainMenu");
+    SI_NS_FUNCTIONS[NS_APPLICATION_SET_MAIN_MENU_CODE] = sel_getUid("setMainMenu:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_SERVICES_MENU_CODE] = sel_getUid("servicesMenu");
+    SI_NS_FUNCTIONS[NS_APPLICATION_SET_SERVICES_MENU_CODE] = sel_getUid("setServicesMenu:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_HELP_MENU_CODE] = sel_getUid("helpMenu");
+    SI_NS_FUNCTIONS[NS_APPLICATION_SET_HELP_MENU_CODE] = sel_getUid("setHelpMenu:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_WINDOWS_MENU_CODE] = sel_getUid("windowsMenu");
+    SI_NS_FUNCTIONS[NS_APPLICATION_SET_WINDOWS_MENU_CODE] = sel_getUid("setWindowsMenu:");
+    SI_NS_FUNCTIONS[NS_WINDOW_DELEGATE_CODE] = sel_getUid("delegate");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_DELEGATE_CODE] = sel_getUid("setDelegate:");
+    SI_NS_FUNCTIONS[NS_WINDOW_IS_VISIBLE_CODE] = sel_getUid("isVisible");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_IS_VISIBLE_CODE] = sel_getUid("setIsVisible:");
+    SI_NS_FUNCTIONS[NS_WINDOW_BACKGROUND_COLOR_CODE] = sel_getUid("backgroundColor");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_BACKGROUND_COLOR_CODE] = sel_getUid("setBackgroundColor:");
+    SI_NS_FUNCTIONS[NS_WINDOW_IS_OPAQUE_CODE] = sel_getUid("isOpaque");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_IS_OPAQUE_CODE] = sel_getUid("setIsOpaque:");
+    SI_NS_FUNCTIONS[NS_WINDOW_ALPHA_VALUE_CODE] = sel_getUid("alphaValue");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_ALPHA_VALUE_CODE] = sel_getUid("setAlphaValue:");
+    SI_NS_FUNCTIONS[NS_WINDOW_ACCEPTS_MOUSE_MOVED_EVENTS_CODE] = sel_getUid("acceptsMouseMovedEvents");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_ACCEPTS_MOUSE_MOVED_EVENTS_CODE] = sel_getUid("setAcceptsMouseMovedEvents:");
+    SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_CURRENT_CONTEXT_CODE] = sel_getUid("currentContext");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_SUBMENU_CODE] = sel_getUid("setSubmenu:");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_TITLE_CODE] = sel_getUid("title");
+    SI_NS_FUNCTIONS[NS_WINDOW_FRAME_CODE] = sel_getUid("frame");
+    SI_NS_FUNCTIONS[NS_WINDOW_INIT_CODE] = sel_getUid("initWithContentRect:styleMask:backing:defer:");
+    SI_NS_FUNCTIONS[NS_WINDOW_ORDER_FRONT_CODE] = sel_getUid("orderFront:");
+    SI_NS_FUNCTIONS[NS_WINDOW_MAKE_KEY_AND_ORDER_FRONT_CODE] = sel_getUid("makeKeyAndOrderFront:");
+    SI_NS_FUNCTIONS[NS_WINDOW_MAKE_KEY_WINDOW_CODE] = sel_getUid("makeKeyWindow");
+    SI_NS_FUNCTIONS[NS_WINDOW_IS_KEY_WINDOW_CODE] = sel_getUid("isKeyWindow");
+    SI_NS_FUNCTIONS[NS_WINDOW_CENTER_CODE] = sel_getUid("center");
+    SI_NS_FUNCTIONS[NS_WINDOW_MAKE_MAIN_WINDOW_CODE] = sel_getUid("makeMainWindow");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_FRAME_AND_DISPLAY_CODE] = sel_getUid("setFrame:display:animate:");
+    SI_NS_FUNCTIONS[NS_WINDOW_CONVERT_POINT_FROM_SCREEN_CODE] = sel_getUid("convertPointFromScreen:");
+    SI_NS_FUNCTIONS[NS_WINDOW_DISPLAY_CODE] = sel_getUid("display");
+    SI_NS_FUNCTIONS[NS_VIEW_INIT_CODE] = sel_getUid("init");
+    SI_NS_FUNCTIONS[NS_VIEW_INIT_WITH_FRAME_CODE] = sel_getUid("initWithFrame:");
+    SI_NS_FUNCTIONS[NS_VIEW_ADD_SUBVIEW_CODE] = sel_getUid("addSubview:");
+    SI_NS_FUNCTIONS[NS_VIEW_REGISTER_FOR_DRAGGED_TYPES_CODE] = sel_getUid("registerForDraggedTypes:");
+    SI_NS_FUNCTIONS[NS_EVENT_TYPE_CODE] = sel_getUid("type");
+    SI_NS_FUNCTIONS[NS_EVENT_LOCATION_IN_WINDOW_CODE] = sel_getUid("locationInWindow");
+    SI_NS_FUNCTIONS[NS_EVENT_MODIFIER_FLAGS_CODE] = sel_getUid("modifierFlags");
+    SI_NS_FUNCTIONS[NS_EVENT_KEY_CODE_CODE] = sel_getUid("keyCode");
+    SI_NS_FUNCTIONS[NS_EVENT_CHARACTERS_CODE] = sel_getUid("characters");
+    SI_NS_FUNCTIONS[NS_EVENT_DELTA_Y_CODE] = sel_getUid("deltaY");
+    SI_NS_FUNCTIONS[NS_EVENT_KEY_CODE_FOR_CHAR_CODE] = sel_getUid("keyCodeForChar:");
+    SI_NS_FUNCTIONS[NS_EVENT_MOUSE_LOCATION_CODE] = sel_getUid("mouseLocation");
+    SI_NS_FUNCTIONS[NS_EVENT_WINDOW_CODE] = sel_getUid("window");
+    SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_PASTEBOARD_CODE] = sel_getUid("draggingPasteboard");
+    SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_LOCATION_CODE] = sel_getUid("draggingLocation");
+    SI_NS_FUNCTIONS[NS_DRAGGING_INFO_NUMBER_OF_VALID_ITEMS_FOR_DROP_CODE] = sel_getUid("numberOfValidItemsForDrop");
+    SI_NS_FUNCTIONS[NS_DRAGGING_INFO_SET_NUMBER_OF_VALID_ITEMS_FOR_DROP_CODE] = sel_getUid("setNumberOfValidItemsForDrop:");
+    SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_DESTINATION_WINDOW_CODE] = sel_getUid("draggingDestinationWindow");
+    SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_SIZE_CODE] = sel_getUid("initWithSize:");
+    SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_DATA_CODE] = sel_getUid("initWithData:");
+    SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_FILE_CODE] = sel_getUid("initWithFile:");
+    SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_CGIMAGE_CODE] = sel_getUid("initWithCGImage:size:");
+    SI_NS_FUNCTIONS[NS_IMAGE_ADD_REPRESENTATION_CODE] = sel_getUid("addRepresentation:");
+    SI_NS_FUNCTIONS[NS_CURSOR_CURRENT_CURSOR_CODE] = sel_getUid("currentCursor");
+    SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_SET_CURRENT_CONTEXT_CODE] = sel_getUid("setCurrentContext:");
+    SI_NS_FUNCTIONS[NS_CURSOR_IMAGE_CODE] = sel_getUid("image");
+    SI_NS_FUNCTIONS[NS_CURSOR_HOT_SPOT_CODE] = sel_getUid("hotSpot");
+    SI_NS_FUNCTIONS[NS_CURSOR_ARROW_CURSOR_CODE] = sel_getUid("arrowCursor");
+    SI_NS_FUNCTIONS[NS_CURSOR_INIT_WITH_IMAGE_CODE] = sel_getUid("initWithImage:hotSpot:");
+    SI_NS_FUNCTIONS[NS_CURSOR_HIDE_CODE] = sel_getUid("hide");
+    SI_NS_FUNCTIONS[NS_CURSOR_UNHIDE_CODE] = sel_getUid("unhide");
+    SI_NS_FUNCTIONS[NS_CURSOR_POP_CODE] = sel_getUid("pop");
+    SI_NS_FUNCTIONS[NS_CURSOR_PUSH_CODE] = sel_getUid("push");
+    SI_NS_FUNCTIONS[NS_CURSOR_SET_CODE] = sel_getUid("set");
+    SI_NS_FUNCTIONS[NS_PASTEBOARD_GENERAL_PASTEBOARD_CODE] = sel_getUid("generalPasteboard");
+    SI_NS_FUNCTIONS[NS_PASTEBOARD_STRING_FOR_TYPE_CODE] = sel_getUid("stringForType:");
+    SI_NS_FUNCTIONS[NS_PASTEBOARD_DECLARE_TYPES_CODE] = sel_getUid("declareTypes:owner:");
+    SI_NS_FUNCTIONS[NS_PASTEBOARD_SET_STRING_CODE] = sel_getUid("setString:forType:");
+    SI_NS_FUNCTIONS[NS_PASTEBOARD_READ_OBJECTS_FOR_CLASSES_CODE] = sel_getUid("readObjectsForClasses:options:");
+    SI_NS_FUNCTIONS[NS_MENU_INIT_CODE] = sel_getUid("initWithTitle:");
+    SI_NS_FUNCTIONS[NS_MENU_ADD_ITEM_CODE] = sel_getUid("addItem:");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_TITLE_CODE] = sel_getUid("setTitle:");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_SUBMENU_CODE] = sel_getUid("submenu");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_INIT_CODE] = sel_getUid("initWithTitle:action:keyEquivalent:");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_ARRAY_CODE] = sel_getUid("itemArray");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_SEPARATOR_ITEM_CODE] = sel_getUid("separatorItem");
+    SI_NS_FUNCTIONS[NS_OPENGL_PIXEL_FORMAT_INIT_WITH_ATTRIBUTES_CODE] = sel_getUid("initWithAttributes:");
+    SI_NS_FUNCTIONS[NS_OPENGL_VIEW_INIT_WITH_FRAME_CODE] = sel_getUid("initWithFrame:pixelFormat:");
+    SI_NS_FUNCTIONS[NS_OPENGL_VIEW_PREPARE_OPENGL_CODE] = sel_getUid("prepareOpenGL");
+    SI_NS_FUNCTIONS[NS_OPENGL_VIEW_OPENGL_CONTEXT_CODE] = sel_getUid("openGLContext");
+    SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_SET_VALUES_CODE] = sel_getUid("setValues:forParameter:");
+    SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_MAKE_CURRENT_CONTEXT_CODE] = sel_getUid("makeCurrentContext");
 }
 
 NSRect NSMakeRect(double x, double y, double width, double height) {
@@ -594,6 +929,92 @@ NSRect NSMakeRect(double x, double y, double width, double height) {
     return r;
 }
 
+NSPoint NSMakePoint(double x, double y) {
+    NSPoint point;
+    point.x = x;
+    point.y = y;
+    return point;
+}
+
+NSSize NSMakeSize(double w, double h) {
+    NSSize size;
+    size.width = w;
+    size.height = h;
+    return size;
+}
+
+double NSMaxX(NSRect aRect) { return aRect.origin.x + aRect.size.width; }
+
+double NSMaxY(NSRect aRect) { return aRect.origin.y + aRect.size.height; }
+double NSMidX(NSRect aRect) { return aRect.origin.x + (aRect.size.width / 2); }
+double NSMidY(NSRect aRect) { return aRect.origin.y + (aRect.size.height / 2); }
+double NSMinX(NSRect aRect) { return aRect.origin.x; }
+double NSMinY(NSRect aRect) { return aRect.origin.y; }
+double NSWidth(NSRect aRect) { return aRect.size.width; }
+double NSHeight(NSRect aRect) { return aRect.size.height; }
+
+NSRect NSRectFromCGRect(CGRect cgrect) {
+    NSRect nsrect;
+    nsrect.origin = NSPointFromCGPoint(cgrect.origin);
+    nsrect.size = NSSizeFromCGSize(cgrect.size);
+    return nsrect;
+}
+
+CGRect NSRectToCGRect(NSRect nsrect) {
+    CGRect cgrect;
+    cgrect.origin = NSPointToCGPoint(nsrect.origin);
+    cgrect.size = NSSizeToCGSize(nsrect.size);
+    return cgrect;
+}
+
+NSPoint NSPointFromCGPoint(CGPoint cgpoint) { return NSMakePoint(cgpoint.x, cgpoint.y); }
+CGPoint NSPointToCGPoint(NSPoint nspoint) { return CGPointMake(nspoint.x, nspoint.y); }
+
+NSSize NSSizeFromCGSize(CGSize cgsize) { return NSMakeSize(cgsize.width, cgsize.height); }
+CGSize NSSizeToCGSize(NSSize nssize) { return CGSizeMake(nssize.width, nssize.height); }
+
+bool NSPointInRect(NSPoint aPoint, NSRect aRect) {
+    return (aPoint.x >= aRect.origin.x && aPoint.x <= NSMaxX(aRect) &&
+            aPoint.y >= aRect.origin.y && aPoint.y <= NSMaxY(aRect));
+}
+
+
+NSColor* NSColor_clearColor() {
+    void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_COLOR_CLEAR_CODE];
+    return (NSColor*)objc_func(nsclass, func);
+}
+
+NSColor* NSColor_keyboardFocusIndicatorColor() {
+    void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_COLOR_KEYBOARD_FOCUS_INDICATOR_CODE];
+    return (NSColor*)objc_func(nsclass, func);
+}
+
+void NSColor_set(NSColor* color) {
+    void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_COLOR_SET_CODE];
+    objc_func(nsclass, func, color);
+}
+
+NSColor* NSColor_colorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) {
+    void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_COLOR_WITH_RGB_CODE];
+    return (NSColor*)objc_func(nsclass, func, red, green, blue, alpha);
+}
+
+NSColor* NSColor_colorWithSRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) {
+    void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_COLOR_WITH_SRGB_CODE];
+    return (NSColor*)objc_func(nsclass, func, red, green, blue, alpha);
+}
+
+NSColor* NSColor_colorWithCalibrated(CGFloat white, CGFloat alpha) {
+    void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_COLOR_WITH_CALIBRATED_CODE];
+    return (NSColor*)objc_func(nsclass, func, white, alpha);
+}
+
 NSApplication* NSApplication_sharedApplication(void) {
 	if (SI_NS_CLASSES[0] == NULL)
 		si_initNS();
@@ -604,9 +1025,111 @@ NSApplication* NSApplication_sharedApplication(void) {
 	return objc_func(nsclass, func);
 }
 
+NSMenu* NSApplication_mainMenu(NSApplication* application) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_MAIN_MENU_CODE];
+    return (NSMenu*)objc_func(application, func);
+}
+
+void NSApplication_setMainMenu(NSApplication* application, NSMenu* mainMenu) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SET_MAIN_MENU_CODE];
+    objc_func(application, func, mainMenu);
+}
+
+NSMenu* NSApplication_servicesMenu(NSApplication* application) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SERVICES_MENU_CODE];
+    return (NSMenu*)objc_func(application, func);
+}
+
+void NSApplication_setServicesMenu(NSApplication* application, NSMenu* servicesMenu) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SET_SERVICES_MENU_CODE];
+    objc_func(application, func, servicesMenu);
+}
+
+NSMenu* NSApplication_helpMenu(NSApplication* application) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_HELP_MENU_CODE];
+    return (NSMenu*)objc_func(application, func);
+}
+
+void NSApplication_setHelpMenu(NSApplication* application, NSMenu* helpMenu) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SET_HELP_MENU_CODE];
+    objc_func(application, func, helpMenu);
+}
+
+NSMenu* NSApplication_windowsMenu(NSApplication* application) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_WINDOWS_MENU_CODE];
+    return (NSMenu*)objc_func(application, func);
+}
+
+void NSApplication_setWindowsMenu(NSApplication* application, NSMenu* windowsMenu) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SET_WINDOWS_MENU_CODE];
+    objc_func(application, func, windowsMenu);
+}
+
+NSApplicationActivationPolicy NSApplication_activationPolicy(NSApplication* application) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_ACTIVATION_POLICY_CODE];
+    return (NSApplicationActivationPolicy)(intptr_t)objc_func(application, func);
+}
+
+NSImage* NSApplication_applicationIconImage(NSApplication* application) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_APPLICATION_ICON_IMAGE_CODE];
+    return (NSImage*)objc_func(application, func);
+}
+
+void NSApplication_setApplicationIconImage(NSApplication* application, NSImage* applicationIconImage) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SET_APPLICATION_ICON_IMAGE_CODE];
+    objc_func(application, func, applicationIconImage);
+}
+
+void NSApplication_stop(NSApplication* application, void* view) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_STOP_CODE];
+    objc_func(application, func, view);
+}
+
+void NSApplication_terminate(NSApplication* application, id sender) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_TERMINATE_CODE];
+    objc_func(application, func, sender);
+}
+
+void NSApplication_sendEvent(NSApplication* application, NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SEND_EVENT_CODE];
+    objc_func(application, func, event);
+}
+
+void NSApplication_updateWindows(NSApplication* application) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_UPDATE_WINDOWS_CODE];
+    objc_func(application, func);
+}
+
+void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool flag) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_ACTIVATE_IGNORING_OTHER_APPS_CODE];
+    objc_func(application, func, flag);
+}
+
+NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, int mode, bool deqFlag) {
+    void* func = SI_NS_FUNCTIONS[NS_APPLICATION_NEXT_EVENT_MATCHING_MASK_CODE];
+    return (NSEvent*)objc_func(application, func, mask, expiration, mode, deqFlag);
+}
+
 si_declare_double(NSApplication, void, setActivationPolicy, NS_APPLICATION_SETPOLICY, NSApplicationActivationPolicy)
 si_declare_single(NSApplication, void, run, NS_APPLICATION_RUN_CODE)
 si_declare_single(NSApplication, void, finishLaunching, NS_APPLICATION_FL_CODE)
+
+NSScreen* NSScreen_mainScreen() {
+    void* func = SI_NS_FUNCTIONS[NS_SCREEN_MAIN_SCREEN_CODE];
+	void* class = SI_NS_CLASSES[NS_SCREEN_CODE];
+
+    return (NSScreen*)objc_func(class, func);
+}
+
+NSRect NSScreen_frame(NSScreen* screen) {
+    void* func = SI_NS_FUNCTIONS[NS_SCREEN_FRAME_CODE];
+    return *(NSRect*)objc_func(screen, func);
+}
+
+NSRect NSScreen_visibleFrame(NSScreen* screen) {
+    void* func = SI_NS_FUNCTIONS[NS_SCREEN_VISIBLE_FRAME_CODE];
+    return *(NSRect*)objc_func(screen, func);
+}
 
 NSWindow* NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingStoreType backingStoreType, bool flag) {
     void* nsclass = SI_NS_CLASSES[NS_WINDOW_CODE];
@@ -616,11 +1139,422 @@ NSWindow* NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingSt
     return objc_func(windowAlloc, func, contentRect, style, backingStoreType, flag);
 }
 
+const char* NSWindow_title(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_TITLE_CODE];
+    return (const char*)objc_func(window, func);
+}
+
+void NSWindow_setTitle(NSWindow* window, const char* title) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_TITLE_CODE];
+    objc_func(window, func, title);
+}
+
+NSView* NSWindow_contentView(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_CONTENT_VIEW_CODE];
+    return (NSView*)objc_func(window, func);
+}
+
+void NSWindow_setContentView(NSWindow* window, NSView* contentView) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_CONTENT_VIEW_CODE];
+    objc_func(window, func, contentView);
+}
+
+id NSWindow_delegate(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_DELEGATE_CODE];
+    return (id)objc_func(window, func);
+}
+
+void NSWindow_setDelegate(NSWindow* window, id delegate) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_DELEGATE_CODE];
+    objc_func(window, func, delegate);
+}
+
+bool NSWindow_isVisible(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_IS_VISIBLE_CODE];
+    return (bool)objc_func(window, func);
+}
+
+void NSWindow_setIsVisible(NSWindow* window, bool isVisible) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_IS_VISIBLE_CODE];
+    objc_func(window, func, isVisible);
+}
+
+NSColor* NSWindow_backgroundColor(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_BACKGROUND_COLOR_CODE];
+    return (NSColor*)objc_func(window, func);
+}
+
+void NSWindow_setBackgroundColor(NSWindow* window, NSColor* backgroundColor) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_BACKGROUND_COLOR_CODE];
+    objc_func(window, func, backgroundColor);
+}
+
+bool NSWindow_isOpaque(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_IS_OPAQUE_CODE];
+    return (bool)objc_func(window, func);
+}
+
+void NSWindow_setIsOpaque(NSWindow* window, bool isOpaque) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_IS_OPAQUE_CODE];
+    objc_func(window, func, isOpaque);
+}
+
+CGFloat NSWindow_alphaValue(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_ALPHA_VALUE_CODE];
+    return (CGFloat)(intptr_t)objc_func(window, func);
+}
+
+void NSWindow_setAlphaValue(NSWindow* window, CGFloat alphaValue) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_ALPHA_VALUE_CODE];
+    objc_func(window, func, (intptr_t)alphaValue);
+}
+
+bool NSWindow_acceptsMouseMovedEvents(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_ACCEPTS_MOUSE_MOVED_EVENTS_CODE];
+    return (bool)objc_func(window, func);
+}
+
+void NSWindow_setAcceptsMouseMovedEvents(NSWindow* window, bool acceptsMouseMovedEvents) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_ACCEPTS_MOUSE_MOVED_EVENTS_CODE];
+    objc_func(window, func, acceptsMouseMovedEvents);
+}
+
 si_declare_single(NSWindow, void, makeKeyWindow, NS_WINDOW_MAKEKW_CODE)
 
 si_declare_double(NSWindow, void, orderFront, NS_WINDOW_MAKEOF_CODE, NSWindow*)
 si_declare_double(NSWindow, void, makeKeyAndOrderFront, NS_WINDOW_MAKEKO_CODE, SEL)
 
+NSInteger NSDraggingInfo_numberOfValidItemsForDrop(NSDraggingInfo* info) {
+    void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_NUMBER_OF_VALID_ITEMS_FOR_DROP_CODE];
+    return (NSInteger)(intptr_t)objc_func(info, func);
+}
+
+NSGraphicsContext* NSGraphicsContext_currentContext(NSGraphicsContext* context) {
+    void* func = SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_CURRENT_CONTEXT_CODE];
+    return (NSGraphicsContext*)objc_func(context, func);
+}
+
+void NSGraphicsContext_setCurrentContext(NSGraphicsContext* context, NSGraphicsContext* currentContext) {
+    void* func = SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_SET_CURRENT_CONTEXT_CODE];
+    objc_func(context, func, currentContext);
+}
+
+void NSMenuItem_setSubmenu(NSMenuItem* item, NSMenu* submenu) {
+    void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_SUBMENU_CODE];
+    objc_func(item, func, submenu);
+}
+
+void NSMenuItem_setTitle(NSMenuItem* item, const char* title) {
+    void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_TITLE_CODE];
+    objc_func(item, func, title);
+}
+
+NSRect NSWindow_frame(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_FRAME_CODE];
+    return *(NSRect*)objc_func(window, func);
+}
+
+bool NSWindow_isKeyWindow(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_IS_KEY_WINDOW_CODE];
+    return (bool)objc_func(window, func);
+}
+
+void NSWindow_center(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_CENTER_CODE];
+    objc_func(window, func);
+}
+
+void NSWindow_makeMainWindow(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_MAKE_MAIN_WINDOW_CODE];
+    objc_func(window, func);
+}
+
+void NSWindow_setFrameAndDisplay(NSWindow* window, NSRect frame, bool display, bool animate) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_FRAME_AND_DISPLAY_CODE];
+    objc_func(window, func, frame, display, animate);
+}
+
+NSPoint NSWindow_convertPointFromScreen(NSWindow* window, NSPoint point) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_CONVERT_POINT_FROM_SCREEN_CODE];
+    return *(NSPoint*)objc_func(window, func, point);
+}
+
+void NSWindow_display(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_DISPLAY_CODE];
+    objc_func(window, func);
+}
+
+void NSWindow_contentView_wantsLayer(NSWindow* window, bool wantsLayer) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_CONTENT_VIEW_CODE];
+    objc_func(window, func, wantsLayer);
+}
+
+NSView* NSView_init() {
+	void* nclass = SI_NS_CLASSES[NS_VIEW_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_VIEW_INIT_CODE];
+    return (NSView*)objc_func(nclass, func);
+}
+
+NSView* NSView_initWithFrame(NSRect frameRect) {
+	void* nclass = SI_NS_CLASSES[NS_VIEW_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_VIEW_INIT_WITH_FRAME_CODE];
+    return (NSView*)objc_func(nclass, func, frameRect);
+}
+
+void NSView_addSubview(NSView* view, NSView* subview) {
+    void* func = SI_NS_FUNCTIONS[NS_VIEW_ADD_SUBVIEW_CODE];
+    objc_func(view, func, subview);
+}
+
+void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newTypes) {
+    void* func = SI_NS_FUNCTIONS[NS_VIEW_REGISTER_FOR_DRAGGED_TYPES_CODE];
+    objc_func(view, func, newTypes);
+}
+
+NSEventType NSEvent_type(NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_EVENT_TYPE_CODE];
+    return (NSEventType)(intptr_t)objc_func(event, func);
+}
+
+NSPoint NSEvent_locationInWindow(NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_EVENT_LOCATION_IN_WINDOW_CODE];
+    return *(NSPoint*)objc_func(event, func);
+}
+
+NSEventModifierFlags NSEvent_modifierFlags(NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_EVENT_MODIFIER_FLAGS_CODE];
+    return (NSEventModifierFlags)(intptr_t)objc_func(event, func);
+}
+
+unsigned short NSEvent_keyCode(NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_EVENT_KEY_CODE_CODE];
+    return (unsigned short)(intptr_t)objc_func(event, func);
+}
+
+const char* NSEvent_characters(NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_EVENT_CHARACTERS_CODE];
+    return (const char*)objc_func(event, func);
+}
+
+CGFloat NSEvent_deltaY(NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_EVENT_DELTA_Y_CODE];
+    return *(CGFloat*)objc_func(event, func);
+}
+
+unsigned short NSEvent_keyCodeForChar(char* keyStr) {
+	for (NSUInteger i = 0; i < NSKEYCOUNT; i++) {
+		if (strcmp(keyStr, NSKEYS[i]))
+			return NSKEYI[i + 1];
+	}
+
+	return keyStr[0];
+}
+
+NSPoint NSEvent_mouseLocation(NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_EVENT_MOUSE_LOCATION_CODE];
+    return *(NSPoint*)objc_func(event, func);
+}
+
+NSWindow* NSEvent_window(NSEvent* event) {
+    void* func = SI_NS_FUNCTIONS[NS_EVENT_WINDOW_CODE];
+    return (NSWindow*)objc_func(event, func);
+}
+
+NSPasteboard* NSDraggingInfo_draggingPasteboard(NSDraggingInfo* info) {
+    void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_PASTEBOARD_CODE];
+    return (NSPasteboard*)objc_func(info, func);
+}
+
+NSPoint NSDraggingInfo_draggingLocation(NSDraggingInfo* info) {
+    void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_LOCATION_CODE];
+    return *(NSPoint*)objc_func(info, func);
+}
+
+void NSDraggingInfo_setNumberOfValidItemsForDrop(NSDraggingInfo* info, NSInteger numberOfValidItemsForDrop) {
+    void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_SET_NUMBER_OF_VALID_ITEMS_FOR_DROP_CODE];
+    objc_func(info, func, (intptr_t)numberOfValidItemsForDrop);
+}
+
+NSWindow* NSDraggingInfo_draggingDestinationWindow(NSDraggingInfo* info) {
+    void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_DESTINATION_WINDOW_CODE];
+    return (NSWindow*)objc_func(info, func);
+}
+
+NSImage* NSImage_initWithSize(NSSize size) {
+    void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_SIZE_CODE];
+    return (NSImage*)objc_func(SI_NS_CLASSES[NS_IMAGE_CODE], func, size);
+}
+
+NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
+    void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_DATA_CODE];
+    return (NSImage*)objc_func(SI_NS_CLASSES[NS_IMAGE_CODE], func, bitmapData, length);
+}
+
+NSImage* NSImage_initWithFile(const char* path) {
+    void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_FILE_CODE];
+    return (NSImage*)objc_func(SI_NS_CLASSES[NS_IMAGE_CODE], func, path);
+}
+
+NSImage* NSImage_initWithCGImage(CGImageRef cgImage, NSSize size) {
+    void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_CGIMAGE_CODE];
+    return (NSImage*)objc_func(SI_NS_CLASSES[NS_IMAGE_CODE], func, cgImage, size);
+}
+
+void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep) {
+    void* func = SI_NS_FUNCTIONS[NS_IMAGE_ADD_REPRESENTATION_CODE];
+    objc_func(image, imageRep, func);
+}
+
+NSCursor* NSCursor_currentCursor() {
+	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_CURRENT_CURSOR_CODE];
+    return (NSCursor*)objc_func(nclass, func);
+}
+
+NSImage* NSCursor_image(NSCursor* cursor) {
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_IMAGE_CODE];
+    return (NSImage*)objc_func(cursor, func);
+}
+
+NSPoint NSCursor_hotSpot(NSCursor* cursor) {
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_HOT_SPOT_CODE];
+    return *(NSPoint*)objc_func(cursor, func);
+}
+
+NSCursor* NSCursor_arrowCursor() {
+	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_ARROW_CURSOR_CODE];
+    return (NSCursor*)objc_func(nclass, func);
+}
+
+NSCursor* NSCursor_initWithImage(NSImage* newImage, NSPoint aPoint) {
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_INIT_WITH_IMAGE_CODE];
+    return (NSCursor*)objc_func(newImage, func, aPoint);
+}
+
+void NSCursor_hide() {
+	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_HIDE_CODE];
+    objc_func(nclass, func);
+}
+
+void NSCursor_unhide() {
+	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_UNHIDE_CODE];
+    objc_func(nclass, func);
+}
+
+void NSCursor_pop(NSCursor* cursor) {
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_POP_CODE];
+    objc_func(cursor, func);
+}
+
+void NSCursor_push(NSCursor* cursor) {
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_PUSH_CODE];
+    objc_func(cursor, func);
+}
+
+void NSCursor_set(NSCursor* cursor) {
+    void* func = SI_NS_FUNCTIONS[NS_CURSOR_SET_CODE];
+    objc_func(cursor, func);
+}
+
+NSPasteboard* NSPasteboard_generalPasteboard() {
+	void* nclass = SI_NS_CLASSES[NS_PASTEBOARD_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_GENERAL_PASTEBOARD_CODE];
+    return (NSPasteboard*)objc_func(nclass, func);
+}
+
+const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType) {
+    void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_STRING_FOR_TYPE_CODE];
+    return (const char*)objc_func(pasteboard, func, dataType);
+}
+
+NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, siArray(NSPasteboardType) newTypes, void* owner) {
+    void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_DECLARE_TYPES_CODE];
+    return (NSInteger)(intptr_t)objc_func(pasteboard, func, newTypes, owner);
+}
+
+bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType) {
+    void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_SET_STRING_CODE];
+    return (bool)objc_func(pasteboard, func, stringToWrite, dataType);
+}
+
+siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard, siArray(Class) classArray, void* options) {
+    void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_READ_OBJECTS_FOR_CLASSES_CODE];
+    return (siArray(const char*))objc_func(pasteboard, func, classArray, options);
+}
+
+NSMenu* NSMenu_init(const char* title) {
+    void* func = SI_NS_FUNCTIONS[NS_MENU_INIT_CODE];
+    return (NSMenu*)objc_func(SI_NS_CLASSES[NS_MENU_CODE], func, title);
+}
+
+void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem) {
+    void* func = SI_NS_FUNCTIONS[NS_MENU_ADD_ITEM_CODE];
+    objc_func(menu, func, newItem);
+}
+
+const char* NSMenuItem_title(NSMenuItem* item) {
+    void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_TITLE_CODE];
+    return (const char*)objc_func(item, func);
+}
+
+NSMenu* NSMenuItem_submenu(NSMenuItem* item) {
+    void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_SUBMENU_CODE];
+    return (NSMenu*)objc_func(item, func);
+}
+
+NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEquivalent) {
+    void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_INIT_CODE];
+    return (NSMenuItem*)objc_func(SI_NS_CLASSES[NS_MENUITEM_CODE], func, selector, keyEquivalent);
+}
+
+siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu) {
+    void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_ARRAY_CODE];
+    return (siArray(NSMenuItem*))objc_func(menu, func);
+}
+
+NSMenuItem* NSMenuItem_separatorItem() {
+	void* nclass = SI_NS_CLASSES[NS_MENUITEM_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_SEPARATOR_ITEM_CODE];
+    return (NSMenuItem*)objc_func(nclass, func);
+}
+
 void NSRelease(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RELEASE_CODE]); }
+
+/* ======== OpenGL ======== */
+NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs) {
+    void* func = SI_NS_FUNCTIONS[NS_OPENGL_PIXEL_FORMAT_INIT_WITH_ATTRIBUTES_CODE];
+    return (NSOpenGLPixelFormat*)objc_func(SI_NS_CLASSES[NS_OPENGL_PF_CODE], func, attribs);
+}
+
+NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format) {
+    void* func = SI_NS_FUNCTIONS[NS_OPENGL_VIEW_INIT_WITH_FRAME_CODE];
+    return (NSOpenGLView*)objc_func(SI_NS_CLASSES[NS_VIEW_CODE], func, frameRect, format);
+}
+
+void NSOpenGLView_prepareOpenGL(NSOpenGLView* view) {
+    void* func = SI_NS_FUNCTIONS[NS_OPENGL_VIEW_PREPARE_OPENGL_CODE];
+    objc_func(view, func);
+}
+
+NSOpenGLContext* NSOpenGLView_openGLContext(NSOpenGLView* view) {
+    void* func = SI_NS_FUNCTIONS[NS_OPENGL_VIEW_OPENGL_CONTEXT_CODE];
+    return (NSOpenGLContext*)objc_func(view, func);
+}
+
+void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpenGLContextParameter param) {
+    void* func = SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_SET_VALUES_CODE];
+    objc_func(context, func, vals, param);
+}
+
+void NSOpenGLContext_makeCurrentContext(NSOpenGLContext* context) {
+    void* func = SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_MAKE_CURRENT_CONTEXT_CODE];
+    objc_func(context, func);
+}
+
+si_declare_single(NSOpenGLContext, void, flushBuffer, NS_OPENGL_CONTEXT_FLUSH_BUFFER_CODE)
+
 
 #endif /* SILICON_IMPLEMENTATION */
