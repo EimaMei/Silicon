@@ -143,6 +143,7 @@ typedef void NSView;
 #ifndef __OBJC__
 typedef void NSDate;
 typedef void NSString;
+typedef void NSArray;
 #else
 
 #endif
@@ -513,6 +514,12 @@ SICDEF NSColor* NSColor_clearColor();
 /* */
 SICDEF NSColor* NSColor_keyboardFocusIndicatorColor();
 
+/* ============ NSString ============ */
+SICDEF NSString* NSString_stringWithUTF8String(const char* str);
+
+/* ============= NSArray ============ */
+SICDEF NSArray* si_array_to_NSArray(siArray(void) array);
+
 /* ====== NSColor functions ====== */
 /* */
 SICDEF void NSColor_set(NSColor* color);
@@ -557,7 +564,7 @@ SICDEF void NSApplication_updateWindows(NSApplication* application);
 /* */
 SICDEF void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool flag);
 /* */
-SICDEF NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, int mode, bool deqFlag);
+SICDEF NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, NSString* mode, bool deqFlag);
 
 /* ============ NSScreen class ============ */
 /* ====== NSScreen properties ====== */
@@ -771,6 +778,8 @@ APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeTextFinderOptions		API_AVAI
 APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeURL                        API_AVAILABLE(macos(10.13)); // Equivalent to kUTTypeURL
 APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeFileURL                    API_AVAILABLE(macos(10.13)); // Equivalent to kUTTypeFileURL
 
+#define NSDefaultRunLoopMode NSString_stringWithUTF8String("kCFRunLoopDefaultMode")
+
 #endif /* ndef SILICON_H */
 
 #ifdef SILICON_IMPLEMENTATION
@@ -787,6 +796,8 @@ APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeFileURL                    
 	type class##_##name(class* obj, arg_type d) { \
 		return (type)objc_func(obj, SI_NS_FUNCTIONS[func], d); \
 	}
+
+#define NSAlloc(nsclass) objc_func(nsclass, SI_NS_CLASSES[NS_ALLOC_CODE])
 
 typedef void* (*objc_send_type)(id, SEL, ...);
 objc_send_type objc_func = (objc_send_type)objc_msgSend;
@@ -818,6 +829,7 @@ enum { /* classes */
 	NS_EVENT_CODE,
 	NS_DATE_CODE,
 	NS_VIEW_CODE,
+    NS_OPENGL_VIEW_CODE,
 	NS_SCREEN_CODE,
 	NS_COLOR_CODE,
 	NS_CURSOR_CODE,
@@ -955,13 +967,16 @@ enum { /* classes */
     NS_OPENGL_CONTEXT_SET_VALUES_CODE,
     NS_OPENGL_CONTEXT_MAKE_CURRENT_CONTEXT_CODE,
 	NS_BITMAPIMAGEREP_BITMAP_CODE,
-	NS_BITMAPIMAGEREP_INIT_BITMAP_CODE
+	NS_BITMAPIMAGEREP_INIT_BITMAP_CODE,
+    NS_VIEW_WANTSLAYER_CODE,
+    NS_STRING_WIDTH_UTF8_STRING_CODE,
+    NS_ARRAY_SI_ARRAY_CODE,
 };
 
 void* SI_NS_CLASSES[22] = {NULL};
-void* SI_NS_FUNCTIONS[149];
+void* SI_NS_FUNCTIONS[150];
 
-void si_initNS(void) {
+void si_initNS(void) {    
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
 	SI_NS_CLASSES[NS_WINDOW_CODE] = objc_getClass("NSWindow");
 	SI_NS_CLASSES[NS_ALLOC_CODE] = sel_registerName("alloc");
@@ -969,6 +984,7 @@ void si_initNS(void) {
 	SI_NS_CLASSES[NS_EVENT_CODE] = objc_getClass("NSEvent");
 	SI_NS_CLASSES[NS_DATE_CODE] = objc_getClass("NSDate");
 	SI_NS_CLASSES[NS_VIEW_CODE] = objc_getClass("NSView");
+    SI_NS_CLASSES[NS_OPENGL_VIEW_CODE] = objc_getClass("NSOpenGLView");
 	SI_NS_CLASSES[NS_SCREEN_CODE] = objc_getClass("NSScreen");
 	SI_NS_CLASSES[NS_COLOR_CODE] = objc_getClass("NSColor");
 	SI_NS_CLASSES[NS_CURSOR_CODE] = objc_getClass("NSCursor");
@@ -1077,6 +1093,7 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_MENU_INIT_CODE] = sel_getUid("initWithTitle:");
     SI_NS_FUNCTIONS[NS_MENU_ADD_ITEM_CODE] = sel_getUid("addItem:");
     SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_TITLE_CODE] = sel_getUid("setTitle:");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_TITLE_CODE] = sel_getUid("setTitle:");
     SI_NS_FUNCTIONS[NS_MENU_ITEM_SUBMENU_CODE] = sel_getUid("submenu");
     SI_NS_FUNCTIONS[NS_MENU_ITEM_INIT_CODE] = sel_getUid("initWithTitle:action:keyEquivalent:");
     SI_NS_FUNCTIONS[NS_MENU_ITEM_ARRAY_CODE] = sel_getUid("itemArray");
@@ -1089,6 +1106,15 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_MAKE_CURRENT_CONTEXT_CODE] = sel_getUid("makeCurrentContext");
 	SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_BITMAP_CODE] = sel_getUid("bitmapData:");
 	SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_INIT_BITMAP_CODE] = sel_getUid("initWithBitmapData:planes:width:height:bps:spp:hasAlpha:isPlanar:colorSpaceName:bitmapFormat:bytesPerRow:bitsPerPixel:");
+    SI_NS_FUNCTIONS[NS_VIEW_WANTSLAYER_CODE] = sel_getUid("wantsLayer:");
+    SI_NS_FUNCTIONS[NS_STRING_WIDTH_UTF8_STRING_CODE] = sel_getUid("stringWithUTF8String:");
+    SI_NS_FUNCTIONS[NS_ARRAY_SI_ARRAY_CODE] = sel_getUid("initWithObjects:count:");
+    SI_NS_FUNCTIONS[NS_WINDOW_SET_CONTENT_VIEW_CODE] = sel_getUid("setContentView:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_NEXT_EVENT_MATCHING_MASK_CODE] = sel_getUid("nextEventMatchingMask:untilDate:inMode:dequeue:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_SEND_EVENT_CODE] = sel_getUid("sendEvent:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_UPDATE_WINDOWS_CODE] = sel_getUid("updateWindows");
+    SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_FLUSH_BUFFER_CODE] = sel_getUid("flushBuffer");
+    SI_NS_FUNCTIONS[NS_APPLICATION_TERMINATE_CODE] = sel_getUid("terminate:");
 }
 
 void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function) {
@@ -1293,7 +1319,7 @@ void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool fl
     objc_func(application, func, flag);
 }
 
-NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, int mode, bool deqFlag) {
+NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, NSString* mode, bool deqFlag) {
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_NEXT_EVENT_MATCHING_MASK_CODE];
     return (NSEvent*)objc_func(application, func, mask, expiration, mode, deqFlag);
 }
@@ -1323,8 +1349,7 @@ NSWindow* NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingSt
     void* nsclass = SI_NS_CLASSES[NS_WINDOW_CODE];
 	void* func = SI_NS_FUNCTIONS[NS_WINDOW_INITR_CODE];
 
-    void* windowAlloc = objc_func(nsclass, SI_NS_CLASSES[NS_ALLOC_CODE]);
-    return objc_func(windowAlloc, func, contentRect, style, backingStoreType, flag);
+    return objc_func(NSAlloc(nsclass), func, contentRect, style, backingStoreType, flag);
 }
 
 const char* NSWindow_title(NSWindow* window) {
@@ -1334,7 +1359,9 @@ const char* NSWindow_title(NSWindow* window) {
 
 void NSWindow_setTitle(NSWindow* window, const char* title) {
     void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_TITLE_CODE];
-    objc_func(window, func, title);
+
+    NSString* str = NSString_stringWithUTF8String(title);
+    objc_func(window, func, str);
 }
 
 NSView* NSWindow_contentView(NSWindow* window) {
@@ -1473,20 +1500,20 @@ void NSWindow_display(NSWindow* window) {
 }
 
 void NSWindow_contentView_wantsLayer(NSWindow* window, bool wantsLayer) {
-    void* func = SI_NS_FUNCTIONS[NS_WINDOW_CONTENT_VIEW_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_VIEW_WANTSLAYER_CODE];
     objc_func(window, func, wantsLayer);
 }
 
 NSView* NSView_init() {
 	void* nclass = SI_NS_CLASSES[NS_VIEW_CODE];
     void* func = SI_NS_FUNCTIONS[NS_VIEW_INIT_CODE];
-    return (NSView*)objc_func(nclass, func);
+    return (NSView*)objc_func(NSAlloc(nclass), func);
 }
 
 NSView* NSView_initWithFrame(NSRect frameRect) {
 	void* nclass = SI_NS_CLASSES[NS_VIEW_CODE];
     void* func = SI_NS_FUNCTIONS[NS_VIEW_INIT_WITH_FRAME_CODE];
-    return (NSView*)objc_func(nclass, func, frameRect);
+    return (NSView*)objc_func(NSAlloc(nclass), func, frameRect);
 }
 
 void NSView_addSubview(NSView* view, NSView* subview) {
@@ -1570,22 +1597,22 @@ NSWindow* NSDraggingInfo_draggingDestinationWindow(NSDraggingInfo* info) {
 
 NSImage* NSImage_initWithSize(NSSize size) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_SIZE_CODE];
-    return (NSImage*)objc_func(SI_NS_CLASSES[NS_IMAGE_CODE], func, size);
+    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, size);
 }
 
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_DATA_CODE];
-    return (NSImage*)objc_func(SI_NS_CLASSES[NS_IMAGE_CODE], func, bitmapData, length);
+    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, bitmapData, length);
 }
 
 NSImage* NSImage_initWithFile(const char* path) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_FILE_CODE];
-    return (NSImage*)objc_func(SI_NS_CLASSES[NS_IMAGE_CODE], func, path);
+    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, path);
 }
 
 NSImage* NSImage_initWithCGImage(CGImageRef cgImage, NSSize size) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_CGIMAGE_CODE];
-    return (NSImage*)objc_func(SI_NS_CLASSES[NS_IMAGE_CODE], func, cgImage, size);
+    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, cgImage, size);
 }
 
 void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep) {
@@ -1617,7 +1644,9 @@ NSCursor* NSCursor_arrowCursor() {
 
 NSCursor* NSCursor_initWithImage(NSImage* newImage, NSPoint aPoint) {
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_INIT_WITH_IMAGE_CODE];
-    return (NSCursor*)objc_func(newImage, func, aPoint);
+    void* nsclass = SI_NS_CLASSES[NS_CURSOR_CODE];
+
+    return (NSCursor*)objc_func(NSAlloc(nsclass), newImage, func, aPoint);
 }
 
 void NSCursor_hide() {
@@ -1675,7 +1704,7 @@ siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard
 
 NSMenu* NSMenu_init(const char* title) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_INIT_CODE];
-    return (NSMenu*)objc_func(SI_NS_CLASSES[NS_MENU_CODE], func, title);
+    return (NSMenu*)objc_func(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE]), func, title);
 }
 
 void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem) {
@@ -1695,7 +1724,7 @@ NSMenu* NSMenuItem_submenu(NSMenuItem* item) {
 
 NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEquivalent) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_INIT_CODE];
-    return (NSMenuItem*)objc_func(SI_NS_CLASSES[NS_MENUITEM_CODE], func, selector, keyEquivalent);
+    return (NSMenuItem*)objc_func(NSAlloc(SI_NS_CLASSES[NS_MENUITEM_CODE]), func, selector, keyEquivalent);
 }
 
 siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu) {
@@ -1716,7 +1745,19 @@ unsigned char* NSBitmapImageRep_bitmapData(NSBitmapImageRep* imageRep) {
 
 NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NSInteger width, NSInteger height, NSInteger bps, NSInteger spp, bool alpha, bool isPlanar, const char* colorSpaceName, NSBitmapFormat bitmapFormat, NSInteger rowBytes, NSInteger pixelBits) {
 	void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_INIT_BITMAP_CODE];
-    return (NSBitmapImageRep*)objc_func(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE], func, planes, width, height, bps, spp, alpha, isPlanar, colorSpaceName, bitmapFormat, rowBytes, pixelBits);
+    return (NSBitmapImageRep*)objc_func(NSAlloc(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE]), func, planes, width, height, bps, spp, alpha, isPlanar, colorSpaceName, bitmapFormat, rowBytes, pixelBits);
+}
+
+NSString* NSString_stringWithUTF8String(const char* str) {
+    void* func = SI_NS_FUNCTIONS[NS_STRING_WIDTH_UTF8_STRING_CODE];
+    return objc_func(SI_NS_CLASSES[NS_STRING_CODE], func, str);
+}
+
+NSArray* si_array_to_NSArray(siArray(void) array) {
+    void* func = SI_NS_FUNCTIONS[NS_ARRAY_SI_ARRAY_CODE];
+    void* nsclass = SI_NS_CLASSES[NS_WINDOW_CODE];
+
+    return objc_func(NSAlloc(nsclass), func, array, si_array_len(array));
 }
 
 void NSRelease(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RELEASE_CODE]); }
@@ -1724,12 +1765,12 @@ void NSRelease(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RELEASE_CODE]); }
 /* ======== OpenGL ======== */
 NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs) {
     void* func = SI_NS_FUNCTIONS[NS_OPENGL_PIXEL_FORMAT_INIT_WITH_ATTRIBUTES_CODE];
-    return (NSOpenGLPixelFormat*)objc_func(SI_NS_CLASSES[NS_OPENGL_PF_CODE], func, attribs);
+    return (NSOpenGLPixelFormat*)objc_func(NSAlloc(SI_NS_CLASSES[NS_OPENGL_PF_CODE]), func, attribs);
 }
 
 NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format) {
     void* func = SI_NS_FUNCTIONS[NS_OPENGL_VIEW_INIT_WITH_FRAME_CODE];
-    return (NSOpenGLView*)objc_func(SI_NS_CLASSES[NS_VIEW_CODE], func, frameRect, format);
+    return (NSOpenGLView*)objc_func(NSAlloc(SI_NS_CLASSES[NS_OPENGL_VIEW_CODE]), func, frameRect, format);
 }
 
 void NSOpenGLView_prepareOpenGL(NSOpenGLView* view) {

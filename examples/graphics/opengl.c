@@ -59,7 +59,8 @@ int main() {
 
 	while (is_running) {
 		// Get the Windows events.
-		NSEvent* e = NSApplication_nextEventMatchingMask(NSApp, NSEventMaskAny, 0, 0, true);
+		NSEvent* e = NSApplication_nextEventMatchingMask(NSApp, NSEventMaskAny, 0, NSDefaultRunLoopMode, true);
+		
 		NSApplication_sendEvent(NSApp, e);
 		NSApplication_updateWindows(NSApp);
 
