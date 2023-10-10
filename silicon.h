@@ -140,6 +140,7 @@ typedef void NSMenu;
 typedef void NSMenuItem;
 typedef void NSImage;
 typedef void NSView;
+typedef void NSAutoreleasePool;
 #ifndef __OBJC__
 typedef void NSDate;
 typedef void NSString;
@@ -510,9 +511,9 @@ SICDEF bool NSPointInRect(NSPoint aPoint, NSRect aRect);
 /* ============ NSColor class ============ */
 /* ====== NSColor properties ====== */
 /* */
-SICDEF NSColor* NSColor_clearColor();
+SICDEF NSColor* NSColor_clearColor(void);
 /* */
-SICDEF NSColor* NSColor_keyboardFocusIndicatorColor();
+SICDEF NSColor* NSColor_keyboardFocusIndicatorColor(void);
 
 /* ============ NSString ============ */
 SICDEF NSString* NSString_stringWithUTF8String(const char* str);
@@ -529,6 +530,18 @@ SICDEF NSColor* NSColor_colorWithRGB(CGFloat red, CGFloat green, CGFloat blue, C
 SICDEF NSColor* NSColor_colorWithSRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha);
 /* Creates a color object using the given opacity and grayscale values. */
 SICDEF NSColor* NSColor_colorWithCalibrated(CGFloat white, CGFloat alpha);
+
+/* ====== NSBezierPath functions ====== */
+/* */
+SICDEF void NSBezierPath_strokeLine(NSPoint from, NSPoint to);
+
+/* ====== NSAutoreleasePool functions ====== */
+/* */
+SICDEF NSAutoreleasePool* NSAutoreleasePool_init(void);
+
+/* ====== NSDate functions ====== */
+/* */
+SICDEF NSDate* NSDate_distantFuture(void);
 
 /* ============ NSApplication class ============ */
 /* ====== NSApplication properties ====== */
@@ -548,7 +561,7 @@ si_define_property(NSApplication, NSImage*, applicationIconImage, ApplicationIco
 
 /* ====== NSApplication functions ====== */
 /* */
-SICDEF NSApplication* NSApplication_sharedApplication();
+SICDEF NSApplication* NSApplication_sharedApplication(void);
 /* */
 SICDEF void NSApplication_finishLaunching(NSApplication* application);
 /* */
@@ -569,7 +582,7 @@ SICDEF NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, 
 /* ============ NSScreen class ============ */
 /* ====== NSScreen properties ====== */
 /* Returns the screen object containing the window with the keyboard focus. */
-SICDEF NSScreen* NSScreen_mainScreen();
+SICDEF NSScreen* NSScreen_mainScreen(void);
 /* The dimensions and location of the screen. */
 SICDEF NSRect NSScreen_frame(NSScreen* screen);
 /* The current location and dimensions of the visible screen. */
@@ -623,7 +636,7 @@ SICDEF void NSWindow_contentView_wantsLayer(NSWindow* window, bool wantsLayer) ;
 /* ============ NSView class ============ */
 /* ====== NSView functions ====== */
 /* */
-SICDEF NSView* NSView_init();
+SICDEF NSView* NSView_init(void);
 /* */
 SICDEF NSView* NSView_initWithFrame(NSRect frameRect);
 /* */
@@ -676,7 +689,7 @@ NSImage* NSImage_initWithCGImage(CGImageRef cgImage, NSSize size);
 /* Adds the specified image representation object to the image. */
 SICDEF void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep);
 /* Returns the application’s current cursor. */
-SICDEF NSCursor* NSCursor_currentCursor();
+SICDEF NSCursor* NSCursor_currentCursor(void);
 
 /* ============ NSGraphicsContext class ============ */
 /* ====== NSGraphicsContext properties ====== */
@@ -693,13 +706,13 @@ SICDEF NSImage* NSCursor_image(NSCursor* cursor);
 /* The position of the cursor's hot spot. */
 SICDEF NSPoint NSCursor_hotSpot(NSCursor* cursor);
 /* Returns the default cursor, the arrow cursor. */
-SICDEF NSCursor* NSCursor_arrowCursor();
+SICDEF NSCursor* NSCursor_arrowCursor(void);
 /* Initializes a cursor with the given image and hot spot. */
 SICDEF NSCursor* NSCursor_initWithImage(NSImage* newImage, NSPoint aPoint);
 /* Makes the current cursor invisible. */
-SICDEF void NSCursor_hide();
+SICDEF void NSCursor_hide(void);
 /* Makes the current cursor invisible. */
-SICDEF void NSCursor_unhide();
+SICDEF void NSCursor_unhide(void);
 /* Pops the current cursor off the top of the stack. */
 SICDEF void NSCursor_pop(NSCursor* cursor);
 /* Puts the receiver on top of the cursor stack and makes it the current cursor. */
@@ -710,7 +723,7 @@ SICDEF void NSCursor_set(NSCursor* cursor);
 /* =========== NSPasteboard class ============ */
 /* ====== NSPasteboard functions ====== */
 /* */
-SICDEF NSPasteboard* NSPasteboard_generalPasteboard();
+SICDEF NSPasteboard* NSPasteboard_generalPasteboard(void);
 /* */
 SICDEF const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType);
 /* */
@@ -741,7 +754,7 @@ SICDEF NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* 
 /* */
 SICDEF siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu);
 /* */
-SICDEF NSMenuItem* NSMenuItem_separatorItem();
+SICDEF NSMenuItem* NSMenuItem_separatorItem(void);
 
 /* ============ NSBitmapImageRep class ============ */
 /* ====== NSBitmapImageRep properties ====== */
@@ -777,6 +790,21 @@ APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeMultipleTextSelection 	API_
 APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeTextFinderOptions		API_AVAILABLE(macos(10.7)); // Replaces NSPasteboardTypeFindPanelSearchOptions
 APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeURL                        API_AVAILABLE(macos(10.13)); // Equivalent to kUTTypeURL
 APPKIT_EXTERN NSPasteboardType const NSPasteboardTypeFileURL                    API_AVAILABLE(macos(10.13)); // Equivalent to kUTTypeFileURL
+
+static const NSWindowStyleMask NSBorderlessWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskBorderless", macos(10.0,10.12)) = NSWindowStyleMaskBorderless;
+static const NSWindowStyleMask NSTitledWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskTitled", macos(10.0,10.12)) = NSWindowStyleMaskTitled;
+static const NSWindowStyleMask NSClosableWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskClosable", macos(10.0,10.12)) = NSWindowStyleMaskClosable;
+static const NSWindowStyleMask NSMiniaturizableWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskMiniaturizable", macos(10.0,10.12)) = NSWindowStyleMaskMiniaturizable;
+static const NSWindowStyleMask NSResizableWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskResizable", macos(10.0,10.12)) = NSWindowStyleMaskResizable;
+static const NSWindowStyleMask NSTexturedBackgroundWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskTexturedBackground", macos(10.0,10.12)) = NSWindowStyleMaskTexturedBackground;
+static const NSWindowStyleMask NSUnifiedTitleAndToolbarWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskUnifiedTitleAndToolbar", macos(10.0,10.12)) = NSWindowStyleMaskUnifiedTitleAndToolbar;
+static const NSWindowStyleMask NSFullScreenWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskFullScreen", macos(10.0,10.12)) = NSWindowStyleMaskFullScreen;
+static const NSWindowStyleMask NSFullSizeContentViewWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskFullSizeContentView", macos(10.0,10.12)) = NSWindowStyleMaskFullSizeContentView;
+static const NSWindowStyleMask NSUtilityWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskUtilityWindow", macos(10.0,10.12)) = NSWindowStyleMaskUtilityWindow;
+static const NSWindowStyleMask NSDocModalWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskDocModalWindow", macos(10.0,10.12)) = NSWindowStyleMaskDocModalWindow;
+static const NSWindowStyleMask NSNonactivatingPanelMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskNonactivatingPanel", macos(10.0,10.12)) = NSWindowStyleMaskNonactivatingPanel;
+static const NSWindowStyleMask NSHUDWindowMask API_DEPRECATED_WITH_REPLACEMENT("NSWindowStyleMaskHUDWindow", macos(10.0,10.12)) = NSWindowStyleMaskHUDWindow;
+static const NSWindowStyleMask NSUnscaledWindowMask API_DEPRECATED("NSUnscaledWindowMask is deprecated and has no effect. The scale factor for a window backing store is dynamic and dependent on the screen it is placed on.", macos(10.0,10.9)) = 1 << 11;
 
 #define NSDefaultRunLoopMode NSString_stringWithUTF8String("kCFRunLoopDefaultMode")
 
@@ -844,6 +872,8 @@ enum { /* classes */
 	NS_IMAGE_REP_CODE,
 	NS_GRAPHICS_CONTEXT_CODE,
 	NS_BITMAPIMAGEREP_CODE,
+    NS_BEZIER_PATH_CODE,
+    NS_AUTO_RELEASE_POOL_CODE,
 	/* functions */
 	NS_APPLICATION_SETPOLICY = 0,
 	NS_APPLICATION_SAPP_CODE,
@@ -971,9 +1001,12 @@ enum { /* classes */
     NS_VIEW_WANTSLAYER_CODE,
     NS_STRING_WIDTH_UTF8_STRING_CODE,
     NS_ARRAY_SI_ARRAY_CODE,
+    NS_STROKE_LINE_CODE,
+    NS_AUTO_RELEASE_POOL_INIT_CODE,
+    NS_DISTANT_FUTURE_CODE,
 };
 
-void* SI_NS_CLASSES[22] = {NULL};
+void* SI_NS_CLASSES[24] = {NULL};
 void* SI_NS_FUNCTIONS[150];
 
 void si_initNS(void) {    
@@ -999,6 +1032,8 @@ void si_initNS(void) {
 	SI_NS_CLASSES[NS_IMAGE_REP_CODE] = objc_getClass("NSImageRep");
 	SI_NS_CLASSES[NS_GRAPHICS_CONTEXT_CODE] = objc_getClass("NSGraphicsContext");
 	SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE] = objc_getClass("NSBitmapImageRep");
+    SI_NS_CLASSES[NS_BEZIER_PATH_CODE] = objc_getClass("NSBezierPath");
+    SI_NS_CLASSES[NS_AUTO_RELEASE_POOL_CODE] = objc_getClass("NSAutoreleasePool");
 
 	SI_NS_FUNCTIONS[NS_APPLICATION_SETPOLICY] = sel_getUid("setActivationPolicy:");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_getUid("sharedApplication");
@@ -1009,7 +1044,6 @@ void si_initNS(void) {
 	SI_NS_FUNCTIONS[NS_WINDOW_MAKEOF_CODE] = sel_getUid("orderFront:");
 	SI_NS_FUNCTIONS[NS_VALUE_RECT_CODE] = sel_registerName("valueWithRect:");
 	SI_NS_FUNCTIONS[NS_RELEASE_CODE] = sel_registerName("release");
-	SI_NS_FUNCTIONS[NS_WINDOW_MAKEKW_CODE] = sel_getUid("makeKeyWindow:");
 	SI_NS_FUNCTIONS[NS_OPENGL_FB_CODE] = sel_getUid("flushBuffer");
     SI_NS_FUNCTIONS[NS_COLOR_CLEAR_CODE] = sel_getUid("clearColor");
     SI_NS_FUNCTIONS[NS_COLOR_KEYBOARD_FOCUS_INDICATOR_CODE] = sel_getUid("keyboardFocusIndicatorColor");
@@ -1115,6 +1149,9 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_APPLICATION_UPDATE_WINDOWS_CODE] = sel_getUid("updateWindows");
     SI_NS_FUNCTIONS[NS_OPENGL_CONTEXT_FLUSH_BUFFER_CODE] = sel_getUid("flushBuffer");
     SI_NS_FUNCTIONS[NS_APPLICATION_TERMINATE_CODE] = sel_getUid("terminate:");
+    SI_NS_FUNCTIONS[NS_STROKE_LINE_CODE] = sel_getUid("strokeLine:");
+    SI_NS_FUNCTIONS[NS_AUTO_RELEASE_POOL_INIT_CODE] = sel_getUid("init");
+    SI_NS_FUNCTIONS[NS_DISTANT_FUTURE_CODE] = sel_getUid("distantFuture");
 }
 
 void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function) {
@@ -1193,13 +1230,13 @@ bool NSPointInRect(NSPoint aPoint, NSRect aRect) {
 }
 
 
-NSColor* NSColor_clearColor() {
+NSColor* NSColor_clearColor(void) {
     void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_COLOR_CLEAR_CODE];
     return (NSColor*)objc_func(nsclass, func);
 }
 
-NSColor* NSColor_keyboardFocusIndicatorColor() {
+NSColor* NSColor_keyboardFocusIndicatorColor(void) {
     void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_COLOR_KEYBOARD_FOCUS_INDICATOR_CODE];
     return (NSColor*)objc_func(nsclass, func);
@@ -1227,6 +1264,27 @@ NSColor* NSColor_colorWithCalibrated(CGFloat white, CGFloat alpha) {
     void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_COLOR_WITH_CALIBRATED_CODE];
     return (NSColor*)objc_func(nsclass, func, white, alpha);
+}
+
+void NSBezierPath_strokeLine(NSPoint from, NSPoint to) {
+    void* nsclass = SI_NS_CLASSES[NS_BEZIER_PATH_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_STROKE_LINE_CODE];
+
+    objc_func(nsclass, func, from, to);
+}
+
+NSAutoreleasePool* NSAutoreleasePool_init(void) {
+	void* nsclass = SI_NS_CLASSES[NS_AUTO_RELEASE_POOL_CODE];
+	void* func = SI_NS_FUNCTIONS[NS_AUTO_RELEASE_POOL_INIT_CODE];
+
+	return objc_func(NSAlloc(nsclass), func);
+}
+
+SICDEF NSDate* NSDate_distantFuture(void) {
+	void* nsclass = SI_NS_CLASSES[NS_DATE_CODE];
+	void* func = SI_NS_FUNCTIONS[NS_DISTANT_FUTURE_CODE];
+
+	return objc_func(nsclass, func);
 }
 
 NSApplication* NSApplication_sharedApplication(void) {
@@ -1320,6 +1378,9 @@ void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool fl
 }
 
 NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, NSString* mode, bool deqFlag) {
+    if (mode == 0)
+        mode = NSBackingStoreBuffered;
+        
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_NEXT_EVENT_MATCHING_MASK_CODE];
     return (NSEvent*)objc_func(application, func, mask, expiration, mode, deqFlag);
 }
@@ -1328,7 +1389,7 @@ si_declare_double(NSApplication, void, setActivationPolicy, NS_APPLICATION_SETPO
 si_declare_single(NSApplication, void, run, NS_APPLICATION_RUN_CODE)
 si_declare_single(NSApplication, void, finishLaunching, NS_APPLICATION_FL_CODE)
 
-NSScreen* NSScreen_mainScreen() {
+NSScreen* NSScreen_mainScreen(void) {
     void* func = SI_NS_FUNCTIONS[NS_SCREEN_MAIN_SCREEN_CODE];
 	void* class = SI_NS_CLASSES[NS_SCREEN_CODE];
 
@@ -1434,7 +1495,7 @@ void NSWindow_setAcceptsMouseMovedEvents(NSWindow* window, bool acceptsMouseMove
     objc_func(window, func, acceptsMouseMovedEvents);
 }
 
-si_declare_single(NSWindow, void, makeKeyWindow, NS_WINDOW_MAKEKW_CODE)
+si_declare_single(NSWindow, void, makeKeyWindow, NS_WINDOW_MAKE_KEY_WINDOW_CODE)
 
 si_declare_double(NSWindow, void, orderFront, NS_WINDOW_MAKEOF_CODE, NSWindow*)
 si_declare_double(NSWindow, void, makeKeyAndOrderFront, NS_WINDOW_MAKEKO_CODE, SEL)
@@ -1504,7 +1565,7 @@ void NSWindow_contentView_wantsLayer(NSWindow* window, bool wantsLayer) {
     objc_func(window, func, wantsLayer);
 }
 
-NSView* NSView_init() {
+NSView* NSView_init(void) {
 	void* nclass = SI_NS_CLASSES[NS_VIEW_CODE];
     void* func = SI_NS_FUNCTIONS[NS_VIEW_INIT_CODE];
     return (NSView*)objc_func(NSAlloc(nclass), func);
@@ -1620,7 +1681,7 @@ void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep) {
     objc_func(image, imageRep, func);
 }
 
-NSCursor* NSCursor_currentCursor() {
+NSCursor* NSCursor_currentCursor(void) {
 	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_CURRENT_CURSOR_CODE];
     return (NSCursor*)objc_func(nclass, func);
@@ -1636,7 +1697,7 @@ NSPoint NSCursor_hotSpot(NSCursor* cursor) {
     return *(NSPoint*)objc_func(cursor, func);
 }
 
-NSCursor* NSCursor_arrowCursor() {
+NSCursor* NSCursor_arrowCursor(void) {
 	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_ARROW_CURSOR_CODE];
     return (NSCursor*)objc_func(nclass, func);
@@ -1649,13 +1710,13 @@ NSCursor* NSCursor_initWithImage(NSImage* newImage, NSPoint aPoint) {
     return (NSCursor*)objc_func(NSAlloc(nsclass), newImage, func, aPoint);
 }
 
-void NSCursor_hide() {
+void NSCursor_hide(void) {
 	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_HIDE_CODE];
     objc_func(nclass, func);
 }
 
-void NSCursor_unhide() {
+void NSCursor_unhide(void) {
 	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_UNHIDE_CODE];
     objc_func(nclass, func);
@@ -1676,7 +1737,7 @@ void NSCursor_set(NSCursor* cursor) {
     objc_func(cursor, func);
 }
 
-NSPasteboard* NSPasteboard_generalPasteboard() {
+NSPasteboard* NSPasteboard_generalPasteboard(void) {
 	void* nclass = SI_NS_CLASSES[NS_PASTEBOARD_CODE];
     void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_GENERAL_PASTEBOARD_CODE];
     return (NSPasteboard*)objc_func(nclass, func);
@@ -1732,7 +1793,7 @@ siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu) {
     return (siArray(NSMenuItem*))objc_func(menu, func);
 }
 
-NSMenuItem* NSMenuItem_separatorItem() {
+NSMenuItem* NSMenuItem_separatorItem(void) {
 	void* nclass = SI_NS_CLASSES[NS_MENUITEM_CODE];
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_SEPARATOR_ITEM_CODE];
     return (NSMenuItem*)objc_func(nclass, func);
