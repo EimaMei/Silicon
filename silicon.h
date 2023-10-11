@@ -28,6 +28,7 @@
 */
 
 #ifndef SILICON_H
+#include <string.h>
 #include <CoreVideo/CVDisplayLink.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <objc/runtime.h>
@@ -465,6 +466,7 @@ SICDEF void si_initNS(void);
 
 /* release objects */
 SICDEF void NSRelease(id object);
+SICDEF void NSRetain(id object);
 
 #ifndef SI_NO_RELEASE
 #define release NSRelease
@@ -517,9 +519,12 @@ SICDEF NSColor* NSColor_keyboardFocusIndicatorColor(void);
 
 /* ============ NSString ============ */
 SICDEF NSString* NSString_stringWithUTF8String(const char* str);
+SICDEF const char* NSString_to_char(NSString* str);
 
 /* ============= NSArray ============ */
 SICDEF NSArray* si_array_to_NSArray(siArray(void) array);
+SICDEF NSUInteger NSArray_count(NSArray* array);
+SICDEF void* NSArray_objectAtIndex(NSArray* array, NSUInteger index);
 
 /* ====== NSColor functions ====== */
 /* */
@@ -1004,10 +1009,14 @@ enum { /* classes */
     NS_STROKE_LINE_CODE,
     NS_AUTO_RELEASE_POOL_INIT_CODE,
     NS_DISTANT_FUTURE_CODE,
+    NS_RETAIN_CODE,
+    NS_ARRAY_COUNT_CODE,
+    NS_OBJECT_AT_INDEX_CODE,
+    NS_UTF8_STRING_CODE,
 };
 
 void* SI_NS_CLASSES[24] = {NULL};
-void* SI_NS_FUNCTIONS[150];
+void* SI_NS_FUNCTIONS[151];
 
 void si_initNS(void) {    
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
@@ -1152,6 +1161,12 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_STROKE_LINE_CODE] = sel_getUid("strokeLine:");
     SI_NS_FUNCTIONS[NS_AUTO_RELEASE_POOL_INIT_CODE] = sel_getUid("init");
     SI_NS_FUNCTIONS[NS_DISTANT_FUTURE_CODE] = sel_getUid("distantFuture");
+    SI_NS_FUNCTIONS[NS_SCREEN_FRAME_CODE] = sel_getUid("frame");
+    SI_NS_FUNCTIONS[NS_SCREEN_MAIN_SCREEN_CODE] = sel_getUid("mainScreen");
+    SI_NS_FUNCTIONS[NS_RETAIN_CODE] = sel_getUid("retain");
+    SI_NS_FUNCTIONS[NS_ARRAY_COUNT_CODE] = sel_getUid("count");
+    SI_NS_FUNCTIONS[NS_OBJECT_AT_INDEX_CODE] = sel_getUid("objectAtIndex:");
+    SI_NS_FUNCTIONS[NS_UTF8_STRING_CODE] = sel_getUid("UTF8String");
 }
 
 void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function) {
@@ -1379,7 +1394,7 @@ void NSApplication_activateIgnoringOtherApps(NSApplication* application, bool fl
 
 NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEventMask mask, NSDate* expiration, NSString* mode, bool deqFlag) {
     if (mode == 0)
-        mode = NSBackingStoreBuffered;
+        mode = (NSString*)NSBackingStoreBuffered;
         
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_NEXT_EVENT_MATCHING_MASK_CODE];
     return (NSEvent*)objc_func(application, func, mask, expiration, mode, deqFlag);
@@ -1415,7 +1430,7 @@ NSWindow* NSWindow_init(NSRect contentRect, NSWindowStyleMask style, NSBackingSt
 
 const char* NSWindow_title(NSWindow* window) {
     void* func = SI_NS_FUNCTIONS[NS_WINDOW_TITLE_CODE];
-    return (const char*)objc_func(window, func);
+    return (const char*)NSString_to_char(objc_func(window, func));
 }
 
 void NSWindow_setTitle(NSWindow* window, const char* title) {
@@ -1522,7 +1537,8 @@ void NSMenuItem_setSubmenu(NSMenuItem* item, NSMenu* submenu) {
 
 void NSMenuItem_setTitle(NSMenuItem* item, const char* title) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_TITLE_CODE];
-    objc_func(item, func, title);
+    
+    objc_func(item, func, NSString_stringWithUTF8String(title));
 }
 
 NSRect NSWindow_frame(NSWindow* window) {
@@ -1584,7 +1600,12 @@ void NSView_addSubview(NSView* view, NSView* subview) {
 
 void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newTypes) {
     void* func = SI_NS_FUNCTIONS[NS_VIEW_REGISTER_FOR_DRAGGED_TYPES_CODE];
-    objc_func(view, func, newTypes);
+
+    NSArray* array = si_array_to_NSArray(newTypes);
+
+    objc_func(view, func, array);
+
+    NSRelease(array);
 }
 
 NSEventType NSEvent_type(NSEvent* event) {
@@ -1609,7 +1630,7 @@ unsigned short NSEvent_keyCode(NSEvent* event) {
 
 const char* NSEvent_characters(NSEvent* event) {
     void* func = SI_NS_FUNCTIONS[NS_EVENT_CHARACTERS_CODE];
-    return (const char*)objc_func(event, func);
+    return (const char*)NSString_to_char(objc_func(event, func));
 }
 
 CGFloat NSEvent_deltaY(NSEvent* event) {
@@ -1668,7 +1689,7 @@ NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
 
 NSImage* NSImage_initWithFile(const char* path) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_FILE_CODE];
-    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, path);
+    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, NSString_stringWithUTF8String(path));
 }
 
 NSImage* NSImage_initWithCGImage(CGImageRef cgImage, NSSize size) {
@@ -1745,27 +1766,47 @@ NSPasteboard* NSPasteboard_generalPasteboard(void) {
 
 const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType) {
     void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_STRING_FOR_TYPE_CODE];
-    return (const char*)objc_func(pasteboard, func, dataType);
+    return (const char*)NSString_to_char(objc_func(pasteboard, func, dataType));
 }
 
 NSInteger NSPasteBoard_declareTypes(NSPasteboard* pasteboard, siArray(NSPasteboardType) newTypes, void* owner) {
     void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_DECLARE_TYPES_CODE];
-    return (NSInteger)(intptr_t)objc_func(pasteboard, func, newTypes, owner);
+
+    NSArray* array = si_array_to_NSArray(newTypes);
+
+    NSInteger output = (NSInteger)(intptr_t)objc_func(pasteboard, func, array, owner);
+    NSRelease(array);
+
+    return output;
 }
 
 bool NSPasteBoard_setString(NSPasteboard* pasteboard, const char* stringToWrite, NSPasteboardType dataType) {
     void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_SET_STRING_CODE];
-    return (bool)objc_func(pasteboard, func, stringToWrite, dataType);
+    return (bool)objc_func(pasteboard, func, NSString_stringWithUTF8String(stringToWrite), dataType);
 }
 
 siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard, siArray(Class) classArray, void* options) {
     void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_READ_OBJECTS_FOR_CLASSES_CODE];
-    return (siArray(const char*))objc_func(pasteboard, func, classArray, options);
+    
+    NSArray* array = si_array_to_NSArray(classArray);
+
+    NSArray* output = (NSArray*)objc_func(pasteboard, func, array, options);
+
+    NSRelease(array);
+
+    NSUInteger count = NSArray_count(output);
+
+	siArray(const char*) res = si_array_init_reserve(si_sizeof(const char*), count);
+
+    for (NSUInteger i = 0; i < count; i++)
+        res[i] = NSString_to_char(NSArray_objectAtIndex(output, i));
+
+	return res;
 }
 
 NSMenu* NSMenu_init(const char* title) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_INIT_CODE];
-    return (NSMenu*)objc_func(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE]), func, title);
+    return (NSMenu*)objc_func(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE]), func, NSString_stringWithUTF8String(title));
 }
 
 void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem) {
@@ -1775,7 +1816,7 @@ void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem) {
 
 const char* NSMenuItem_title(NSMenuItem* item) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_TITLE_CODE];
-    return (const char*)objc_func(item, func);
+    return (const char*)NSString_to_char(objc_func(item, func));
 }
 
 NSMenu* NSMenuItem_submenu(NSMenuItem* item) {
@@ -1785,12 +1826,25 @@ NSMenu* NSMenuItem_submenu(NSMenuItem* item) {
 
 NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEquivalent) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_INIT_CODE];
-    return (NSMenuItem*)objc_func(NSAlloc(SI_NS_CLASSES[NS_MENUITEM_CODE]), func, selector, keyEquivalent);
+    return (NSMenuItem*)objc_func(NSAlloc(SI_NS_CLASSES[NS_MENUITEM_CODE]), func, NSString_stringWithUTF8String(title), selector, NSString_stringWithUTF8String(keyEquivalent));
 }
 
 siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_ARRAY_CODE];
-    return (siArray(NSMenuItem*))objc_func(menu, func);
+
+    NSArray* array = objc_func(menu, func);
+
+    NSUInteger count = NSArray_count(array);
+
+	siArray(NSMenuItem*) result = si_array_init_reserve(si_sizeof(*result), count);
+
+	for (NSUInteger i = 0; i < count; i++) {
+		result[i] = NSArray_objectAtIndex(array, i);
+		NSRetain(result[i]);
+	}
+	/* TODO(EimaMei): Maybe release item_array here? */
+
+    return result;
 }
 
 NSMenuItem* NSMenuItem_separatorItem(void) {
@@ -1806,12 +1860,17 @@ unsigned char* NSBitmapImageRep_bitmapData(NSBitmapImageRep* imageRep) {
 
 NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NSInteger width, NSInteger height, NSInteger bps, NSInteger spp, bool alpha, bool isPlanar, const char* colorSpaceName, NSBitmapFormat bitmapFormat, NSInteger rowBytes, NSInteger pixelBits) {
 	void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_INIT_BITMAP_CODE];
-    return (NSBitmapImageRep*)objc_func(NSAlloc(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE]), func, planes, width, height, bps, spp, alpha, isPlanar, colorSpaceName, bitmapFormat, rowBytes, pixelBits);
+    return (NSBitmapImageRep*)objc_func(NSAlloc(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE]), func, planes, width, height, bps, spp, alpha, isPlanar, NSString_stringWithUTF8String(colorSpaceName), bitmapFormat, rowBytes, pixelBits);
 }
 
 NSString* NSString_stringWithUTF8String(const char* str) {
     void* func = SI_NS_FUNCTIONS[NS_STRING_WIDTH_UTF8_STRING_CODE];
     return objc_func(SI_NS_CLASSES[NS_STRING_CODE], func, str);
+}
+
+const char* NSString_to_char(NSString* str) {
+    void* func = SI_NS_FUNCTIONS[NS_UTF8_STRING_CODE];
+    return objc_func(str, func);   
 }
 
 NSArray* si_array_to_NSArray(siArray(void) array) {
@@ -1821,7 +1880,19 @@ NSArray* si_array_to_NSArray(siArray(void) array) {
     return objc_func(NSAlloc(nsclass), func, array, si_array_len(array));
 }
 
+NSUInteger NSArray_count(NSArray* array) {
+    void* func = SI_NS_FUNCTIONS[NS_ARRAY_COUNT_CODE];
+    return *(NSUInteger*)objc_func(array, func);
+}
+
+void* NSArray_objectAtIndex(NSArray* array, NSUInteger index) {
+    void* func = SI_NS_FUNCTIONS[NS_OBJECT_AT_INDEX_CODE];
+    return objc_func(SI_NS_CLASSES[NS_STRING_CODE], func, index);
+}
+
 void NSRelease(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RELEASE_CODE]); }
+
+void NSRetain(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RETAIN_CODE]); }
 
 /* ======== OpenGL ======== */
 NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs) {
