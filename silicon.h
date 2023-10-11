@@ -880,7 +880,7 @@ enum { /* classes */
     NS_BEZIER_PATH_CODE,
     NS_AUTO_RELEASE_POOL_CODE,
 	/* functions */
-	NS_APPLICATION_SETPOLICY = 0,
+	NS_APPLICATION_SET_ACTIVATION_POLICY_CODE = 0,
 	NS_APPLICATION_SAPP_CODE,
 	NS_APPLICATION_RUN_CODE,
 	NS_APPLICATION_FL_CODE,
@@ -889,7 +889,6 @@ enum { /* classes */
 	NS_VALUE_RECT_CODE,
 	NS_RELEASE_CODE,
 	NS_WINDOW_MAKEOF_CODE,
-	NS_WINDOW_MAKEKW_CODE,
 	NS_OPENGL_FB_CODE,
     NS_COLOR_CLEAR_CODE,
     NS_COLOR_KEYBOARD_FOCUS_INDICATOR_CODE,
@@ -906,7 +905,6 @@ enum { /* classes */
     NS_APPLICATION_WINDOWS_MENU_CODE,
     NS_APPLICATION_SET_WINDOWS_MENU_CODE,
     NS_APPLICATION_ACTIVATION_POLICY_CODE,
-    NS_APPLICATION_SET_ACTIVATION_POLICY_CODE,
     NS_APPLICATION_APPLICATION_ICON_IMAGE_CODE,
     NS_APPLICATION_SET_APPLICATION_ICON_IMAGE_CODE,
     NS_APPLICATION_STOP_CODE,
@@ -1044,7 +1042,7 @@ void si_initNS(void) {
     SI_NS_CLASSES[NS_BEZIER_PATH_CODE] = objc_getClass("NSBezierPath");
     SI_NS_CLASSES[NS_AUTO_RELEASE_POOL_CODE] = objc_getClass("NSAutoreleasePool");
 
-	SI_NS_FUNCTIONS[NS_APPLICATION_SETPOLICY] = sel_getUid("setActivationPolicy:");
+	SI_NS_FUNCTIONS[NS_APPLICATION_SET_ACTIVATION_POLICY_CODE] = sel_getUid("setActivationPolicy:");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_getUid("sharedApplication");
 	SI_NS_FUNCTIONS[NS_APPLICATION_RUN_CODE] = sel_registerName("run");	
 	SI_NS_FUNCTIONS[NS_APPLICATION_FL_CODE] = sel_getUid("finishLaunching");
@@ -1167,6 +1165,14 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_ARRAY_COUNT_CODE] = sel_getUid("count");
     SI_NS_FUNCTIONS[NS_OBJECT_AT_INDEX_CODE] = sel_getUid("objectAtIndex:");
     SI_NS_FUNCTIONS[NS_UTF8_STRING_CODE] = sel_getUid("UTF8String");
+    SI_NS_FUNCTIONS[NS_SCREEN_VISIBLE_FRAME_CODE] = sel_getUid("visibleFrame");
+    SI_NS_FUNCTIONS[NS_WINDOW_TITLE_CODE] = sel_getUid("title");
+    SI_NS_FUNCTIONS[NS_WINDOW_CONTENT_VIEW_CODE] = sel_getUid("contentView");
+    SI_NS_FUNCTIONS[NS_APPLICATION_ACTIVATE_IGNORING_OTHER_APPS_CODE] = sel_getUid("activateIgnoringOtherApps:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_STOP_CODE] = sel_getUid("stop:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_APPLICATION_ICON_IMAGE_CODE] = sel_getUid("applicationIconImage");
+    SI_NS_FUNCTIONS[NS_APPLICATION_SET_APPLICATION_ICON_IMAGE_CODE] = sel_getUid("setApplicationIconImage:");
+    SI_NS_FUNCTIONS[NS_APPLICATION_ACTIVATION_POLICY_CODE] = sel_getUid("activationPolicy");
 }
 
 void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function) {
@@ -1400,7 +1406,7 @@ NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEvent
     return (NSEvent*)objc_func(application, func, mask, expiration, mode, deqFlag);
 }
 
-si_declare_double(NSApplication, void, setActivationPolicy, NS_APPLICATION_SETPOLICY, NSApplicationActivationPolicy)
+si_declare_double(NSApplication, void, setActivationPolicy, NS_APPLICATION_SET_ACTIVATION_POLICY_CODE, NSApplicationActivationPolicy)
 si_declare_single(NSApplication, void, run, NS_APPLICATION_RUN_CODE)
 si_declare_single(NSApplication, void, finishLaunching, NS_APPLICATION_FL_CODE)
 
