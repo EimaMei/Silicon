@@ -824,7 +824,7 @@ si_define_property(NSComboBox, NSFont*, font, Font, field);
 /**/
 SICDEF NSComboBox* NSComboBox_initWithFrame(NSRect frameRect);
 /* */
-SICDEF void NSComboBox_addItem(NSComboBox* comboBox, void* item);
+SICDEF void NSComboBox_addItem(NSComboBox* comboBox, const char* item);
 /* */
 SICDEF void NSComboBox_selectItem(NSComboBox* comboBox, NSInteger index);
 
@@ -1634,7 +1634,7 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_TEXT_FIELD_INIT_FRAME_CODE] = sel_getUid("initWithFrame:");
     SI_NS_FUNCTIONS[NS_FONT_MANAGER_SHARED_FONT_MANAGER_CODE] = sel_getUid("sharedFontManager");
     SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE] = sel_getUid("convertFont:");
-    SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_TO_HAVE_FONT_CODE] = sel_getUid("convertFontToHaveTrait:trait:");
+    SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_TO_HAVE_FONT_CODE] = sel_getUid("convertFont:toHaveTrait:");
     SI_NS_FUNCTIONS[NS_PROCESS_INFO_PROCESS_INFO_CODE] = sel_getUid("processInfo");
     SI_NS_FUNCTIONS[NS_PROCESS_INFO_PROCESS_NAME_CODE] = sel_getUid("processName");
     SI_NS_FUNCTIONS[NS_SLIDER_SET_TARGET_CODE] = sel_getUid("setTarget:");
@@ -1657,7 +1657,6 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_INIT_CODE] = sel_getUid("initWithFrame:");
     SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_CURRENT_CONTEXT_CODE] = sel_getUid("currentContext");
     SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_SET_CURRENT_CONTEXT_CODE] = sel_getUid("setCurrentContext:");
-    SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_SUBMENU_CODE] = sel_getUid("setSubmenu:");
     SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_TITLE_CODE] = sel_getUid("setTitle:");
     SI_NS_FUNCTIONS[NS_FONT_INIT_CODE] = sel_getUid("fontWithName:size:");
     SI_NS_FUNCTIONS[NS_FONT_FONT_NAME_CODE] = sel_getUid("fontName");
@@ -2365,17 +2364,27 @@ NSFont* NSFontManager_convertFont(NSFontManager* manager, NSFont* fontObj) {
 NSFont* NSFontManager_convertFontToHaveTrait(NSFontManager* manager, NSFont* fontObj, NSFontTraitMask trait) {
     void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_TO_HAVE_FONT_CODE];
 
-    return (NSFont*)objc_func(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func, manager, fontObj, trait);
+    return (NSFont*)objc_func(manager, func, fontObj, trait);
 }
 
 NSFont* NSFont_init(const char* fontName, CGFloat fontSize) {
     void* func = SI_NS_FUNCTIONS[NS_FONT_INIT_CODE];
-    return (NSFont*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_FONT_CODE]), func, NSString_stringWithUTF8String(fontName), fontSize);
+
+    NSString* str = NSString_stringWithUTF8String(fontName);
+
+    NSFont* font = (NSFont*)objc_func(SI_NS_CLASSES[NS_FONT_CODE], func, str, fontSize);
+
+    NSRelease(str);
+
+    return font;
 }
 
 const char* NSFont_fontName(NSFont* font) {
     void* func = SI_NS_FUNCTIONS[NS_FONT_FONT_NAME_CODE];
-    return (const char*)NSString_to_char(objc_func(font, func));
+
+    NSString* str = objc_func(font, func);
+
+    return (const char*)NSString_to_char(str);
 }
 
 SICDEF const char* NSButton_title(NSButton* button) {
@@ -2558,14 +2567,18 @@ NSComboBox* NSComboBox_initWithFrame(NSRect frameRect) {
     return (NSComboBox*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_COMBOBOX_CODE]), func, frameRect);
 }
 
-void NSComboBox_addItem(NSComboBox* comboBox, void* item) {
+void NSComboBox_addItem(NSComboBox* comboBox, const char* item) {
     void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_ADD_ITEM_CODE];
-    objc_func(comboBox, func, item);
+
+    NSString* str = NSString_stringWithUTF8String(item);
+    NSRetain(str);
+
+    objc_func(comboBox, func, str);
 }
 
 void NSComboBox_selectItem(NSComboBox* comboBox, NSInteger index) {
     void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SELECT_ITEM_CODE];
-    objc_func(comboBox, func, (void*)(intptr_t)index);
+    objc_func(comboBox, func, index);
 }
 
 NSEventType NSEvent_type(NSEvent* event) {
@@ -2792,7 +2805,7 @@ NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEqui
 siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_ARRAY_CODE];
 
-    NSArray* array = objc_func(menu, func);
+    NSArray* array = (NSArray*)objc_func(menu, func);
 
     NSUInteger count = NSArray_count(array);
 
