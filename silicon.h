@@ -1212,6 +1212,13 @@ enum { /* classes */
     NS_SAVE_PANEL_CODE,
     NS_TEXT_FIELD_CODE,
     NS_FONT_MANAGER_CODE,
+    NS_PROCESS_INFO_CODE,
+    NS_FONT_CODE,
+    NS_BUTTON_CODE,
+    NS_COMBOBOX_CODE,
+    NS_PROGRESS_INDICATOR_CODE,
+    NS_SLIDER_CODE,
+    NS_URL_CODE,
 	/* functions */
 	NS_APPLICATION_SET_ACTIVATION_POLICY_CODE = 0,
 	NS_APPLICATION_SAPP_CODE,
@@ -1361,10 +1368,86 @@ enum { /* classes */
     NS_TEXT_FIELD_INIT_FRAME_CODE,
     NS_FONT_MANAGER_SHARED_FONT_MANAGER_CODE,
     NS_FONT_MANAGER_CONVERT_FONT_CODE,
+    NS_FONT_MANAGER_CONVERT_FONT_TO_HAVE_CODE,
+    NS_PROCESS_INFO_PROCESS_INFO_CODE,
+    NS_PROCESS_INFO_PROCESS_NAME_CODE,
+    NS_SLIDER_SET_TARGET_CODE,
+    NS_SLIDER_TARGET_CODE,
+    NS_SLIDER_SET_ACTION_CODE,
+    NS_SLIDER_ACTION_CODE,
+    NS_SLIDER_SET_FONT_CODE,
+    NS_SLIDER_FONT_CODE,
+    NS_SLIDER_SET_DOUBLE_VALUE_CODE,
+    NS_SLIDER_DOUBLE_VALUE_CODE,
+    NS_SLIDER_SET_MAX_VALUE_CODE,
+    NS_SLIDER_MAX_VALUE_CODE,
+    NS_SLIDER_INIT_WITH_FRAME_CODE,
+    NS_PROGRESS_INDICATOR_SET_DOUBLE_VALUE_CODE,
+    NS_PROGRESS_INDICATOR_DOUBLE_VALUE_CODE,
+    NS_PROGRESS_INDICATOR_SET_MAX_VALUE_CODE,
+    NS_PROGRESS_INDICATOR_MAX_VALUE_CODE,
+    NS_PROGRESS_INDICATOR_SET_INDETERMINATE_CODE,
+    NS_PROGRESS_INDICATOR_INDETERMINATE_CODE,
+    NS_PROGRESS_INDICATOR_INIT_CODE,
+    NS_FONT_INIT_CODE,
+    NS_FONT_FONT_NAME_CODE,
+    NS_BUTTON_TITLE_CODE,
+    NS_BUTTON_SET_TITLE_CODE,
+    NS_BUTTON_BEZEL_STYLE_CODE,
+    NS_BUTTON_SET_BEZEL_STYLE_CODE,
+    NS_BUTTON_TARGET_CODE,
+    NS_BUTTON_SET_TARGET_CODE,
+    NS_BUTTON_ACTION_CODE,
+    NS_BUTTON_SET_ACTION_CODE,
+    NS_BUTTON_AUTO_RESIZE_MASK_CODE,
+    NS_BUTTON_SET_AUTO_RESIZE_MASK_CODE,
+    NS_BUTTON_STATE_CODE,
+    NS_BUTTON_SET_STATE_CODE,
+    NS_BUTTON_ALLOWS_MIXED_STATE_CODE,
+    NS_BUTTON_SET_ALLOWS_MIXED_STATE_CODE,
+    NS_BUTTON_INIT_WITH_FRAME_CODE,
+    NS_BUTTON_SET_BUTTON_TYPE_CODE,
+    NS_COMBOBOX_INDEX_OF_SELECTED_ITEM_CODE,
+    NS_COMBOBOX_TARGET_CODE,
+    NS_COMBOBOX_SET_TARGET_CODE,
+    NS_COMBOBOX_ACTION_CODE,
+    NS_COMBOBOX_SET_ACTION_CODE,
+    NS_COMBOBOX_FONT_CODE,
+    NS_COMBOBOX_SET_FONT_CODE,
+    NS_COMBOBOX_STRING_VALUE_CODE,
+    NS_COMBOBOX_SET_STRING_VALUE_CODE,
+    NS_COMBOBOX_IS_BEZELED_CODE,
+    NS_COMBOBOX_SET_IS_BEZELED_CODE,
+    NS_COMBOBOX_DRAWS_BACKGROUND_CODE,
+    NS_COMBOBOX_SET_DRAWS_BACKGROUND_CODE,
+    NS_COMBOBOX_IS_EDITABLE_CODE,
+    NS_COMBOBOX_SET_IS_EDITABLE_CODE,
+    NS_COMBOBOX_IS_SELECTABLE_CODE,
+    NS_COMBOBOX_SET_IS_SELECTABLE_CODE,
+    NS_COMBOBOX_TEXT_COLOR_CODE,
+    NS_COMBOBOX_SET_TEXT_COLOR_CODE,
+    NS_COMBOBOX_INIT_WITH_FRAME_CODE,
+    NS_COMBOBOX_ADD_ITEM_CODE,
+    NS_COMBOBOX_SELECT_ITEM_CODE,
+    NS_SAVE_PANEL_SET_CAN_CREATE_DIRECTORIES_CODE,
+    NS_SAVE_PANEL_CAN_CREATE_DIRECTORIES_CODE,
+    NS_SAVE_PANEL_SET_ALLOWED_FILE_TYPES_CODE,
+    NS_SAVE_PANEL_ALLOWED_FILE_TYPES_CODE,
+    NS_SAVE_PANEL_SET_DIRECTORY_URL_CODE,
+    NS_SAVE_PANEL_DIRECTORY_URL_CODE,
+    NS_SAVE_PANEL_SET_NAME_FIELD_STRING_VALUE_CODE,
+    NS_SAVE_PANEL_NAME_FIELD_STRING_VALUE_CODE,
+    NS_SAVE_PANEL_URL_CODE,
+    NS_SAVE_PANEL_RUN_MODAL_CODE,
+    NSURL_PATH_CODE,
+    NSURL_FILE_URL_WITH_PATH_CODE,
+    NS_AUTORELEASE_CODE,
+    NS_INIT_CODE,
+    NS_FONT_MANAGER_CONVERT_TO_HAVE_FONT_CODE,
 };
 
-void* SI_NS_CLASSES[30] = {NULL};
-void* SI_NS_FUNCTIONS[151];
+void* SI_NS_CLASSES[35] = {NULL};
+void* SI_NS_FUNCTIONS[224];
 
 void si_initNS(void) {    
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
@@ -1395,6 +1478,13 @@ void si_initNS(void) {
     SI_NS_CLASSES[NS_SAVE_PANEL_CODE] = objc_getClass("NSSavePanel");
     SI_NS_CLASSES[NS_TEXT_FIELD_CODE] = objc_getClass("NSTextField");
     SI_NS_CLASSES[NS_FONT_MANAGER_CODE] = objc_getClass("NSFontManager");
+    SI_NS_CLASSES[NS_PROCESS_INFO_CODE] = objc_getClass("NSProcessInfo");
+    SI_NS_CLASSES[NS_FONT_CODE] = objc_getClass("NSFont");
+    SI_NS_CLASSES[NS_BUTTON_CODE] = objc_getClass("NSButton");
+    SI_NS_CLASSES[NS_COMBOBOX_CODE] = objc_getClass("NSComboBox");
+    SI_NS_CLASSES[NS_PROGRESS_INDICATOR_CODE] = objc_getClass("NSProgressIndicator");
+    SI_NS_CLASSES[NS_SLIDER_CODE] = objc_getClass("NSSlider");
+    SI_NS_CLASSES[NS_URL_CODE] = objc_getClass("NSURL");
 
 	SI_NS_FUNCTIONS[NS_APPLICATION_SET_ACTIVATION_POLICY_CODE] = sel_getUid("setActivationPolicy:");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_getUid("sharedApplication");
@@ -1544,7 +1634,85 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_TEXT_FIELD_INIT_FRAME_CODE] = sel_getUid("initWithFrame:");
     SI_NS_FUNCTIONS[NS_FONT_MANAGER_SHARED_FONT_MANAGER_CODE] = sel_getUid("sharedFontManager");
     SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE] = sel_getUid("convertFont:");
-    SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE] = sel_getUid("convertFontToHaveTrait:trait:");
+    SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_TO_HAVE_FONT_CODE] = sel_getUid("convertFontToHaveTrait:trait:");
+    SI_NS_FUNCTIONS[NS_PROCESS_INFO_PROCESS_INFO_CODE] = sel_getUid("processInfo");
+    SI_NS_FUNCTIONS[NS_PROCESS_INFO_PROCESS_NAME_CODE] = sel_getUid("processName");
+    SI_NS_FUNCTIONS[NS_SLIDER_SET_TARGET_CODE] = sel_getUid("setTarget:");
+    SI_NS_FUNCTIONS[NS_SLIDER_TARGET_CODE] = sel_getUid("target");
+    SI_NS_FUNCTIONS[NS_SLIDER_SET_ACTION_CODE] = sel_getUid("setAction:");
+    SI_NS_FUNCTIONS[NS_SLIDER_ACTION_CODE] = sel_getUid("action");
+    SI_NS_FUNCTIONS[NS_SLIDER_SET_FONT_CODE] = sel_getUid("setFont:");
+    SI_NS_FUNCTIONS[NS_SLIDER_FONT_CODE] = sel_getUid("font");
+    SI_NS_FUNCTIONS[NS_SLIDER_SET_DOUBLE_VALUE_CODE] = sel_getUid("setDoubleValue:");
+    SI_NS_FUNCTIONS[NS_SLIDER_DOUBLE_VALUE_CODE] = sel_getUid("doubleValue");
+    SI_NS_FUNCTIONS[NS_SLIDER_SET_MAX_VALUE_CODE] = sel_getUid("setMaxValue:");
+    SI_NS_FUNCTIONS[NS_SLIDER_MAX_VALUE_CODE] = sel_getUid("maxValue");
+    SI_NS_FUNCTIONS[NS_SLIDER_INIT_WITH_FRAME_CODE] = sel_getUid("initWithFrame:");
+    SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_SET_DOUBLE_VALUE_CODE] = sel_getUid("setDoubleValue:");
+    SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_DOUBLE_VALUE_CODE] = sel_getUid("doubleValue");
+    SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_SET_MAX_VALUE_CODE] = sel_getUid("setMaxValue:");
+    SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_MAX_VALUE_CODE] = sel_getUid("maxValue");
+    SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_SET_INDETERMINATE_CODE] = sel_getUid("setIndeterminate:");
+    SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_INDETERMINATE_CODE] = sel_getUid("isIndeterminate");
+    SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_INIT_CODE] = sel_getUid("initWithFrame:");
+    SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_CURRENT_CONTEXT_CODE] = sel_getUid("currentContext");
+    SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_SET_CURRENT_CONTEXT_CODE] = sel_getUid("setCurrentContext:");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_SUBMENU_CODE] = sel_getUid("setSubmenu:");
+    SI_NS_FUNCTIONS[NS_MENU_ITEM_SET_TITLE_CODE] = sel_getUid("setTitle:");
+    SI_NS_FUNCTIONS[NS_FONT_INIT_CODE] = sel_getUid("fontWithName:size:");
+    SI_NS_FUNCTIONS[NS_FONT_FONT_NAME_CODE] = sel_getUid("fontName");
+    SI_NS_FUNCTIONS[NS_BUTTON_TITLE_CODE] = sel_getUid("title");
+    SI_NS_FUNCTIONS[NS_BUTTON_SET_TITLE_CODE] = sel_getUid("setTitle:");
+    SI_NS_FUNCTIONS[NS_BUTTON_BEZEL_STYLE_CODE] = sel_getUid("bezelStyle");
+    SI_NS_FUNCTIONS[NS_BUTTON_SET_BEZEL_STYLE_CODE] = sel_getUid("setBezelStyle:");
+    SI_NS_FUNCTIONS[NS_BUTTON_TARGET_CODE] = sel_getUid("target");
+    SI_NS_FUNCTIONS[NS_BUTTON_SET_TARGET_CODE] = sel_getUid("setTarget:");
+    SI_NS_FUNCTIONS[NS_BUTTON_ACTION_CODE] = sel_getUid("action");
+    SI_NS_FUNCTIONS[NS_BUTTON_SET_ACTION_CODE] = sel_getUid("setAction:");
+    SI_NS_FUNCTIONS[NS_BUTTON_AUTO_RESIZE_MASK_CODE] = sel_getUid("autoresizingMask");
+    SI_NS_FUNCTIONS[NS_BUTTON_SET_AUTO_RESIZE_MASK_CODE] = sel_getUid("setAutoresizingMask:");
+    SI_NS_FUNCTIONS[NS_BUTTON_STATE_CODE] = sel_getUid("state");
+    SI_NS_FUNCTIONS[NS_BUTTON_SET_STATE_CODE] = sel_getUid("setState:");
+    SI_NS_FUNCTIONS[NS_BUTTON_ALLOWS_MIXED_STATE_CODE] = sel_getUid("allowsMixedState");
+    SI_NS_FUNCTIONS[NS_BUTTON_SET_ALLOWS_MIXED_STATE_CODE] = sel_getUid("setAllowsMixedState:");
+    SI_NS_FUNCTIONS[NS_BUTTON_INIT_WITH_FRAME_CODE] = sel_getUid("initWithFrame:");
+    SI_NS_FUNCTIONS[NS_BUTTON_SET_BUTTON_TYPE_CODE] = sel_getUid("setButtonType:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_INDEX_OF_SELECTED_ITEM_CODE] = sel_getUid("indexOfSelectedItem");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_TARGET_CODE] = sel_getUid("target");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_TARGET_CODE] = sel_getUid("setTarget:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_ACTION_CODE] = sel_getUid("action");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_ACTION_CODE] = sel_getUid("setAction:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_FONT_CODE] = sel_getUid("font");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_FONT_CODE] = sel_getUid("setFont:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_STRING_VALUE_CODE] = sel_getUid("stringValue");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_STRING_VALUE_CODE] = sel_getUid("setStringValue:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_IS_BEZELED_CODE] = sel_getUid("isBezeled");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_IS_BEZELED_CODE] = sel_getUid("setBezeled:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_DRAWS_BACKGROUND_CODE] = sel_getUid("drawsBackground");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_DRAWS_BACKGROUND_CODE] = sel_getUid("setDrawsBackground:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_IS_EDITABLE_CODE] = sel_getUid("isEditable");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_IS_EDITABLE_CODE] = sel_getUid("setEditable:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_IS_SELECTABLE_CODE] = sel_getUid("isSelectable");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_IS_SELECTABLE_CODE] = sel_getUid("setSelectable:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_TEXT_COLOR_CODE] = sel_getUid("textColor");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SET_TEXT_COLOR_CODE] = sel_getUid("setTextColor:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_INIT_WITH_FRAME_CODE] = sel_getUid("initWithFrame:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_ADD_ITEM_CODE] = sel_getUid("addItemWithObjectValue:");
+    SI_NS_FUNCTIONS[NS_COMBOBOX_SELECT_ITEM_CODE] = sel_getUid("selectItemAtIndex:");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_CAN_CREATE_DIRECTORIES_CODE] = sel_getUid("setCanCreateDirectories:");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_CAN_CREATE_DIRECTORIES_CODE] = sel_getUid("canCreateDirectories");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_ALLOWED_FILE_TYPES_CODE] = sel_getUid("setAllowedFileTypes:");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_ALLOWED_FILE_TYPES_CODE] = sel_getUid("allowedFileTypes");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_DIRECTORY_URL_CODE] = sel_getUid("setDirectoryURL:");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_DIRECTORY_URL_CODE] = sel_getUid("directoryURL");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_NAME_FIELD_STRING_VALUE_CODE] = sel_getUid("setNameFieldStringValue:");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_NAME_FIELD_STRING_VALUE_CODE] = sel_getUid("nameFieldStringValue");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_URL_CODE] = sel_getUid("URL");
+    SI_NS_FUNCTIONS[NS_SAVE_PANEL_RUN_MODAL_CODE] = sel_getUid("runModal");
+    SI_NS_FUNCTIONS[NSURL_PATH_CODE] = sel_getUid("path");
+    SI_NS_FUNCTIONS[NSURL_FILE_URL_WITH_PATH_CODE] = sel_getUid("fileURLWithPath:");
+    SI_NS_FUNCTIONS[NS_AUTORELEASE_CODE] = sel_getUid("autorelease");
+    SI_NS_FUNCTIONS[NS_INIT_CODE] = sel_getUid("init");
 }
 
 void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function) {
@@ -1681,11 +1849,16 @@ SICDEF NSDate* NSDate_distantFuture(void) {
 }
 
 NSProcessInfo* NSProcessInfo_processInfo(void) {
+	void* nsclass = SI_NS_CLASSES[NS_PROCESS_INFO_CODE];
+	void* func = SI_NS_FUNCTIONS[NS_PROCESS_INFO_PROCESS_INFO_CODE];
 
+	return objc_func(nsclass, func);
 }
 
-SICDEF const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
-
+const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
+	void* func = SI_NS_FUNCTIONS[NS_PROCESS_INFO_PROCESS_NAME_CODE];
+    
+	return NSString_to_char(objc_func(processInfo, func));
 }
 
 NSApplication* NSApplication_sharedApplication(void) {
@@ -1908,76 +2081,93 @@ NSInteger NSDraggingInfo_numberOfValidItemsForDrop(NSDraggingInfo* info) {
 }
 
 void NSSlider_setTarget(NSSlider* slider, id target) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_SET_TARGET_CODE];
+    objc_func(slider, func, target);
 }
 
 id NSSlider_target(NSSlider* slider) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_TARGET_CODE];
+    return objc_func(slider, func);
 }
 
 void NSSlider_setAction(NSSlider* slider, SEL action) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_SET_ACTION_CODE];
+    objc_func(slider, func, action);
 }
 
 SEL NSSlider_action(NSSlider* slider) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_ACTION_CODE];
+    return objc_func(slider, func);
 }
 
 void NSSlider_setFont(NSSlider* slider, NSFont* font) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_SET_FONT_CODE];
+    objc_func(slider, func, font);
 }
 
 NSFont* NSSlider_font(NSSlider* slider) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_FONT_CODE];
+    return (NSFont*)(intptr_t)objc_func(slider, func);
 }
 
 void NSSlider_setDoubleValue(NSSlider* slider, double doubleValue) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_SET_DOUBLE_VALUE_CODE];
+    objc_func(slider, func, (void*)(intptr_t)doubleValue);
 }
 
 double NSSlider_doubleValue(NSSlider* slider) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_DOUBLE_VALUE_CODE];
+    return (double)(intptr_t)objc_func(slider, func);
 }
 
 void NSSlider_setMaxValue(NSSlider* slider, double maxValue) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_SET_MAX_VALUE_CODE];
+    objc_func(slider, func, (void*)(intptr_t)maxValue);
 }
 
 double NSSlider_maxValue(NSSlider* slider) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_MAX_VALUE_CODE];
+    return (double)(intptr_t)objc_func(slider, func);
 }
 
-
 NSSlider* NSSlider_initWithFrame(NSRect frameRect) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SLIDER_INIT_WITH_FRAME_CODE];
+    return (NSSlider*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_SLIDER_CODE]), func, frameRect);
 }
 
 void NSProgressIndicator_setDoubleValue(NSProgressIndicator* progressIndicator, double doubleValue) {
-
+    void* func = SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_SET_DOUBLE_VALUE_CODE];
+    objc_func(progressIndicator, func, (void*)(intptr_t)doubleValue);
 }
 
 double NSProgressIndicator_doubleValue(NSProgressIndicator* progressIndicator) {
-
+    void* func = SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_DOUBLE_VALUE_CODE];
+    return (double)(intptr_t)objc_func(progressIndicator, func);
 }
 
 void NSProgressIndicator_setMaxValue(NSProgressIndicator* progressIndicator, double maxValue) {
-
+    void* func = SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_SET_MAX_VALUE_CODE];
+    objc_func(progressIndicator, func, (void*)(intptr_t)maxValue);
 }
 
 double NSProgressIndicator_maxValue(NSProgressIndicator* progressIndicator) {
-
+    void* func = SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_MAX_VALUE_CODE];
+    return (double)(intptr_t)objc_func(progressIndicator, func);
 }
 
 void NSProgressIndicator_setIndeterminate(NSProgressIndicator* progressIndicator, bool isIndeterminate) {
-
+    void* func = SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_SET_INDETERMINATE_CODE];
+    objc_func(progressIndicator, func, (void*)(intptr_t)isIndeterminate);
 }
 
 bool NSProgressIndicator_indeterminate(NSProgressIndicator* progressIndicator) {
-
+    void* func = SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_INDETERMINATE_CODE];
+    return (bool)(intptr_t)objc_func(progressIndicator, func);
 }
 
 NSProgressIndicator* NSProgressIndicator_init(NSRect frameRect) {
-
+    void* func = SI_NS_FUNCTIONS[NS_PROGRESS_INDICATOR_INIT_CODE];
+    return (NSProgressIndicator*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_PROGRESS_INDICATOR_CODE]), func, frameRect);
 }
 
 NSGraphicsContext* NSGraphicsContext_currentContext(NSGraphicsContext* context) {
@@ -2171,172 +2361,209 @@ NSFont* NSFontManager_convertFont(NSFontManager* manager, NSFont* fontObj) {
 }
 
 NSFont* NSFontManager_convertFontToHaveTrait(NSFontManager* manager, NSFont* fontObj, NSFontTraitMask trait) {
-    void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_TO_HAVE_FONT_CODE];
 
     return (NSFont*)objc_func(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func, manager, fontObj, trait);
 }
 
 NSFont* NSFont_init(const char* fontName, CGFloat fontSize) {
-
+    void* func = SI_NS_FUNCTIONS[NS_FONT_INIT_CODE];
+    return (NSFont*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_FONT_CODE]), func, fontName, fontSize);
 }
 
 const char* NSFont_fontName(NSFont* font) {
-
+    void* func = SI_NS_FUNCTIONS[NS_FONT_FONT_NAME_CODE];
+    return (const char*)objc_func(font, func);
 }
 
 SICDEF const char* NSButton_title(NSButton* button) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_TITLE_CODE];
+    return (const char*)objc_func(button, func);
 }
 
 void NSButton_setTitle(NSButton* button, const char* title) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_TITLE_CODE];
+    objc_func(button, func, title);
 }
 
 NSBezelStyle NSButton_bezelStyle(NSButton* button) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_BEZEL_STYLE_CODE];
+    return (NSBezelStyle)(intptr_t)objc_func(button, func);
 }
 
 void NSButton_setBezelStyle(NSButton* button, NSBezelStyle bezelStyle) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_BEZEL_STYLE_CODE];
+    objc_func(button, func, (void*)(intptr_t)bezelStyle);
 }
 
 id NSButton_target(NSButton* button) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_TARGET_CODE];
+    return (id)objc_func(button, func);
 }
 
 void NSButton_setTarget(NSButton* button, id target) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_TARGET_CODE];
+    objc_func(button, func, target);
 }
 
 SEL NSButton_action(NSButton* button) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_ACTION_CODE];
+    return (SEL)objc_func(button, func);
 }
 
 void NSButton_setAction(NSButton* button, SEL action) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_ACTION_CODE];
+    objc_func(button, func, action);
 }
 
 NSAutoresizingMaskOptions NSButton_autoresizingMask(NSButton* button) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_AUTO_RESIZE_MASK_CODE];
+    return (NSAutoresizingMaskOptions)(intptr_t)objc_func(button, func);
 }
 
 void NSButton_setAutoresizingMask(NSButton* button, NSAutoresizingMaskOptions autoresizingMask) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_AUTO_RESIZE_MASK_CODE];
+    objc_func(button, func, (void*)(intptr_t)autoresizingMask);
 }
 
 NSControlStateValue NSButton_state(NSButton* button) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_STATE_CODE];
+    return (NSControlStateValue)(intptr_t)objc_func(button, func);
 }
 
 void NSButton_setState(NSButton* button, NSControlStateValue state) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_STATE_CODE];
+    objc_func(button, func, (void*)(intptr_t)state);
 }
 
 bool NSButton_allowsMixedState(NSButton* button) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_ALLOWS_MIXED_STATE_CODE];
+    return (bool)(intptr_t)objc_func(button, func);
 }
 
 void NSButton_setAllowsMixedState(NSButton* button, bool allowsMixedState) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_ALLOWS_MIXED_STATE_CODE];
+    objc_func(button, func, (void*)(intptr_t)allowsMixedState);
 }
 
 NSButton* NSButton_initWithFrame(NSRect frameRect) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_INIT_WITH_FRAME_CODE];
+    return (NSButton*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_BUTTON_CODE]), func, frameRect);
 }
 
 void NSButton_setButtonType(NSButton* button, NSButtonType buttonType) {
-
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_BUTTON_TYPE_CODE];
+    objc_func(button, func, (void*)(intptr_t)buttonType);
 }
 
-
 NSInteger NSComboBox_indexOfSelectedItem(NSComboBox* comboBox) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_INDEX_OF_SELECTED_ITEM_CODE];
+    return (NSInteger)(intptr_t)objc_func(comboBox, func);
 }
 
 id NSComboBox_target(NSComboBox* comboBox) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_TARGET_CODE];
+    return objc_func(comboBox, func);
 }
 
 void NSComboBox_setTarget(NSComboBox* comboBox, id target) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_TARGET_CODE];
+    objc_func(comboBox, func, target);
 }
 
 SEL NSComboBox_action(NSComboBox* comboBox) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_ACTION_CODE];
+    return objc_func(comboBox, func);
 }
 
 void NSComboBox_setAction(NSComboBox* comboBox, SEL action) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_ACTION_CODE];
+    objc_func(comboBox, func, action);
 }
 
 NSFont* NSComboBox_font(NSComboBox* comboBox) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_FONT_CODE];
+    return (NSFont*)(intptr_t)objc_func(comboBox, func);
 }
 
 void NSComboBox_setFont(NSComboBox* comboBox, NSFont* font) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_FONT_CODE];
+    objc_func(comboBox, func, font);
 }
 
 const char* NSComboBox_stringValue(NSComboBox* field) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_STRING_VALUE_CODE];
+    return (const char*)objc_func(field, func);
 }
 
 void NSComboBox_setStringValue(NSComboBox* field, const char* stringValue) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_STRING_VALUE_CODE];
+    objc_func(field, func, stringValue);
 }
 
 bool NSComboBox_isBezeled(NSComboBox* field) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_IS_BEZELED_CODE];
+    return (bool)(intptr_t)objc_func(field, func);
 }
 
 void NSComboBox_setIsBezeled(NSComboBox* field, bool isBezeled) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_IS_BEZELED_CODE];
+    objc_func(field, func, (void*)(intptr_t)isBezeled);
 }
 
-
 bool NSComboBox_drawsBackground(NSComboBox* field) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_DRAWS_BACKGROUND_CODE];
+    return (bool)(intptr_t)objc_func(field, func);
 }
 
 void NSComboBox_setDrawsBackground(NSComboBox* field, bool drawsBackground) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_DRAWS_BACKGROUND_CODE];
+    objc_func(field, func, (void*)(intptr_t)drawsBackground);
 }
 
 bool NSComboBox_isEditable(NSComboBox* field) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_IS_EDITABLE_CODE];
+    return (bool)(intptr_t)objc_func(field, func);
 }
 
 void NSComboBox_setEditable(NSComboBox* field, bool isEditable) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_IS_EDITABLE_CODE];
+    objc_func(field, func, (void*)(intptr_t)isEditable);
 }
 
 bool NSComboBox_isSelectable(NSComboBox* field) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_IS_SELECTABLE_CODE];
+    return (bool)(intptr_t)objc_func(field, func);
 }
 
 void NSComboBox_setIsSelectable(NSComboBox* field, bool isSelectable) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_IS_SELECTABLE_CODE];
+    objc_func(field, func, (void*)(intptr_t)isSelectable);
 }
 
 NSColor* NSComboBox_textColor(NSComboBox* field) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_TEXT_COLOR_CODE];
+    return (NSColor*)objc_func(field, func);
 }
 
 void NSComboBox_setTextColor(NSComboBox* field, NSColor* textColor) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_TEXT_COLOR_CODE];
+    objc_func(field, func, textColor);
 }
 
-
 NSComboBox* NSComboBox_initWithFrame(NSRect frameRect) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_INIT_WITH_FRAME_CODE];
+    return (NSComboBox*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_COMBOBOX_CODE]), func, frameRect);
 }
 
 void NSComboBox_addItem(NSComboBox* comboBox, void* item) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_ADD_ITEM_CODE];
+    objc_func(comboBox, func, item);
 }
 
 void NSComboBox_selectItem(NSComboBox* comboBox, NSInteger index) {
-
+    void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SELECT_ITEM_CODE];
+    objc_func(comboBox, func, (void*)(intptr_t)index);
 }
 
 NSEventType NSEvent_type(NSEvent* event) {
@@ -2595,51 +2822,63 @@ NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NS
 }
 
 void NSSavePanel_setCanCreateDirectories(NSSavePanel* savePanel, bool canCreateDirectories) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_CAN_CREATE_DIRECTORIES_CODE];
+    objc_func(savePanel, func, (void*)(intptr_t)canCreateDirectories);
 }
 
 bool NSSavePanel_canCreateDirectories(NSSavePanel* savePanel) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_CAN_CREATE_DIRECTORIES_CODE];
+    return (bool)(intptr_t)objc_func(savePanel, func);
 }
 
 void NSSavePanel_setAllowedFileTypes(NSSavePanel* savePanel, siArray(const char*) allowedFileTypes) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_ALLOWED_FILE_TYPES_CODE];
+    objc_func(savePanel, func, allowedFileTypes);
 }
 
 siArray(const char*) NSSavePanel_allowedFileTypes(NSSavePanel* savePanel) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_ALLOWED_FILE_TYPES_CODE];
+    return (siArray(const char*))objc_func(savePanel, func);
 }
 
 void NSSavePanel_setDirectoryURL(NSSavePanel* savePanel, NSURL* directoryURL) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_DIRECTORY_URL_CODE];
+    objc_func(savePanel, func, directoryURL);
 }
 
 NSURL* NSSavePanel_directoryURL(NSSavePanel* savePanel) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_DIRECTORY_URL_CODE];
+    return (NSURL*)objc_func(savePanel, func);
 }
 
 void NSSavePanel_setNameFieldStringValue(NSSavePanel* savePanel, const char* nameFieldStringValue) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_NAME_FIELD_STRING_VALUE_CODE];
+    objc_func(savePanel, func, nameFieldStringValue);
 }
 
 const char* NSSavePanel_nameFieldStringValue(NSSavePanel* savePanel) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_NAME_FIELD_STRING_VALUE_CODE];
+    return (const char*)objc_func(savePanel, func);
 }
 
 NSURL* NSSavePanel_URL(NSSavePanel* savePanel) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_URL_CODE];
+    return (NSURL*)objc_func(savePanel, func);
 }
 
 NSModalResponse NSSavePanel_runModal(NSSavePanel* savePanel) {
-
+    void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_RUN_MODAL_CODE];
+    return (NSModalResponse)(intptr_t)objc_func(savePanel, func);
 }
 
 const char* NSURL_path(NSURL* url) {
-
+    void* func = SI_NS_FUNCTIONS[NSURL_PATH_CODE];
+    return (const char*)objc_func(url, func);
 }
 
 NSURL* NSURL_fileURLWithPath(const char* path) {
-
+    void* func = SI_NS_FUNCTIONS[NSURL_FILE_URL_WITH_PATH_CODE];
+    return (NSURL*)objc_func(SI_NS_CLASSES[NS_URL_CODE], func, path);
 }
 
 NSString* NSString_stringWithUTF8String(const char* str) {
@@ -2669,13 +2908,9 @@ void* NSArray_objectAtIndex(NSArray* array, NSUInteger index) {
     return objc_func(SI_NS_CLASSES[NS_STRING_CODE], func, index);
 }
 
-id NSAutoRelease(id object) {
-    
-}
+id NSAutoRelease(id obj) { return (id)objc_func(obj, SI_NS_FUNCTIONS[NS_AUTORELEASE_CODE]); }
 
-id NSInit(void* class) {
-
-}
+id NSInit(void* class) { return (id)objc_func(class, SI_NS_FUNCTIONS[NS_INIT_CODE]); }
 
 void NSRelease(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RELEASE_CODE]); }
 
