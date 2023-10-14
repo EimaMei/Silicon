@@ -7,6 +7,8 @@ NSWindow* win;
 bool windowShouldClose(void* self)  {
     NSRelease(NSApp);
     NSRelease(win);
+
+    NSApplication_stop(NSApp, self);
     return true;
 }
 
