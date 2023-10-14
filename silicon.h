@@ -2261,13 +2261,15 @@ void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newT
 const char* NSTextField_stringValue(NSTextField* obj) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_STRING_VALUE_CODE];
 
-    return (const char*)objc_func(obj, func);
+    return (const char*)NSString_to_char(objc_func(obj, func));
 }
 
 void NSTextField_setStringValue(NSTextField* obj, const char* field) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_STRING_VALUE_CODE];
 
-    objc_func(obj, func, field);
+    NSString* str = NSString_stringWithUTF8String(field);
+
+    objc_func(obj, func, str);
 }
 
 bool NSTextField_isBezeled(NSTextField* obj) {
@@ -2368,22 +2370,22 @@ NSFont* NSFontManager_convertFontToHaveTrait(NSFontManager* manager, NSFont* fon
 
 NSFont* NSFont_init(const char* fontName, CGFloat fontSize) {
     void* func = SI_NS_FUNCTIONS[NS_FONT_INIT_CODE];
-    return (NSFont*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_FONT_CODE]), func, fontName, fontSize);
+    return (NSFont*)(intptr_t)objc_func(NSAlloc(SI_NS_CLASSES[NS_FONT_CODE]), func, NSString_stringWithUTF8String(fontName), fontSize);
 }
 
 const char* NSFont_fontName(NSFont* font) {
     void* func = SI_NS_FUNCTIONS[NS_FONT_FONT_NAME_CODE];
-    return (const char*)objc_func(font, func);
+    return (const char*)NSString_to_char(objc_func(font, func));
 }
 
 SICDEF const char* NSButton_title(NSButton* button) {
     void* func = SI_NS_FUNCTIONS[NS_BUTTON_TITLE_CODE];
-    return (const char*)objc_func(button, func);
+    return (const char*)NSString_to_char(objc_func(button, func));
 }
 
 void NSButton_setTitle(NSButton* button, const char* title) {
     void* func = SI_NS_FUNCTIONS[NS_BUTTON_SET_TITLE_CODE];
-    objc_func(button, func, title);
+    objc_func(button, func, NSString_stringWithUTF8String(title));
 }
 
 NSBezelStyle NSButton_bezelStyle(NSButton* button) {
@@ -2493,12 +2495,12 @@ void NSComboBox_setFont(NSComboBox* comboBox, NSFont* font) {
 
 const char* NSComboBox_stringValue(NSComboBox* field) {
     void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_STRING_VALUE_CODE];
-    return (const char*)objc_func(field, func);
+    return (const char*)NSString_to_char(objc_func(field, func));
 }
 
 void NSComboBox_setStringValue(NSComboBox* field, const char* stringValue) {
     void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_SET_STRING_VALUE_CODE];
-    objc_func(field, func, stringValue);
+    objc_func(field, func, NSString_stringWithUTF8String(stringValue));
 }
 
 bool NSComboBox_isBezeled(NSComboBox* field) {
@@ -2813,11 +2815,11 @@ NSMenuItem* NSMenuItem_separatorItem(void) {
 
 unsigned char* NSBitmapImageRep_bitmapData(NSBitmapImageRep* imageRep) {
     void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_BITMAP_CODE];
-    return (unsigned char*)objc_func(imageRep, func);
+    return (unsigned char*)NSString_to_char(objc_func(imageRep, func));
 }
 
 NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NSInteger width, NSInteger height, NSInteger bps, NSInteger spp, bool alpha, bool isPlanar, const char* colorSpaceName, NSBitmapFormat bitmapFormat, NSInteger rowBytes, NSInteger pixelBits) {
-	void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_INIT_BITMAP_CODE];
+    void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_INIT_BITMAP_CODE];
     return (NSBitmapImageRep*)objc_func(NSAlloc(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE]), func, planes, width, height, bps, spp, alpha, isPlanar, NSString_stringWithUTF8String(colorSpaceName), bitmapFormat, rowBytes, pixelBits);
 }
 
@@ -2833,12 +2835,34 @@ bool NSSavePanel_canCreateDirectories(NSSavePanel* savePanel) {
 
 void NSSavePanel_setAllowedFileTypes(NSSavePanel* savePanel, siArray(const char*) allowedFileTypes) {
     void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_ALLOWED_FILE_TYPES_CODE];
-    objc_func(savePanel, func, allowedFileTypes);
+
+	siArray(NSString*) copy = si_array_init_reserve(si_sizeof(*copy), si_array_len(allowedFileTypes));
+
+	for (usize i = 0; i < si_array_len(copy); i++) {
+		copy[i] = NSString_stringWithUTF8String(allowedFileTypes[i]);
+	}
+
+	NSArray* array = si_array_to_NSArray(copy);
+	objc_func(savePanel, func, array);
+
+	si_array_free(copy);
+	NSRelease(array);
 }
 
 siArray(const char*) NSSavePanel_allowedFileTypes(NSSavePanel* savePanel) {
     void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_ALLOWED_FILE_TYPES_CODE];
-    return (siArray(const char*))objc_func(savePanel, func);
+    NSArray* output = (NSArray*)objc_func(savePanel, func);
+
+    NSUInteger count = NSArray_count(output);
+
+	siArray(const char*) res = si_array_init_reserve(si_sizeof(const char*), count);
+
+    for (NSUInteger i = 0; i < count; i++)
+        res[i] = NSString_to_char(NSArray_objectAtIndex(output, i));
+
+    NSRelease(output);
+
+	return res; 
 }
 
 void NSSavePanel_setDirectoryURL(NSSavePanel* savePanel, NSURL* directoryURL) {
@@ -2853,7 +2877,7 @@ NSURL* NSSavePanel_directoryURL(NSSavePanel* savePanel) {
 
 void NSSavePanel_setNameFieldStringValue(NSSavePanel* savePanel, const char* nameFieldStringValue) {
     void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_SET_NAME_FIELD_STRING_VALUE_CODE];
-    objc_func(savePanel, func, nameFieldStringValue);
+    objc_func(savePanel, func, NSString_stringWithUTF8String(nameFieldStringValue));
 }
 
 const char* NSSavePanel_nameFieldStringValue(NSSavePanel* savePanel) {
@@ -2878,7 +2902,7 @@ const char* NSURL_path(NSURL* url) {
 
 NSURL* NSURL_fileURLWithPath(const char* path) {
     void* func = SI_NS_FUNCTIONS[NSURL_FILE_URL_WITH_PATH_CODE];
-    return (NSURL*)objc_func(SI_NS_CLASSES[NS_URL_CODE], func, path);
+    return (NSURL*)objc_func(SI_NS_CLASSES[NS_URL_CODE], func, NSString_stringWithUTF8String(path));
 }
 
 NSString* NSString_stringWithUTF8String(const char* str) {
