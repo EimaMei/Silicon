@@ -7,7 +7,7 @@
 
 NSApplication* NSApp;
 
-bool windowShouldClose(void* self, id sender)  {
+bool windowShouldClose(id sender)  {
 	NSApplication_terminate(NSApp, sender);
 	return true;
 }
