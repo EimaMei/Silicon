@@ -15,18 +15,23 @@ void OnComboBox1SelectedItemChange(id sender) {
 	NSComboBox_selectItem(comboBox2, NSComboBox_indexOfSelectedItem(comboBox1));
 }
 
+NSApplication* NSApp;
+
 // Standard close function.
 bool windowShouldClose(id sender) {
 	NSApplication_terminate(NSApp, sender);
 	return true;
 }
 
+#define selector(function) sel_getUid(#function":")
+
+
 int main(int argc, char* argv[]) {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 	si_func_to_SEL(SI_DEFAULT, OnComboBox1SelectedItemChange);
 
-	NSApplication_sharedApplication();
+	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	// Init the window beforehand as we'll have to reference for later.

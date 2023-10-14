@@ -19,11 +19,14 @@ void valueChanged(id sender) {
 	NSTextField_setStringValue(label, buffer);
 }
 
+NSApplication* NSApp;
+
 bool windowShouldClose(id sender) {
 	NSApplication_terminate(NSApp, sender);
 	return true;
 }
 
+#define selector(function) sel_getUid(#function":")
 
 int main(int argc, char* argv[]) {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
@@ -31,7 +34,7 @@ int main(int argc, char* argv[]) {
 	si_func_to_SEL(SI_DEFAULT, valueChanged);
 
 	// Ever since MacOS 10.6, Mac applications require a 'NSApplicationActivationPolicyRegular' type policy to properly show applications on dock.
-	NSApplication_sharedApplication();
+	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	// Init and configure the track bar.

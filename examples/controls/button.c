@@ -15,6 +15,7 @@ int button2Clicked;
 // Buffer for our text.
 static char buffer[30];
 
+NSApplication* NSApp;
 
 bool windowShouldClose(id sender) {
 	NSApplication_terminate(NSApp, sender);
@@ -31,6 +32,7 @@ void OnButton2Click(id sender) {
 	NSTextField_setStringValue(label2, buffer);
 }
 
+#define selector(function) sel_getUid(#function":")
 
 int main(int argc, char* argv[]) {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
@@ -38,7 +40,7 @@ int main(int argc, char* argv[]) {
 	si_func_to_SEL(SI_DEFAULT, OnButton1Click);
 	si_func_to_SEL(SI_DEFAULT, OnButton2Click);
 
-	NSApplication_sharedApplication();
+	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);

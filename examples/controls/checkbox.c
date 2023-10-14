@@ -33,6 +33,7 @@ const char* stateToString(NSControlStateValue state) {
 	return "N/A";
 }
 
+NSApplication* NSApp;
 
 bool windowShouldClose(id sender) {
 	NSApplication_terminate(NSApp, sender);
@@ -63,7 +64,7 @@ void OnCheckBox5Click(id sender) {
 
 
 NSButton* create_checkbox(checkBox checkbox) {
-	NSButton* result = autorelease(NSButton_initWithFrame(checkbox.rect));
+	NSButton* result = NSAutoRelease(NSButton_initWithFrame(checkbox.rect));
 	NSButton_setTitle(result, checkbox.title);
 	NSButton_setAllowsMixedState(result, checkbox.allowMixedState);
 	NSButton_setButtonType(result, checkbox.type);
@@ -78,7 +79,13 @@ NSButton* create_checkbox(checkBox checkbox) {
 	return result;
 }
 
+#define selector(function) sel_getUid(#function":")
+
+
 int main(int argc, char* argv[]) {
+	NSApp = NSApplication_sharedApplication();
+	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
+
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 	si_func_to_SEL(SI_DEFAULT, OnCheckBox1Click);
@@ -108,9 +115,6 @@ int main(int argc, char* argv[]) {
 
 	NSWindow_setIsVisible(window, true);
 	NSWindow_makeMainWindow(window);
-
-	NSApplication_sharedApplication();
-	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	NSApplication_run(NSApp);
 }

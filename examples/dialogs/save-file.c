@@ -8,9 +8,10 @@
 NSButton* button;
 NSTextField* label;
 
+NSApplication* NSApp;
 
 void OnButtonClick(void* sender) {
-	NSSavePanel* saveFileDialog = malloc_class(NSSavePanel);
+	NSSavePanel* saveFileDialog = NSInit(SI_NS_CLASSES[NS_SAVE_PANEL_CODE]);
 	siArray(const char*) value = si_array_init((char*[]){"txt", "md"}, si_sizeof(*value), 2);
 
  	NSSavePanel_setCanCreateDirectories(saveFileDialog, true);
@@ -44,7 +45,7 @@ int main(int argc, char* argv[]) {
 	si_func_to_SEL(SI_DEFAULT, OnButtonClick);
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 
-	NSApplication_sharedApplication();
+	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
@@ -54,7 +55,7 @@ int main(int argc, char* argv[]) {
 	NSButton_setTitle(button, "Save...");
 	NSButton_setBezelStyle(button, NSBezelStyleRounded);
 	NSButton_setTarget(button, (id)window);
-	NSButton_setAction(button, selector(OnButtonClick));
+	NSButton_setAction(button, sel_getUid("OnButtonClick"));
 	NSButton_setAutoresizingMask(button, NSViewMaxXMargin | NSViewMinYMargin);
 
 	label = NSTextField_initWithFrame(NSMakeRect(10, 235, 280, 20));
