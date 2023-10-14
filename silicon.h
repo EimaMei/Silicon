@@ -142,6 +142,18 @@ typedef void NSMenuItem;
 typedef void NSImage;
 typedef void NSView;
 typedef void NSAutoreleasePool;
+typedef void NSFontManager;
+typedef void NSTextField;
+typedef void NSFont;
+typedef void NSProcessInfo;
+typedef void NSButton;
+typedef void NSComboBox;
+typedef void NSSlider;
+typedef void NSProgressIndicator;
+typedef void NSURL;
+typedef void NSSavePanel;
+typedef void NSOpenPanel;
+typedef void NSColorPanel;
 #ifndef __OBJC__
 typedef void NSDate;
 typedef void NSString;
@@ -155,6 +167,7 @@ typedef NSView NSOpenGLView;
 typedef const char* NSPasteboardType;
 typedef unsigned long NSUInteger;
 typedef long NSInteger;
+typedef NSInteger NSModalResponse;
 
 typedef uint32_t NSOpenGLPixelFormatAttribute NS_OPENGL_DEPRECATED(10.0, 10.14);
 
@@ -323,6 +336,66 @@ typedef NS_ENUM(NSUInteger, NSBitmapFormat) {
     NSBitmapFormatThirtyTwoBitBigEndian API_AVAILABLE(macos(10.10)) = (1 << 11)
 };
 
+typedef NS_ENUM(NSUInteger, NSFontTraitMask) {
+	NSItalicFontMask			= 0x00000001,
+	NSBoldFontMask			= 0x00000002,
+	NSUnboldFontMask			= 0x00000004,
+	NSNonStandardCharacterSetFontMask	= 0x00000008,
+	NSNarrowFontMask			= 0x00000010,
+	NSExpandedFontMask			= 0x00000020,
+	NSCondensedFontMask			= 0x00000040,
+	NSSmallCapsFontMask			= 0x00000080,
+	NSPosterFontMask			= 0x00000100,
+	NSCompressedFontMask		= 0x00000200,
+	NSFixedPitchFontMask		= 0x00000400,
+	NSUnitalicFontMask			= 0x01000000
+};
+
+typedef NS_ENUM(NSUInteger, NSButtonType) {
+	NSButtonTypeMomentaryLight    = 0,
+	NSButtonTypePushOnPushOff     = 1,
+	NSButtonTypeToggle            = 2,
+	NSButtonTypeSwitch            = 3,
+	NSButtonTypeRadio             = 4,
+	NSButtonTypeMomentaryChange   = 5,
+	NSButtonTypeOnOff             = 6,
+	NSButtonTypeMomentaryPushIn   = 7,
+	NSButtonTypeAccelerator API_AVAILABLE(macos(10.10.3)) = 8,
+	NSButtonTypeMultiLevelAccelerator API_AVAILABLE(macos(10.10.3)) = 9,
+};
+
+// Bitset options for the autoresizingMask
+typedef NS_ENUM(NSUInteger, NSAutoresizingMaskOptions) {
+	NSViewNotSizable			=  0,
+	NSViewMinXMargin			=  1,
+	NSViewWidthSizable			=  2,
+	NSViewMaxXMargin			=  4,
+	NSViewMinYMargin			=  8,
+	NSViewHeightSizable			= 16,
+	NSViewMaxYMargin			= 32
+};
+
+typedef NS_ENUM(NSUInteger, NSBezelStyle) {
+	NSBezelStyleRounded           = 1,
+	NSBezelStyleRegularSquare     = 2,
+	NSBezelStyleDisclosure        = 5,
+	NSBezelStyleShadowlessSquare  = 6,
+	NSBezelStyleCircular          = 7,
+	NSBezelStyleTexturedSquare    = 8,
+	NSBezelStyleHelpButton        = 9,
+	NSBezelStyleSmallSquare       = 10,
+	NSBezelStyleTexturedRounded   = 11,
+	NSBezelStyleRoundRect         = 12,
+	NSBezelStyleRecessed          = 13,
+	NSBezelStyleRoundedDisclosure = 14,
+	NSBezelStyleInline API_AVAILABLE(macos(10.7)) = 15,
+};
+
+typedef NSInteger NSControlStateValue;
+static const NSControlStateValue NSControlStateValueMixed = -1;
+static const NSControlStateValue NSControlStateValueOff = 0;
+static const NSControlStateValue NSControlStateValueOn = 1;
+
 /*
  ** Attribute names for [NSOpenGLPixelFormat initWithAttributes]
  ** and [NSOpenGLPixelFormat getValues:forAttribute:forVirtualScreen].
@@ -465,6 +538,8 @@ enum {
 SICDEF void si_initNS(void);
 
 /* release objects */
+SICDEF id NSAutoRelease(id object);
+SICDEF id NSInit(void* class);
 SICDEF void NSRelease(id object);
 SICDEF void NSRetain(id object);
 
@@ -547,6 +622,14 @@ SICDEF NSAutoreleasePool* NSAutoreleasePool_init(void);
 /* ====== NSDate functions ====== */
 /* */
 SICDEF NSDate* NSDate_distantFuture(void);
+
+/* ============ NSProcessInfo class ============ */
+/* ====== NSProcessInfo functions ====== */
+/* */
+SICDEF NSProcessInfo* NSProcessInfo_processInfo(void);
+/* */
+SICDEF const char* NSProcessInfo_processName(NSProcessInfo* processInfo);
+
 
 /* ============ NSApplication class ============ */
 /* ====== NSApplication properties ====== */
@@ -649,6 +732,102 @@ SICDEF void NSView_addSubview(NSView* view, NSView* subview);
 /* */
 SICDEF void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newTypes);
 
+/* ============ NSTextField class ============ */
+/* ====== NSTextField properties ====== */
+/* */
+si_define_property(NSTextField, const char*, stringValue, StringValue, field);
+/* */
+si_define_property(NSTextField, bool, isBezeled, Bezeled, field);
+/* */
+si_define_property(NSTextField, bool, drawsBackground, DrawsBackground, field);
+/* */
+si_define_property(NSTextField, bool, isEditable, Editable, field);
+/* */
+si_define_property(NSTextField, bool, isSelectable, Selectable, field);
+/* */
+si_define_property(NSTextField, NSColor*, textColor, TextColor, field);
+/* */
+si_define_property(NSTextField, NSFont*, font, Font, field);
+
+/* ====== NSTextField functions ====== */
+/* Initializes a NSTextField handle. */
+SICDEF NSTextField* NSTextField_initWithFrame(NSRect frameRect);
+
+
+/* ============ NSFontManager class ============ */
+/* ====== NSFontManager functions ====== */
+/* */
+SICDEF NSFontManager* NSFontManager_sharedFontManager(void);
+/* */
+SICDEF NSFont* NSFontManager_convertFont(NSFontManager* manager, NSFont* fontObj);
+/* */
+SICDEF NSFont* NSFontManager_convertFontToHaveTrait(NSFontManager* manager, NSFont* fontObj, NSFontTraitMask trait);
+
+/* ============ NSFont class ============ */
+/* ====== NSFont functions ====== */
+/* */
+SICDEF NSFont* NSFont_init(const char* fontName, CGFloat fontSize);
+/* */
+SICDEF const char* NSFont_fontName(NSFont* font);
+
+/* ============ NSButton class ============ */
+/* ====== NSButton properties ====== */
+/* */
+si_define_property(NSButton, const char*, title, Title, button);
+/* */
+si_define_property(NSButton, NSBezelStyle, bezelStyle, BezelStyle, button);
+/* */
+si_define_property(NSButton, id, target, Target, button);
+/* */
+si_define_property(NSButton, SEL, action, Action, button);
+/* */
+si_define_property(NSButton, NSAutoresizingMaskOptions, autoresizingMask, AutoresizingMask, button);
+/* */
+si_define_property(NSButton, NSControlStateValue, state, State, button);
+/* */
+si_define_property(NSButton, bool, allowsMixedState, AllowsMixedState, button);
+
+/* ====== NSButton functions ====== */
+/* */
+SICDEF NSButton* NSButton_initWithFrame(NSRect frameRect);
+/* */
+SICDEF void NSButton_setButtonType(NSButton* button, NSButtonType buttonType);
+
+
+/* ============ NSComboBox class ============ */
+/* ====== NSComboBox properties ====== */
+/* (read-only) */
+SICDEF NSInteger NSComboBox_indexOfSelectedItem(NSComboBox* comboBox);
+/* */
+si_define_property(NSComboBox, id, target, Target, comboBox);
+/* */
+si_define_property(NSComboBox, SEL, action, Action, comboBox);
+/**/
+si_define_property(NSComboBox, NSFont*, font, Font, comboBox);
+/* */
+si_define_property(NSComboBox, const char*, stringValue, StringValue, field);
+/* */
+si_define_property(NSComboBox, bool, isBezeled, Bezeled, field);
+/* */
+si_define_property(NSComboBox, bool, drawsBackground, DrawsBackground, field);
+/* */
+si_define_property(NSComboBox, bool, isEditable, Editable, field);
+/* */
+si_define_property(NSComboBox, bool, isSelectable, Selectable, field);
+/* */
+si_define_property(NSComboBox, NSColor*, textColor, TextColor, field);
+/* */
+si_define_property(NSComboBox, NSFont*, font, Font, field);
+
+
+/* ====== NSComboBox functions ====== */
+/**/
+SICDEF NSComboBox* NSComboBox_initWithFrame(NSRect frameRect);
+/* */
+SICDEF void NSComboBox_addItem(NSComboBox* comboBox, void* item);
+/* */
+SICDEF void NSComboBox_selectItem(NSComboBox* comboBox, NSInteger index);
+
 /* ============ NSEvent class ============ */
 /* ====== NSEvent functions ====== */
 /* */
@@ -681,6 +860,36 @@ si_define_property(NSDraggingInfo, NSInteger, numberOfValidItemsForDrop, NumberO
 /* */
 SICDEF NSWindow* NSDraggingInfo_draggingDestinationWindow(NSDraggingInfo* info);
 
+/* ============ NSSlider class ============ */
+/* ====== NSSlider properties ====== */
+/**/
+si_define_property(NSSlider, id, target, Target, slider);
+/* */
+si_define_property(NSSlider, SEL, action, Action, slider);
+/**/
+si_define_property(NSSlider, NSFont*, font, Font, slider);
+/* */
+si_define_property(NSSlider, double, doubleValue, DoubleValue, slider);
+/* */
+si_define_property(NSSlider, double, maxValue, MaxValue, slider);
+
+/* ====== NSSlider functions ====== */
+/* */
+SICDEF NSSlider* NSSlider_initWithFrame(NSRect frameRect);
+
+/* ============ NSProgressIndicator class ============ */
+/* ====== NSProgressIndicator properties ====== */
+/* */
+si_define_property(NSProgressIndicator, double, doubleValue, DoubleValue, progressIndicator);
+/* */
+si_define_property(NSProgressIndicator, double, maxValue, MaxValue, progressIndicator);
+/* */
+si_define_property(NSProgressIndicator, bool, isIndeterminate, Indeterminate, progressIndicator);
+
+/* ====== NSProgressIndicator functions ====== */
+/* */
+SICDEF NSProgressIndicator* NSProgressIndicator_init(NSRect frameRect);
+
 /* ============ NSImage class ============ */
 /* ====== NSImage functions ====== */
 /* Initializes and returns an image object with the specified dimensions. */
@@ -690,7 +899,7 @@ SICDEF NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger lengt
 /* Initializes a data object with the content of the file at a given path. */
 SICDEF NSImage* NSImage_initWithFile(const char* path);
 /* */
-NSImage* NSImage_initWithCGImage(CGImageRef cgImage, NSSize size);
+SICDEF NSImage* NSImage_initWithCGImage(CGImageRef cgImage, NSSize size);
 /* Adds the specified image representation object to the image. */
 SICDEF void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep);
 /* Returns the application’s current cursor. */
@@ -761,6 +970,10 @@ SICDEF siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu);
 /* */
 SICDEF NSMenuItem* NSMenuItem_separatorItem(void);
 
+/* ============ NSColorPanel class ============ */
+/* =====si_= NSColorPanel properties ====== */
+si_define_property(NSColorPanel, NSColor*, color, Color, colorPanel);
+
 /* ============ NSBitmapImageRep class ============ */
 /* ====== NSBitmapImageRep properties ====== */
 SICDEF unsigned char* NSBitmapImageRep_bitmapData(NSBitmapImageRep* imageRep);
@@ -768,6 +981,68 @@ SICDEF unsigned char* NSBitmapImageRep_bitmapData(NSBitmapImageRep* imageRep);
 /* ====== NSBitmapImageRep functions ====== */
 /* Initializes a newly allocated bitmap image representation so it can render the specified image. */
 SICDEF NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NSInteger width, NSInteger height, NSInteger bps, NSInteger spp, bool alpha, bool isPlanar, const char* colorSpaceName, NSBitmapFormat bitmapFormat, NSInteger rowBytes, NSInteger pixelBits);
+
+/* ============ NSSavePanel class ============ */
+/* ====== NSSavePanel properties ====== */
+/* A Boosi_lean value that indicates whether the panel displays UI for creating directories. */
+si_define_property(NSSavePanel, bool, canCreateDirectories, CanCreateDirectories, savePanel);
+/* (Deprsi_ecated!) An array of filename extensions or UTIs that represent the allowed file types for the panel. */
+si_define_property(NSSavePanel, siArray(const char*), allowedFileTypes, AllowedFileTypes, savePanel);
+/* The csi_urrent directory shown in the panel. */
+si_define_property(NSSavePanel, NSURL*, directoryURL, DirectoryURL, savePanel);
+/* The usi_ser-editable filename currently shown in the name field. */
+si_define_property(NSSavePanel, const char*, nameFieldStringValue, NameFieldStringValue, savePanel);
+/* A URL that contains the fully specified location of the targeted file. */
+SICDEF NSURL* NSSavePanel_URL(NSSavePanel* savePanel);
+
+/* ====== NSSavePanel functions ====== */
+/* Displays the panel and begins its event loop with the current working (or last-selected) directory as the default starting point. */
+SICDEF NSModalResponse NSSavePanel_runModal(NSSavePanel* savePanel);
+
+
+/* ============ NSURL class ============ */
+/* ====== NSURL properties ====== */
+SICDEF const char* NSURL_path(NSURL* url);
+
+/* ====== NSURL functions ====== */
+/* Initializes and returns a newly created NSURL object as a file URL with a specified path. */
+SICDEF NSURL* NSURL_fileURLWithPath(const char* path);
+
+
+/* ============ NSOpenPanel class ============ */
+/* ====== NSOpenPanel properties ====== */
+/* A Boosi_lean that indicates whether the user can choose files in the panel. */
+si_define_property(NSOpenPanel, bool, canChooseFiles, CanChooseFiles, openPanel);
+/* A Boosi_lean that indicates whether the user can choose directories in the panel. */
+si_define_property(NSOpenPanel, bool, canChooseDirectories, CanChooseDirectories, openPanel);
+/* A Boosi_lean value that indicates whether the panel displays UI for creating directories. */
+si_define_property(NSOpenPanel, bool, canCreateDirectories, CanCreateDirectories, openPanel);
+/* A Boosi_lean that indicates whether the panel resolves aliases. */
+si_define_property(NSOpenPanel, bool, resolvesAliases, ResolvesAliases, openPanel);
+/* A Boosi_lean that indicates whether the user may select multiple files and directories. */
+si_define_property(NSOpenPanel, bool, allowsMultipleSelection, AllowsMultipleSelection, openPanel);
+/* A Boosi_lean value that indicates whether the panel's accessory view is visible. */
+si_define_property(NSOpenPanel, bool, accessoryViewDisclosed, AccessoryViewDisclosed, openPanel);
+/* An array of URLs, each of which contains the fully specified location of a selected file or directory. */
+SICDEF siArray(NSURL*) NSOpenPanel_URLs(NSOpenPanel* openPanel);
+/* A Boosi_lean value that indicates how the panel responds to iCloud documents that aren't fully downloaded locally. */
+si_define_property(NSOpenPanel, bool, canDownloadUbiquitousContents, CanDownloadUbiquitousContents, openPanel);
+/* A Boosi_lean value that indicates whether the panel's accessory view is visible. */
+si_define_property(NSOpenPanel, bool, canResolveUbiquitousConflicts, CanResolveUbiquitousConflicts, openPanel);
+/* (Deprsi_ecated!) An array of filename extensions or UTIs that represent the allowed file types for the panel. */
+si_define_property(NSOpenPanel, siArray(const char*), allowedFileTypes, AllowedFileTypes, openPanel);
+/* The csi_urrent directory shown in the panel. */
+si_define_property(NSOpenPanel, NSURL*, directoryURL, DirectoryURL, openPanel);
+/* The usi_ser-editable filename currently shown in the name field. */
+si_define_property(NSOpenPanel, const char*, nameFieldStringValue, NameFieldStringValue, openPanel);
+/* A URL that contains the fully specified location of the targeted file. */
+SICDEF NSURL* NSOpenPanel_URL(NSOpenPanel* openPanel);
+
+/* ====== NSOpenPanel functions ====== */
+/* Creates a new Open panel and initializes it with a default configuration. */
+SICDEF NSOpenPanel* NSOpenPanel_openPanel();
+/* Displays the panel and begins its event loop with the current working (or last-selected) directory as the default starting point. */
+SICDEF NSModalResponse NSOpenPanel_runModal(NSOpenPanel* openPanel);
 
 /* ============ OpenGL ============ */
 /* TODO(EimaMei): Add documentation & deprecations macros for the OpenGL functions. */
@@ -812,6 +1087,60 @@ static const NSWindowStyleMask NSHUDWindowMask API_DEPRECATED_WITH_REPLACEMENT("
 static const NSWindowStyleMask NSUnscaledWindowMask API_DEPRECATED("NSUnscaledWindowMask is deprecated and has no effect. The scale factor for a window backing store is dynamic and dependent on the screen it is placed on.", macos(10.0,10.9)) = 1 << 11;
 
 #define NSDefaultRunLoopMode NSString_stringWithUTF8String("kCFRunLoopDefaultMode")
+
+// Additional NSModalResponse values
+static const NSModalResponse NSModalResponseOK = 1;
+static const NSModalResponse NSModalResponseCancel = 0;
+
+enum {
+	NSFontItalicTrait = (1 << 0),
+	NSFontBoldTrait = (1 << 1),
+	NSFontExpandedTrait = (1 << 5),
+	NSFontCondensedTrait = (1 << 6),
+	NSFontMonoSpaceTrait = (1 << 10),
+	NSFontVerticalTrait = (1 << 11),
+	NSFontUIOptimizedTrait = (1 << 12)
+};
+
+typedef NS_ENUM(NSUInteger, NSSearchPathDirectory) {
+    NSApplicationDirectory = 1,             // supported applications (Applications)
+    NSDemoApplicationDirectory,             // unsupported applications, demonstration versions (Demos)
+    NSDeveloperApplicationDirectory,        // developer applications (Developer/Applications). DEPRECATED - there is no one single Developer directory.
+    NSAdminApplicationDirectory,            // system and network administration applications (Administration)
+    NSLibraryDirectory,                     // various documentation, support, and configuration files, resources (Library)
+    NSDeveloperDirectory,                   // developer resources (Developer) DEPRECATED - there is no one single Developer directory.
+    NSUserDirectory,                        // user home directories (Users)
+    NSDocumentationDirectory,               // documentation (Documentation)
+    NSDocumentDirectory,                    // documents (Documents)
+    NSCoreServiceDirectory,                 // location of CoreServices directory (System/Library/CoreServices)
+    NSAutosavedInformationDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 11,   // location of autosaved documents (Documents/Autosaved)
+    NSDesktopDirectory = 12,                // location of user's desktop
+    NSCachesDirectory = 13,                 // location of discardable cache files (Library/Caches)
+    NSApplicationSupportDirectory = 14,     // location of application support files (plug-ins, etc) (Library/Application Support)
+    NSDownloadsDirectory API_AVAILABLE(macos(10.5), ios(2.0), watchos(2.0), tvos(9.0)) = 15,              // location of the user's "Downloads" directory
+    NSInputMethodsDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 16,           // input methods (Library/Input Methods)
+    NSMoviesDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 17,                 // location of user's Movies directory (~/Movies)
+    NSMusicDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 18,                  // location of user's Music directory (~/Music)
+    NSPicturesDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 19,               // location of user's Pictures directory (~/Pictures)
+    NSPrinterDescriptionDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 20,     // location of system's PPDs directory (Library/Printers/PPDs)
+    NSSharedPublicDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 21,           // location of user's Public sharing directory (~/Public)
+    NSPreferencePanesDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 22,        // location of the PreferencePanes directory for use with System Preferences (Library/PreferencePanes)
+    NSApplicationScriptsDirectory API_AVAILABLE(macos(10.8)) API_UNAVAILABLE(ios, watchos, tvos) = 23,      // location of the user scripts folder for the calling application (~/Library/Application Scripts/code-signing-id)
+    NSItemReplacementDirectory API_AVAILABLE(macos(10.6), ios(4.0), watchos(2.0), tvos(9.0)) = 99,	    // For use with NSFileManager's URLForDirectory:inDomain:appropriateForURL:create:error:
+    NSAllApplicationsDirectory = 100,       // all directories where applications can occur
+    NSAllLibrariesDirectory = 101,          // all directories where resources can occur
+    NSTrashDirectory API_AVAILABLE(macos(10.8), ios(11.0)) API_UNAVAILABLE(watchos, tvos) = 102             // location of Trash directory
+};
+
+typedef NS_ENUM(NSUInteger, NSSearchPathDomainMask) {
+    NSUserDomainMask = 1,       // user's home directory --- place to install user's personal items (~)
+    NSLocalDomainMask = 2,      // local to the current machine --- place to install items available to everyone on this machine (/Library)
+    NSNetworkDomainMask = 4,    // publically available location in the local area network --- place to install items available on the network (/Network)
+    NSSystemDomainMask = 8,     // provided by Apple, unmodifiable (/System)
+    NSAllDomainsMask = 0x0ffff  // all domains: all of the above and future items
+};
+
+siArray(const char*) NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, bool expandTilde);
 
 #endif /* ndef SILICON_H */
 
@@ -879,6 +1208,10 @@ enum { /* classes */
 	NS_BITMAPIMAGEREP_CODE,
     NS_BEZIER_PATH_CODE,
     NS_AUTO_RELEASE_POOL_CODE,
+    NS_ARRAY_CODE,
+    NS_SAVE_PANEL_CODE,
+    NS_TEXT_FIELD_CODE,
+    NS_FONT_MANAGER_CODE,
 	/* functions */
 	NS_APPLICATION_SET_ACTIVATION_POLICY_CODE = 0,
 	NS_APPLICATION_SAPP_CODE,
@@ -1011,9 +1344,26 @@ enum { /* classes */
     NS_ARRAY_COUNT_CODE,
     NS_OBJECT_AT_INDEX_CODE,
     NS_UTF8_STRING_CODE,
+    NS_TEXT_FIELD_STRING_VALUE_CODE,
+    NS_TEXT_FIELD_SET_STRING_VALUE_CODE,
+    NS_TEXT_FIELD_IS_BEZELED_CODE,
+    NS_TEXT_FIELD_SET_BEZELED_CODE,
+    NS_TEXT_FIELD_DRAWS_BACKGROUND_CODE,
+    NS_TEXT_FIELD_SET_DRAWS_BACKGROUND_CODE,
+    NS_TEXT_FIELD_IS_EDITABLE_CODE,
+    NS_TEXT_FIELD_SET_EDITABLE_CODE,
+    NS_TEXT_FIELD_IS_SELECTABLE_CODE,
+    NS_TEXT_FIELD_SET_SEDITABLE_CODE,
+    NS_TEXT_FIELD_TEXT_COLOR_CODE,
+    NS_TEXT_FIELD_SET_TEXT_COLOR_CODE,
+    NS_TEXT_FIELD_FONT_CODE,
+    NS_TEXT_FIELD_SET_FONT_CODE,
+    NS_TEXT_FIELD_INIT_FRAME_CODE,
+    NS_FONT_MANAGER_SHARED_FONT_MANAGER_CODE,
+    NS_FONT_MANAGER_CONVERT_FONT_CODE,
 };
 
-void* SI_NS_CLASSES[24] = {NULL};
+void* SI_NS_CLASSES[30] = {NULL};
 void* SI_NS_FUNCTIONS[151];
 
 void si_initNS(void) {    
@@ -1041,6 +1391,10 @@ void si_initNS(void) {
 	SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE] = objc_getClass("NSBitmapImageRep");
     SI_NS_CLASSES[NS_BEZIER_PATH_CODE] = objc_getClass("NSBezierPath");
     SI_NS_CLASSES[NS_AUTO_RELEASE_POOL_CODE] = objc_getClass("NSAutoreleasePool");
+    SI_NS_CLASSES[NS_ARRAY_CODE] = objc_getClass("NSArray");
+    SI_NS_CLASSES[NS_SAVE_PANEL_CODE] = objc_getClass("NSSavePanel");
+    SI_NS_CLASSES[NS_TEXT_FIELD_CODE] = objc_getClass("NSTextField");
+    SI_NS_CLASSES[NS_FONT_MANAGER_CODE] = objc_getClass("NSFontManager");
 
 	SI_NS_FUNCTIONS[NS_APPLICATION_SET_ACTIVATION_POLICY_CODE] = sel_getUid("setActivationPolicy:");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_getUid("sharedApplication");
@@ -1173,6 +1527,24 @@ void si_initNS(void) {
     SI_NS_FUNCTIONS[NS_APPLICATION_APPLICATION_ICON_IMAGE_CODE] = sel_getUid("applicationIconImage");
     SI_NS_FUNCTIONS[NS_APPLICATION_SET_APPLICATION_ICON_IMAGE_CODE] = sel_getUid("setApplicationIconImage:");
     SI_NS_FUNCTIONS[NS_APPLICATION_ACTIVATION_POLICY_CODE] = sel_getUid("activationPolicy");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_STRING_VALUE_CODE] = sel_getUid("stringValue");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_STRING_VALUE_CODE] = sel_getUid("setStringValue:");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_BEZELED_CODE] = sel_getUid("isBezeled");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_BEZELED_CODE] = sel_getUid("setBezeled:");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_DRAWS_BACKGROUND_CODE] = sel_getUid("drawsBackground");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_DRAWS_BACKGROUND_CODE] = sel_getUid("setDrawsBackground:");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_EDITABLE_CODE] = sel_getUid("isEditable");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_EDITABLE_CODE] = sel_getUid("setEditable:");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_SELECTABLE_CODE] = sel_getUid("isSelectable");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_SEDITABLE_CODE] = sel_getUid("setSelectable:");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_TEXT_COLOR_CODE] = sel_getUid("textColor");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_TEXT_COLOR_CODE] = sel_getUid("setTextColor:");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_FONT_CODE] = sel_getUid("font");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_FONT_CODE] = sel_getUid("setFont:");
+    SI_NS_FUNCTIONS[NS_TEXT_FIELD_INIT_FRAME_CODE] = sel_getUid("initWithFrame:");
+    SI_NS_FUNCTIONS[NS_FONT_MANAGER_SHARED_FONT_MANAGER_CODE] = sel_getUid("sharedFontManager");
+    SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE] = sel_getUid("convertFont:");
+    SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE] = sel_getUid("convertFontToHaveTrait:trait:");
 }
 
 void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function) {
@@ -1306,6 +1678,14 @@ SICDEF NSDate* NSDate_distantFuture(void) {
 	void* func = SI_NS_FUNCTIONS[NS_DISTANT_FUTURE_CODE];
 
 	return objc_func(nsclass, func);
+}
+
+NSProcessInfo* NSProcessInfo_processInfo(void) {
+
+}
+
+SICDEF const char* NSProcessInfo_processName(NSProcessInfo* processInfo) {
+
 }
 
 NSApplication* NSApplication_sharedApplication(void) {
@@ -1473,6 +1853,7 @@ bool NSWindow_isVisible(NSWindow* window) {
 
 void NSWindow_setIsVisible(NSWindow* window, bool isVisible) {
     void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_IS_VISIBLE_CODE];
+
     objc_func(window, func, isVisible);
 }
 
@@ -1524,6 +1905,79 @@ si_declare_double(NSWindow, void, makeKeyAndOrderFront, NS_WINDOW_MAKEKO_CODE, S
 NSInteger NSDraggingInfo_numberOfValidItemsForDrop(NSDraggingInfo* info) {
     void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_NUMBER_OF_VALID_ITEMS_FOR_DROP_CODE];
     return (NSInteger)(intptr_t)objc_func(info, func);
+}
+
+void NSSlider_setTarget(NSSlider* slider, id target) {
+
+}
+
+id NSSlider_target(NSSlider* slider) {
+
+}
+
+void NSSlider_setAction(NSSlider* slider, SEL action) {
+
+}
+
+SEL NSSlider_action(NSSlider* slider) {
+
+}
+
+void NSSlider_setFont(NSSlider* slider, NSFont* font) {
+
+}
+
+NSFont* NSSlider_font(NSSlider* slider) {
+
+}
+
+void NSSlider_setDoubleValue(NSSlider* slider, double doubleValue) {
+
+}
+
+double NSSlider_doubleValue(NSSlider* slider) {
+
+}
+
+void NSSlider_setMaxValue(NSSlider* slider, double maxValue) {
+
+}
+
+double NSSlider_maxValue(NSSlider* slider) {
+
+}
+
+
+NSSlider* NSSlider_initWithFrame(NSRect frameRect) {
+
+}
+
+void NSProgressIndicator_setDoubleValue(NSProgressIndicator* progressIndicator, double doubleValue) {
+
+}
+
+double NSProgressIndicator_doubleValue(NSProgressIndicator* progressIndicator) {
+
+}
+
+void NSProgressIndicator_setMaxValue(NSProgressIndicator* progressIndicator, double maxValue) {
+
+}
+
+double NSProgressIndicator_maxValue(NSProgressIndicator* progressIndicator) {
+
+}
+
+void NSProgressIndicator_setIndeterminate(NSProgressIndicator* progressIndicator, bool isIndeterminate) {
+
+}
+
+bool NSProgressIndicator_indeterminate(NSProgressIndicator* progressIndicator) {
+
+}
+
+NSProgressIndicator* NSProgressIndicator_init(NSRect frameRect) {
+
 }
 
 NSGraphicsContext* NSGraphicsContext_currentContext(NSGraphicsContext* context) {
@@ -1612,6 +2066,277 @@ void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newT
     objc_func(view, func, array);
 
     NSRelease(array);
+}
+
+const char* NSTextField_stringValue(NSTextField* obj) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_STRING_VALUE_CODE];
+
+    return (const char*)objc_func(obj, func);
+}
+
+void NSTextField_setStringValue(NSTextField* obj, const char* field) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_STRING_VALUE_CODE];
+
+    objc_func(obj, func, field);
+}
+
+bool NSTextField_isBezeled(NSTextField* obj) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_BEZELED_CODE];
+
+    return *(bool*)objc_func(obj, func);
+}
+
+void NSTextField_setBezeled(NSTextField* obj, bool field) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_BEZELED_CODE];
+
+    objc_func(obj, func, field);
+}
+
+bool NSTextField_drawsBackground(NSTextField* obj) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_DRAWS_BACKGROUND_CODE];
+
+    return *(bool*)objc_func(obj, func);
+}
+
+void NSTextField_setDrawsBackground(NSTextField* obj, bool field) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_DRAWS_BACKGROUND_CODE];
+
+    objc_func(obj, func, field);
+}
+
+bool NSTextField_isEditable(NSTextField* obj) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_EDITABLE_CODE];
+
+    return *(bool*)objc_func(obj, func);
+}
+
+void NSTextField_setEditable(NSTextField* obj, bool field) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_EDITABLE_CODE];
+
+    objc_func(obj, func, field);
+}
+
+bool NSTextField_isSelectable(NSTextField* obj) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_SELECTABLE_CODE];
+
+    return *(bool*)objc_func(obj, func);
+}
+
+void NSTextField_setSelectable(NSTextField* obj, bool field) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_SEDITABLE_CODE];
+
+    objc_func(obj, func, field);
+}
+
+NSColor* NSTextField_textColor(NSTextField* obj) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_TEXT_COLOR_CODE];
+
+    return (NSColor*)objc_func(obj, func);
+}
+
+void NSTextField_setTextColor(NSTextField* obj, NSColor* field) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_TEXT_COLOR_CODE];
+
+    objc_func(obj, func, field);
+}
+
+NSFont* NSTextField_font(NSTextField* obj) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_FONT_CODE];
+
+    return (NSFont*)objc_func(obj, func);
+}
+
+void NSTextField_setFont(NSTextField* obj, NSFont* field) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_SET_FONT_CODE];
+
+    objc_func(obj, func, field);
+}
+
+NSTextField* NSTextField_initWithFrame(NSRect frameRect) {
+    void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_INIT_FRAME_CODE];
+
+    return (NSTextField*)objc_func(NSAlloc(SI_NS_CLASSES[NS_TEXT_FIELD_CODE]), func, frameRect);
+}
+
+NSFontManager* NSFontManager_sharedFontManager(void) {
+    void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_SHARED_FONT_MANAGER_CODE];
+
+    return (NSFontManager*)objc_func(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func);
+}
+
+NSFont* NSFontManager_convertFont(NSFontManager* manager, NSFont* fontObj) {
+    void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE];
+
+    return (NSFont*)objc_func(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func, manager, fontObj);
+}
+
+NSFont* NSFontManager_convertFontToHaveTrait(NSFontManager* manager, NSFont* fontObj, NSFontTraitMask trait) {
+    void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE];
+
+    return (NSFont*)objc_func(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func, manager, fontObj, trait);
+}
+
+NSFont* NSFont_init(const char* fontName, CGFloat fontSize) {
+
+}
+
+const char* NSFont_fontName(NSFont* font) {
+
+}
+
+SICDEF const char* NSButton_title(NSButton* button) {
+
+}
+
+void NSButton_setTitle(NSButton* button, const char* title) {
+
+}
+
+NSBezelStyle NSButton_bezelStyle(NSButton* button) {
+
+}
+
+void NSButton_setBezelStyle(NSButton* button, NSBezelStyle bezelStyle) {
+
+}
+
+id NSButton_target(NSButton* button) {
+
+}
+
+void NSButton_setTarget(NSButton* button, id target) {
+
+}
+
+SEL NSButton_action(NSButton* button) {
+
+}
+
+void NSButton_setAction(NSButton* button, SEL action) {
+
+}
+
+NSAutoresizingMaskOptions NSButton_autoresizingMask(NSButton* button) {
+
+}
+
+void NSButton_setAutoresizingMask(NSButton* button, NSAutoresizingMaskOptions autoresizingMask) {
+
+}
+
+NSControlStateValue NSButton_state(NSButton* button) {
+
+}
+
+void NSButton_setState(NSButton* button, NSControlStateValue state) {
+
+}
+
+bool NSButton_allowsMixedState(NSButton* button) {
+
+}
+
+void NSButton_setAllowsMixedState(NSButton* button, bool allowsMixedState) {
+
+}
+
+NSButton* NSButton_initWithFrame(NSRect frameRect) {
+
+}
+
+void NSButton_setButtonType(NSButton* button, NSButtonType buttonType) {
+
+}
+
+
+NSInteger NSComboBox_indexOfSelectedItem(NSComboBox* comboBox) {
+
+}
+
+id NSComboBox_target(NSComboBox* comboBox) {
+
+}
+
+void NSComboBox_setTarget(NSComboBox* comboBox, id target) {
+
+}
+
+SEL NSComboBox_action(NSComboBox* comboBox) {
+
+}
+
+void NSComboBox_setAction(NSComboBox* comboBox, SEL action) {
+
+}
+
+NSFont* NSComboBox_font(NSComboBox* comboBox) {
+
+}
+
+void NSComboBox_setFont(NSComboBox* comboBox, NSFont* font) {
+
+}
+
+const char* NSComboBox_stringValue(NSComboBox* field) {
+
+}
+
+void NSComboBox_setStringValue(NSComboBox* field, const char* stringValue) {
+
+}
+
+bool NSComboBox_isBezeled(NSComboBox* field) {
+
+}
+
+void NSComboBox_setIsBezeled(NSComboBox* field, bool isBezeled) {
+
+}
+
+
+bool NSComboBox_drawsBackground(NSComboBox* field) {
+
+}
+
+void NSComboBox_setDrawsBackground(NSComboBox* field, bool drawsBackground) {
+
+}
+
+bool NSComboBox_isEditable(NSComboBox* field) {
+
+}
+
+void NSComboBox_setEditable(NSComboBox* field, bool isEditable) {
+
+}
+
+bool NSComboBox_isSelectable(NSComboBox* field) {
+
+}
+
+void NSComboBox_setIsSelectable(NSComboBox* field, bool isSelectable) {
+
+}
+
+NSColor* NSComboBox_textColor(NSComboBox* field) {
+
+}
+
+void NSComboBox_setTextColor(NSComboBox* field, NSColor* textColor) {
+
+}
+
+
+NSComboBox* NSComboBox_initWithFrame(NSRect frameRect) {
+
+}
+
+void NSComboBox_addItem(NSComboBox* comboBox, void* item) {
+
+}
+
+void NSComboBox_selectItem(NSComboBox* comboBox, NSInteger index) {
+
 }
 
 NSEventType NSEvent_type(NSEvent* event) {
@@ -1869,6 +2594,54 @@ NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NS
     return (NSBitmapImageRep*)objc_func(NSAlloc(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE]), func, planes, width, height, bps, spp, alpha, isPlanar, NSString_stringWithUTF8String(colorSpaceName), bitmapFormat, rowBytes, pixelBits);
 }
 
+void NSSavePanel_setCanCreateDirectories(NSSavePanel* savePanel, bool canCreateDirectories) {
+
+}
+
+bool NSSavePanel_canCreateDirectories(NSSavePanel* savePanel) {
+
+}
+
+void NSSavePanel_setAllowedFileTypes(NSSavePanel* savePanel, siArray(const char*) allowedFileTypes) {
+
+}
+
+siArray(const char*) NSSavePanel_allowedFileTypes(NSSavePanel* savePanel) {
+
+}
+
+void NSSavePanel_setDirectoryURL(NSSavePanel* savePanel, NSURL* directoryURL) {
+
+}
+
+NSURL* NSSavePanel_directoryURL(NSSavePanel* savePanel) {
+
+}
+
+void NSSavePanel_setNameFieldStringValue(NSSavePanel* savePanel, const char* nameFieldStringValue) {
+
+}
+
+const char* NSSavePanel_nameFieldStringValue(NSSavePanel* savePanel) {
+
+}
+
+NSURL* NSSavePanel_URL(NSSavePanel* savePanel) {
+
+}
+
+NSModalResponse NSSavePanel_runModal(NSSavePanel* savePanel) {
+
+}
+
+const char* NSURL_path(NSURL* url) {
+
+}
+
+NSURL* NSURL_fileURLWithPath(const char* path) {
+
+}
+
 NSString* NSString_stringWithUTF8String(const char* str) {
     void* func = SI_NS_FUNCTIONS[NS_STRING_WIDTH_UTF8_STRING_CODE];
     return objc_func(SI_NS_CLASSES[NS_STRING_CODE], func, str);
@@ -1881,7 +2654,7 @@ const char* NSString_to_char(NSString* str) {
 
 NSArray* si_array_to_NSArray(siArray(void) array) {
     void* func = SI_NS_FUNCTIONS[NS_ARRAY_SI_ARRAY_CODE];
-    void* nsclass = SI_NS_CLASSES[NS_WINDOW_CODE];
+    void* nsclass = SI_NS_CLASSES[NS_ARRAY_CODE];
 
     return objc_func(NSAlloc(nsclass), func, array, si_array_len(array));
 }
@@ -1894,6 +2667,14 @@ NSUInteger NSArray_count(NSArray* array) {
 void* NSArray_objectAtIndex(NSArray* array, NSUInteger index) {
     void* func = SI_NS_FUNCTIONS[NS_OBJECT_AT_INDEX_CODE];
     return objc_func(SI_NS_CLASSES[NS_STRING_CODE], func, index);
+}
+
+id NSAutoRelease(id object) {
+    
+}
+
+id NSInit(void* class) {
+
 }
 
 void NSRelease(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RELEASE_CODE]); }
