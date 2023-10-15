@@ -1,3 +1,4 @@
+#define GL_SILENCE_DEPRECATION
 /*
 	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/Applications/ApplicationWithMessageLoop/README.md
 */

@@ -1,7 +1,7 @@
 /*
 	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/CommonControls/CheckBox/README.md
 */
-
+#define GL_SILENCE_DEPRECATION
 #define SILICON_IMPLEMENTATION
 #include <silicon.h>
 

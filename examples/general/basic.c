@@ -1,3 +1,4 @@
+#define GL_SILENCE_DEPRECATION
 #define SILICON_IMPLEMENTATION
 #include "silicon.h"
 

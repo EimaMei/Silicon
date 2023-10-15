@@ -1,3 +1,4 @@
+#define GL_SILENCE_DEPRECATION
 #define SILICON_IMPLEMENTATION
 #include <silicon.h>
 
@@ -43,8 +44,8 @@ int main() {
 	NSAutoreleasePool* myPool = NSAutoreleasePool_init();
 
 	NSRect rect = {{100.0, 350.0}, {400.0, 400.0}};
-	NSInteger mask = NSTitledWindowMask | NSClosableWindowMask
-				   | NSMiniaturizableWindowMask;
+	NSInteger mask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable
+				   | NSWindowStyleMaskMiniaturizable;
 	NSWindow* myWnd = NSWindow_init(rect, mask, NSBackingStoreBuffered, false);
 	NSWindow_setTitle(myWnd, "ObjC Application Window");
 

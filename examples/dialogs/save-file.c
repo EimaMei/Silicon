@@ -1,6 +1,7 @@
 /*
 	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/CommonDialogs/SaveFileDialog/README.md
 */
+#define GL_SILENCE_DEPRECATION
 #define SILICON_IMPLEMENTATION
 #include <silicon.h>
 
