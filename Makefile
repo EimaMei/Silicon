@@ -11,6 +11,7 @@ example:
 	make menu
 	make trackbar
 	make basic
+	make iphone
 
 debug:
 	gcc -g -Wall examples/general/basic.c -I./ -framework Cocoa -o basic
@@ -42,6 +43,9 @@ events:
 opengl:
 	gcc examples/graphics/opengl.c -I./ -framework Cocoa -framework OpenGL -framework CoreVideo -o opengl
 
+iphone:
+	gcc examples/iphone/print.c -I./ -framework Cocoa -o iphone_print
+
 runExamples:
 	./opengl
 	./mac-load
@@ -53,6 +57,7 @@ runExamples:
 	./menu
 	./trackbar
 	./basic
+	./iphone_print
 
 clean:
 	rm -f main.m opengl mac-load basic events menu trackbar checkbox combobox button save-file hello-world 
