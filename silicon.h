@@ -1184,7 +1184,7 @@ siArray(const char*) NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory d
 #define objc_msgSend_uint			((NSUInteger (*)(id, SEL))objc_msgSend)
 #define objc_msgSend_int			((NSInteger (*)(id, SEL))objc_msgSend)
 #define objc_msgSend_SEL			((SEL (*)(id, SEL))objc_msgSend)
-#define objc_msgSend_float			((CGFloat (*)(id, SEL))objc_msgSend_fpret)
+#define objc_msgSend_float			((CGFloat (*)(id, SEL))abi_objc_msgSend_fpret)
 #define objc_msgSend_bool			((BOOL (*)(id, SEL))objc_msgSend)
 #define objc_msgSend_void			((void (*)(id, SEL))objc_msgSend)
 #define objc_msgSend_double			((double (*)(id, SEL))objc_msgSend)
