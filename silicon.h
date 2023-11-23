@@ -1168,6 +1168,21 @@ siArray(const char*) NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory d
 
 #ifdef SILICON_IMPLEMENTATION
 
+#ifdef __arm64__
+/* ARM just uses objc_msgSend */
+#define abi_objc_msgSend_stret objc_msgSend
+#define abi_objc_msgSend_fpret objc_msgSend
+#else /* __i386__ */ 
+/* x86 just uses abi_objc_msgSend_fpret and ((NSColor (*)(id, SEL))abi_objc_msgSend_stret) respectively */
+#define abi_objc_msgSend_stret objc_msgSend_stret
+#define abi_objc_msgSend_fpret objc_msgSend_fpret
+#endif
+
+/*
+abi_objc_msgSend_stret - Sends a message with a floating-point return value to an instance of a class.
+abi_objc_msgSend_stret - Sends a message with a data-structure return value to an instance of a class.
+*/
+
 /* Defining common properties/methods macros. */
 /* Defines the `get` and `set` versions of the provided property. */
 
@@ -1830,13 +1845,13 @@ bool NSPointInRect(NSPoint aPoint, NSRect aRect) {
 NSColor* NSColor_clearColor(void) {
     void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_COLOR_CLEAR_CODE];
-    return (NSColor*)objc_func(nsclass, func);
+    return (((NSColor (*)(id, SEL))abi_objc_msgSend_stret))(nsclass, func);
 }
 
 NSColor* NSColor_keyboardFocusIndicatorColor(void) {
     void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_COLOR_KEYBOARD_FOCUS_INDICATOR_CODE];
-    return (NSColor*)objc_func(nsclass, func);
+    return ((NSColor (*)(id, SEL))abi_objc_msgSend_stret)(nsclass, func);
 }
 
 void NSColor_set(NSColor* color) {
@@ -1848,19 +1863,19 @@ void NSColor_set(NSColor* color) {
 NSColor* NSColor_colorWithRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) {
     void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_COLOR_WITH_RGB_CODE];
-    return (NSColor*)objc_func(nsclass, func, red, green, blue, alpha);
+    return ((NSColor (*)(id, SEL))abi_objc_msgSend_stret)(nsclass, func, red, green, blue, alpha);
 }
 
 NSColor* NSColor_colorWithSRGB(CGFloat red, CGFloat green, CGFloat blue, CGFloat alpha) {
     void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_COLOR_WITH_SRGB_CODE];
-    return (NSColor*)objc_func(nsclass, func, red, green, blue, alpha);
+    return ((NSColor (*)(id, SEL))abi_objc_msgSend_stret)(nsclass, func, red, green, blue, alpha);
 }
 
 NSColor* NSColor_colorWithCalibrated(CGFloat white, CGFloat alpha) {
     void* nsclass = SI_NS_CLASSES[NS_COLOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_COLOR_WITH_CALIBRATED_CODE];
-    return (NSColor*)objc_func(nsclass, func, white, alpha);
+    return ((NSColor (*)(id, SEL))abi_objc_msgSend_stret)(nsclass, func, white, alpha);
 }
 
 void NSBezierPath_strokeLine(NSPoint from, NSPoint to) {
@@ -1915,7 +1930,7 @@ NSApplication* NSApplication_sharedApplication(void) {
 
 NSMenu* NSApplication_mainMenu(NSApplication* application) {
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_MAIN_MENU_CODE];
-    return (NSMenu*)objc_func(application, func);
+    return ((NSMenu (*)(id, SEL))abi_objc_msgSend_stret)(application, func);
 }
 
 void NSApplication_setMainMenu(NSApplication* application, NSMenu* mainMenu) {
@@ -1925,7 +1940,7 @@ void NSApplication_setMainMenu(NSApplication* application, NSMenu* mainMenu) {
 
 NSMenu* NSApplication_servicesMenu(NSApplication* application) {
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_SERVICES_MENU_CODE];
-    return (NSMenu*)objc_func(application, func);
+    return ((NSMenu (*)(id, SEL))abi_objc_msgSend_stret)(application, func);
 }
 
 void NSApplication_setServicesMenu(NSApplication* application, NSMenu* servicesMenu) {
@@ -1935,7 +1950,7 @@ void NSApplication_setServicesMenu(NSApplication* application, NSMenu* servicesM
 
 NSMenu* NSApplication_helpMenu(NSApplication* application) {
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_HELP_MENU_CODE];
-    return (NSMenu*)objc_func(application, func);
+    return ((NSMenu (*)(id, SEL))abi_objc_msgSend_stret)(application, func);
 }
 
 void NSApplication_setHelpMenu(NSApplication* application, NSMenu* helpMenu) {
@@ -1945,7 +1960,7 @@ void NSApplication_setHelpMenu(NSApplication* application, NSMenu* helpMenu) {
 
 NSMenu* NSApplication_windowsMenu(NSApplication* application) {
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_WINDOWS_MENU_CODE];
-    return (NSMenu*)objc_func(application, func);
+    return ((NSMenu (*)(id, SEL))abi_objc_msgSend_stret)(application, func);
 }
 
 void NSApplication_setWindowsMenu(NSApplication* application, NSMenu* windowsMenu) {
@@ -1960,7 +1975,7 @@ NSApplicationActivationPolicy NSApplication_activationPolicy(NSApplication* appl
 
 NSImage* NSApplication_applicationIconImage(NSApplication* application) {
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_APPLICATION_ICON_IMAGE_CODE];
-    return (NSImage*)objc_func(application, func);
+    return ((NSImage (*)(id, SEL))abi_objc_msgSend_stret)(application, func);
 }
 
 void NSApplication_setApplicationIconImage(NSApplication* application, NSImage* applicationIconImage) {
@@ -1998,7 +2013,7 @@ NSEvent* NSApplication_nextEventMatchingMask(NSApplication* application, NSEvent
         mode = (NSString*)NSBackingStoreBuffered;
         
     void* func = SI_NS_FUNCTIONS[NS_APPLICATION_NEXT_EVENT_MATCHING_MASK_CODE];
-    return (NSEvent*)objc_func(application, func, mask, expiration, mode, deqFlag);
+    return ((NSEvent (*)(id, SEL))abi_objc_msgSend_stret)(application, func, mask, expiration, mode, deqFlag);
 }
 
 si_declare_double(NSApplication, void, setActivationPolicy, NS_APPLICATION_SET_ACTIVATION_POLICY_CODE, NSApplicationActivationPolicy)
@@ -2009,7 +2024,7 @@ NSScreen* NSScreen_mainScreen(void) {
     void* func = SI_NS_FUNCTIONS[NS_SCREEN_MAIN_SCREEN_CODE];
 	void* class = SI_NS_CLASSES[NS_SCREEN_CODE];
 
-    return (NSScreen*)objc_func(class, func);
+    return ((NSScreen (*)(id, SEL))abi_objc_msgSend_stret)(class, func);
 }
 
 NSRect NSScreen_frame(NSScreen* screen) {
@@ -2051,7 +2066,7 @@ void NSWindow_setTitle(NSWindow* window, const char* title) {
 
 NSView* NSWindow_contentView(NSWindow* window) {
     void* func = SI_NS_FUNCTIONS[NS_WINDOW_CONTENT_VIEW_CODE];
-    return (NSView*)objc_func(window, func);
+    return ((NSView (*)(id, SEL))abi_objc_msgSend_stret)(window, func);
 }
 
 void NSWindow_setContentView(NSWindow* window, NSView* contentView) {
@@ -2097,7 +2112,7 @@ SICDEF NSWindowStyleMask NSWindow_styleMask(NSWindow* window) {
 
 NSColor* NSWindow_backgroundColor(NSWindow* window) {
     void* func = SI_NS_FUNCTIONS[NS_WINDOW_BACKGROUND_COLOR_CODE];
-    return (NSColor*)objc_func(window, func);
+    return ((NSColor (*)(id, SEL))abi_objc_msgSend_stret)(window, func);
 }
 
 void NSWindow_setBackgroundColor(NSWindow* window, NSColor* backgroundColor) {
@@ -2172,7 +2187,7 @@ void NSSlider_setFont(NSSlider* slider, NSFont* font) {
 
 NSFont* NSSlider_font(NSSlider* slider) {
     void* func = SI_NS_FUNCTIONS[NS_SLIDER_FONT_CODE];
-    return (NSFont*)(intptr_t)objc_func(slider, func);
+    return (iNSFont)objc_func(slider, func);
 }
 
 void NSSlider_setDoubleValue(NSSlider* slider, double doubleValue) {
@@ -2237,7 +2252,7 @@ NSProgressIndicator* NSProgressIndicator_init(NSRect frameRect) {
 
 NSGraphicsContext* NSGraphicsContext_currentContext(NSGraphicsContext* context) {
     void* func = SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_CURRENT_CONTEXT_CODE];
-    return (NSGraphicsContext*)objc_func(SI_NS_CLASSES[NS_GRAPHICS_CONTEXT_CODE], func);
+    return ((NSGraphicsContext (*)(id, SEL))abi_objc_msgSend_stret)(SI_NS_CLASSES[NS_GRAPHICS_CONTEXT_CODE], func);
 }
 
 void NSGraphicsContext_setCurrentContext(NSGraphicsContext* context, NSGraphicsContext* currentContext) {
@@ -2297,7 +2312,7 @@ void NSWindow_performZoom(NSWindow* window, SEL s) {
 
 NSPoint NSWindow_convertPointFromScreen(NSWindow* window, NSPoint point) {
     void* func = SI_NS_FUNCTIONS[NS_WINDOW_CONVERT_POINT_FROM_SCREEN_CODE];
-    return *(NSPoint*)objc_func(window, func, point);
+    return *((NSPoint (*)(id, SEL))abi_objc_msgSend_stret)(window, func, point);
 }
 
 void NSWindow_display(NSWindow* window) {
@@ -2316,13 +2331,13 @@ void NSWindow_contentView_setWantsLayer(NSWindow* window, bool wantsLayer) {
 NSView* NSView_init(void) {
 	void* nclass = SI_NS_CLASSES[NS_VIEW_CODE];
     void* func = SI_NS_FUNCTIONS[NS_VIEW_INIT_CODE];
-    return (NSView*)objc_func(NSAlloc(nclass), func);
+    return ((NSView (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(nclass), func);
 }
 
 NSView* NSView_initWithFrame(NSRect frameRect) {
 	void* nclass = SI_NS_CLASSES[NS_VIEW_CODE];
     void* func = SI_NS_FUNCTIONS[NS_VIEW_INIT_WITH_FRAME_CODE];
-    return (NSView*)objc_func(NSAlloc(nclass), func, frameRect);
+    return ((NSView (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(nclass), func, frameRect);
 }
 
 void NSView_addSubview(NSView* view, NSView* subview) {
@@ -2357,7 +2372,7 @@ void NSTextField_setStringValue(NSTextField* obj, const char* field) {
 bool NSTextField_isBezeled(NSTextField* obj) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_BEZELED_CODE];
 
-    return *(bool*)objc_func(obj, func);
+    return *((NS_WINDOW_BACKGROUND_COLOR_CODE (*)(id, SEL))abi_objc_msgSend)(obj, func);
 }
 
 void NSTextField_setBezeled(NSTextField* obj, bool field) {
@@ -2369,7 +2384,7 @@ void NSTextField_setBezeled(NSTextField* obj, bool field) {
 bool NSTextField_drawsBackground(NSTextField* obj) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_DRAWS_BACKGROUND_CODE];
 
-    return *(bool*)objc_func(obj, func);
+    return *((bool (*)(id, SEL))abi_objc_msgSend_stret)(obj, func);
 }
 
 void NSTextField_setDrawsBackground(NSTextField* obj, bool field) {
@@ -2381,7 +2396,7 @@ void NSTextField_setDrawsBackground(NSTextField* obj, bool field) {
 bool NSTextField_isEditable(NSTextField* obj) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_EDITABLE_CODE];
 
-    return *(bool*)objc_func(obj, func);
+    return *((bool (*)(id, SEL))abi_objc_msgSend_stret)(obj, func);
 }
 
 void NSTextField_setEditable(NSTextField* obj, bool field) {
@@ -2393,7 +2408,7 @@ void NSTextField_setEditable(NSTextField* obj, bool field) {
 bool NSTextField_isSelectable(NSTextField* obj) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_IS_SELECTABLE_CODE];
 
-    return *(bool*)objc_func(obj, func);
+    return *((bool (*)(id, SEL))abi_objc_msgSend_stret)(obj, func);
 }
 
 void NSTextField_setSelectable(NSTextField* obj, bool field) {
@@ -2405,7 +2420,7 @@ void NSTextField_setSelectable(NSTextField* obj, bool field) {
 NSColor* NSTextField_textColor(NSTextField* obj) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_TEXT_COLOR_CODE];
 
-    return (NSColor*)objc_func(obj, func);
+    return ((NSColor (*)(id, SEL))abi_objc_msgSend_stret)(obj, func);
 }
 
 void NSTextField_setTextColor(NSTextField* obj, NSColor* field) {
@@ -2417,7 +2432,7 @@ void NSTextField_setTextColor(NSTextField* obj, NSColor* field) {
 NSFont* NSTextField_font(NSTextField* obj) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_FONT_CODE];
 
-    return (NSFont*)objc_func(obj, func);
+    return ((NSFont (*)(id, SEL))abi_objc_msgSend_stret)(obj, func);
 }
 
 void NSTextField_setFont(NSTextField* obj, NSFont* field) {
@@ -2429,25 +2444,25 @@ void NSTextField_setFont(NSTextField* obj, NSFont* field) {
 NSTextField* NSTextField_initWithFrame(NSRect frameRect) {
     void* func = SI_NS_FUNCTIONS[NS_TEXT_FIELD_INIT_FRAME_CODE];
 
-    return (NSTextField*)objc_func(NSAlloc(SI_NS_CLASSES[NS_TEXT_FIELD_CODE]), func, frameRect);
+    return ((NSTextField (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_TEXT_FIELD_CODE]), func, frameRect);
 }
 
 NSFontManager* NSFontManager_sharedFontManager(void) {
     void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_SHARED_FONT_MANAGER_CODE];
 
-    return (NSFontManager*)objc_func(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func);
+    return ((NSFontManager (*)(id, SEL))abi_objc_msgSend_stret)(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func);
 }
 
 NSFont* NSFontManager_convertFont(NSFontManager* manager, NSFont* fontObj) {
     void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_FONT_CODE];
 
-    return (NSFont*)objc_func(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func, manager, fontObj);
+    return ((NSFont (*)(id, SEL))abi_objc_msgSend_stret)(SI_NS_CLASSES[NS_FONT_MANAGER_CODE], func, manager, fontObj);
 }
 
 NSFont* NSFontManager_convertFontToHaveTrait(NSFontManager* manager, NSFont* fontObj, NSFontTraitMask trait) {
     void* func = SI_NS_FUNCTIONS[NS_FONT_MANAGER_CONVERT_TO_HAVE_FONT_CODE];
 
-    return (NSFont*)objc_func(manager, func, fontObj, trait);
+    return ((NSFont (*)(id, SEL))abi_objc_msgSend_stret)(manager, func, fontObj, trait);
 }
 
 NSFont* NSFont_init(const char* fontName, CGFloat fontSize) {
@@ -2455,7 +2470,7 @@ NSFont* NSFont_init(const char* fontName, CGFloat fontSize) {
 
     NSString* str = NSString_stringWithUTF8String(fontName);
 
-    NSFont* font = (NSFont*)objc_func(SI_NS_CLASSES[NS_FONT_CODE], func, str, fontSize);
+    NSFont* font = ((NSFont (*)(id, SEL))abi_objc_msgSend_stret)(SI_NS_CLASSES[NS_FONT_CODE], func, str, fontSize);
 
     NSRelease(str);
 
@@ -2577,7 +2592,7 @@ void NSComboBox_setAction(NSComboBox* comboBox, SEL action) {
 
 NSFont* NSComboBox_font(NSComboBox* comboBox) {
     void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_FONT_CODE];
-    return (NSFont*)(intptr_t)objc_func(comboBox, func);
+    return (iNSFont)objc_func(comboBox, func);
 }
 
 void NSComboBox_setFont(NSComboBox* comboBox, NSFont* font) {
@@ -2637,7 +2652,7 @@ void NSComboBox_setIsSelectable(NSComboBox* field, bool isSelectable) {
 
 NSColor* NSComboBox_textColor(NSComboBox* field) {
     void* func = SI_NS_FUNCTIONS[NS_COMBOBOX_TEXT_COLOR_CODE];
-    return (NSColor*)objc_func(field, func);
+    return ((NSColor (*)(id, SEL))abi_objc_msgSend_stret)(field, func);
 }
 
 void NSComboBox_setTextColor(NSComboBox* field, NSColor* textColor) {
@@ -2695,7 +2710,7 @@ const char* NSEvent_characters(NSEvent* event) {
 
 CGFloat NSEvent_deltaY(NSEvent* event) {
     void* func = SI_NS_FUNCTIONS[NS_EVENT_DELTA_Y_CODE];
-    return *(CGFloat*)objc_func(event, func);
+    return ((CGFloat (*)(id, SEL))abi_objc_msgSend_fpret)(event, func);
 }
 
 unsigned short NSEvent_keyCodeForChar(char* keyStr) {
@@ -2709,22 +2724,22 @@ unsigned short NSEvent_keyCodeForChar(char* keyStr) {
 
 NSPoint NSEvent_mouseLocation(void) {
     void* func = SI_NS_FUNCTIONS[NS_EVENT_MOUSE_LOCATION_CODE];
-    return *(NSPoint*)objc_func(SI_NS_CLASSES[NS_EVENT_CODE], func);
+    return *((NSPoint (*)(id, SEL))abi_objc_msgSend_stret)(SI_NS_CLASSES[NS_EVENT_CODE], func);
 }
 
 NSWindow* NSEvent_window(NSEvent* event) {
     void* func = SI_NS_FUNCTIONS[NS_EVENT_WINDOW_CODE];
-    return (NSWindow*)objc_func(event, func);
+    return ((NSWindow (*)(id, SEL))abi_objc_msgSend_stret)(event, func);
 }
 
 NSPasteboard* NSDraggingInfo_draggingPasteboard(NSDraggingInfo* info) {
     void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_PASTEBOARD_CODE];
-    return (NSPasteboard*)objc_func(info, func);
+    return ((NSPasteboard (*)(id, SEL))abi_objc_msgSend_stret)(info, func);
 }
 
 NSPoint NSDraggingInfo_draggingLocation(NSDraggingInfo* info) {
     void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_LOCATION_CODE];
-    return *(NSPoint*)objc_func(info, func);
+    return *((NSPoint (*)(id, SEL))abi_objc_msgSend_stret)(info, func);
 }
 
 void NSDraggingInfo_setNumberOfValidItemsForDrop(NSDraggingInfo* info, NSInteger numberOfValidItemsForDrop) {
@@ -2734,27 +2749,27 @@ void NSDraggingInfo_setNumberOfValidItemsForDrop(NSDraggingInfo* info, NSInteger
 
 NSWindow* NSDraggingInfo_draggingDestinationWindow(NSDraggingInfo* info) {
     void* func = SI_NS_FUNCTIONS[NS_DRAGGING_INFO_DRAGGING_DESTINATION_WINDOW_CODE];
-    return (NSWindow*)objc_func(info, func);
+    return ((NSWindow (*)(id, SEL))abi_objc_msgSend_stret)(info, func);
 }
 
 NSImage* NSImage_initWithSize(NSSize size) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_SIZE_CODE];
-    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, size);
+    return ((NSImage (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, size);
 }
 
 NSImage* NSImage_initWithData(unsigned char* bitmapData, NSUInteger length) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_DATA_CODE];
-    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, bitmapData, length);
+    return ((NSImage (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, bitmapData, length);
 }
 
 NSImage* NSImage_initWithFile(const char* path) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_FILE_CODE];
-    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, NSString_stringWithUTF8String(path));
+    return ((NSImage (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, NSString_stringWithUTF8String(path));
 }
 
 NSImage* NSImage_initWithCGImage(CGImageRef cgImage, NSSize size) {
     void* func = SI_NS_FUNCTIONS[NS_IMAGE_INIT_WITH_CGIMAGE_CODE];
-    return (NSImage*)objc_func(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, cgImage, size);
+    return ((NSImage (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_IMAGE_CODE]), func, cgImage, size);
 }
 
 void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep) {
@@ -2765,30 +2780,30 @@ void NSImage_addRepresentation(NSImage* image, NSImageRep* imageRep) {
 NSCursor* NSCursor_currentCursor(void) {
 	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_CURRENT_CURSOR_CODE];
-    return (NSCursor*)objc_func(nclass, func);
+    return ((NSCursor (*)(id, SEL))abi_objc_msgSend_stret)(nclass, func);
 }
 
 NSImage* NSCursor_image(NSCursor* cursor) {
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_IMAGE_CODE];
-    return (NSImage*)objc_func(cursor, func);
+    return ((NSImage (*)(id, SEL))abi_objc_msgSend_stret)(cursor, func);
 }
 
 NSPoint NSCursor_hotSpot(NSCursor* cursor) {
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_HOT_SPOT_CODE];
-    return *(NSPoint*)objc_func(cursor, func);
+    return *((NSPoint (*)(id, SEL))abi_objc_msgSend_stret)(cursor, func);
 }
 
 NSCursor* NSCursor_arrowCursor(void) {
 	void* nclass = SI_NS_CLASSES[NS_CURSOR_CODE];
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_ARROW_CURSOR_CODE];
-    return (NSCursor*)objc_func(nclass, func);
+    return ((NSCursor (*)(id, SEL))abi_objc_msgSend_stret)(nclass, func);
 }
 
 NSCursor* NSCursor_initWithImage(NSImage* newImage, NSPoint aPoint) {
     void* func = SI_NS_FUNCTIONS[NS_CURSOR_INIT_WITH_IMAGE_CODE];
     void* nsclass = SI_NS_CLASSES[NS_CURSOR_CODE];
 
-    return (NSCursor*)objc_func(NSAlloc(nsclass), func, newImage, aPoint);
+    return ((NSCursor (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(nsclass), func, newImage, aPoint);
 }
 
 void NSCursor_hide(void) {
@@ -2821,7 +2836,7 @@ void NSCursor_set(NSCursor* cursor) {
 NSPasteboard* NSPasteboard_generalPasteboard(void) {
 	void* nclass = SI_NS_CLASSES[NS_PASTEBOARD_CODE];
     void* func = SI_NS_FUNCTIONS[NS_PASTEBOARD_GENERAL_PASTEBOARD_CODE];
-    return (NSPasteboard*)objc_func(nclass, func);
+    return ((NSPasteboard (*)(id, SEL))abi_objc_msgSend_stret)(nclass, func);
 }
 
 const char* NSPasteboard_stringForType(NSPasteboard* pasteboard, NSPasteboardType dataType) {
@@ -2850,7 +2865,7 @@ siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard
     
     NSArray* array = si_array_to_NSArray(classArray);
 
-    NSArray* output = (NSArray*)objc_func(pasteboard, func, array, options);
+    NSArray* output = ((NSArray (*)(id, SEL))abi_objc_msgSend_stret)(pasteboard, func, array, options);
 
     NSRelease(array);
 
@@ -2866,7 +2881,7 @@ siArray(const char*) NSPasteboard_readObjectsForClasses(NSPasteboard* pasteboard
 
 NSMenu* NSMenu_init(const char* title) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_INIT_CODE];
-    return (NSMenu*)objc_func(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE]), func, NSString_stringWithUTF8String(title));
+    return ((NSMenu (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE]), func, NSString_stringWithUTF8String(title));
 }
 
 void NSMenu_addItem(NSMenu* menu, NSMenuItem* newItem) {
@@ -2881,18 +2896,18 @@ const char* NSMenuItem_title(NSMenuItem* item) {
 
 NSMenu* NSMenuItem_submenu(NSMenuItem* item) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_SUBMENU_CODE];
-    return (NSMenu*)objc_func(item, func);
+    return ((NSMenu (*)(id, SEL))abi_objc_msgSend_stret)(item, func);
 }
 
 NSMenuItem* NSMenuItem_init(const char* title, SEL selector, const char* keyEquivalent) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_INIT_CODE];
-    return (NSMenuItem*)objc_func(NSAlloc(SI_NS_CLASSES[NS_MENUITEM_CODE]), func, NSString_stringWithUTF8String(title), selector, NSString_stringWithUTF8String(keyEquivalent));
+    return ((NSMenuItem (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_MENUITEM_CODE]), func, NSString_stringWithUTF8String(title), selector, NSString_stringWithUTF8String(keyEquivalent));
 }
 
 siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu) {
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_ARRAY_CODE];
 
-    NSArray* array = (NSArray*)objc_func(menu, func);
+    NSArray* array = ((NSArray (*)(id, SEL))abi_objc_msgSend_stret)(menu, func);
 
     NSUInteger count = NSArray_count(array);
 
@@ -2910,17 +2925,17 @@ siArray(NSMenuItem*) NSMenu_itemArray(NSMenu* menu) {
 NSMenuItem* NSMenuItem_separatorItem(void) {
 	void* nclass = SI_NS_CLASSES[NS_MENUITEM_CODE];
     void* func = SI_NS_FUNCTIONS[NS_MENU_ITEM_SEPARATOR_ITEM_CODE];
-    return (NSMenuItem*)objc_func(nclass, func);
+    return ((NSMenuItem (*)(id, SEL))abi_objc_msgSend_stret)(nclass, func);
 }
 
 unsigned char* NSBitmapImageRep_bitmapData(NSBitmapImageRep* imageRep) {
     void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_BITMAP_CODE];
-    return (unsigned char*)objc_func(imageRep, func);
+    return ((unsigned char (*)(id, SEL))abi_objc_msgSend)(imageRep, func);
 }
 
 NSBitmapImageRep* NSBitmapImageRep_initWithBitmapData(unsigned char** planes, NSInteger width, NSInteger height, NSInteger bps, NSInteger spp, bool alpha, bool isPlanar, const char* colorSpaceName, NSBitmapFormat bitmapFormat, NSInteger rowBytes, NSInteger pixelBits) {
     void* func = SI_NS_FUNCTIONS[NS_BITMAPIMAGEREP_INIT_BITMAP_CODE];
-    return (NSBitmapImageRep*)objc_func(NSAlloc(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE]), func, planes, width, height, bps, spp, alpha, isPlanar, NSString_stringWithUTF8String(colorSpaceName), bitmapFormat, rowBytes, pixelBits);
+    return ((NSBitmapImageRep (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_BITMAPIMAGEREP_CODE]), func, planes, width, height, bps, spp, alpha, isPlanar, NSString_stringWithUTF8String(colorSpaceName), bitmapFormat, rowBytes, pixelBits);
 }
 
 void NSSavePanel_setCanCreateDirectories(NSSavePanel* savePanel, bool canCreateDirectories) {
@@ -2951,7 +2966,7 @@ void NSSavePanel_setAllowedFileTypes(NSSavePanel* savePanel, siArray(const char*
 
 siArray(const char*) NSSavePanel_allowedFileTypes(NSSavePanel* savePanel) {
     void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_ALLOWED_FILE_TYPES_CODE];
-    NSArray* output = (NSArray*)objc_func(savePanel, func);
+    NSArray* output = ((NSArray (*)(id, SEL))abi_objc_msgSend_stret)(savePanel, func);
 
     NSUInteger count = NSArray_count(output);
 
@@ -2972,7 +2987,7 @@ void NSSavePanel_setDirectoryURL(NSSavePanel* savePanel, NSURL* directoryURL) {
 
 NSURL* NSSavePanel_directoryURL(NSSavePanel* savePanel) {
     void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_DIRECTORY_URL_CODE];
-    return (NSURL*)objc_func(savePanel, func);
+    return ((NSURL (*)(id, SEL))abi_objc_msgSend_stret)(savePanel, func);
 }
 
 void NSSavePanel_setNameFieldStringValue(NSSavePanel* savePanel, const char* nameFieldStringValue) {
@@ -2982,12 +2997,12 @@ void NSSavePanel_setNameFieldStringValue(NSSavePanel* savePanel, const char* nam
 
 const char* NSSavePanel_nameFieldStringValue(NSSavePanel* savePanel) {
     void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_NAME_FIELD_STRING_VALUE_CODE];
-    return (const char*)objc_func(savePanel, func);
+    return (const char*)NSString_to_char(((NSString (*)(id, SEL))abi_objc_msgSend_stret)(savePanel, func));
 }
 
 NSURL* NSSavePanel_URL(NSSavePanel* savePanel) {
     void* func = SI_NS_FUNCTIONS[NS_SAVE_PANEL_URL_CODE];
-    return (NSURL*)objc_func(savePanel, func);
+    return ((NSURL (*)(id, SEL))abi_objc_msgSend_stret)(savePanel, func);
 }
 
 NSModalResponse NSSavePanel_runModal(NSSavePanel* savePanel) {
@@ -2997,12 +3012,12 @@ NSModalResponse NSSavePanel_runModal(NSSavePanel* savePanel) {
 
 const char* NSURL_path(NSURL* url) {
     void* func = SI_NS_FUNCTIONS[NSURL_PATH_CODE];
-    return (const char*)objc_func(url, func);
+    return (const char*)NSString_to_char(((NSString (*)(id, SEL))abi_objc_msgSend_stret)(url, func));
 }
 
 NSURL* NSURL_fileURLWithPath(const char* path) {
     void* func = SI_NS_FUNCTIONS[NSURL_FILE_URL_WITH_PATH_CODE];
-    return (NSURL*)objc_func(SI_NS_CLASSES[NS_URL_CODE], func, NSString_stringWithUTF8String(path));
+    return ((NSURL (*)(id, SEL))abi_objc_msgSend_stret)(SI_NS_CLASSES[NS_URL_CODE], func, NSString_stringWithUTF8String(path));
 }
 
 NSString* NSString_stringWithUTF8String(const char* str) {
@@ -3050,7 +3065,7 @@ NSArray* si_array_to_NSArray(siArray(void) array) {
 
 NSUInteger NSArray_count(NSArray* array) {
     void* func = SI_NS_FUNCTIONS[NS_ARRAY_COUNT_CODE];
-    return *(NSUInteger*)objc_func(array, func);
+    return ((NSUInteger (*)(id, SEL))objc_msgSend)(array, func);
 }
 
 void* NSArray_objectAtIndex(NSArray* array, NSUInteger index) {
@@ -3069,12 +3084,12 @@ void NSRetain(id obj) { objc_func(obj, SI_NS_FUNCTIONS[NS_RETAIN_CODE]); }
 /* ======== OpenGL ======== */
 NSOpenGLPixelFormat* NSOpenGLPixelFormat_initWithAttributes(const NSOpenGLPixelFormatAttribute* attribs) {
     void* func = SI_NS_FUNCTIONS[NS_OPENGL_PIXEL_FORMAT_INIT_WITH_ATTRIBUTES_CODE];
-    return (NSOpenGLPixelFormat*)objc_func(NSAlloc(SI_NS_CLASSES[NS_OPENGL_PF_CODE]), func, attribs);
+    return ((NSOpenGLPixelFormat (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_OPENGL_PF_CODE]), func, attribs);
 }
 
 NSOpenGLView* NSOpenGLView_initWithFrame(NSRect frameRect, NSOpenGLPixelFormat* format) {
     void* func = SI_NS_FUNCTIONS[NS_OPENGL_VIEW_INIT_WITH_FRAME_CODE];
-    return (NSOpenGLView*)objc_func(NSAlloc(SI_NS_CLASSES[NS_OPENGL_VIEW_CODE]), func, frameRect, format);
+    return ((NSOpenGLView (*)(id, SEL))abi_objc_msgSend_stret)(NSAlloc(SI_NS_CLASSES[NS_OPENGL_VIEW_CODE]), func, frameRect, format);
 }
 
 void NSOpenGLView_prepareOpenGL(NSOpenGLView* view) {
@@ -3084,7 +3099,7 @@ void NSOpenGLView_prepareOpenGL(NSOpenGLView* view) {
 
 NSOpenGLContext* NSOpenGLView_openGLContext(NSOpenGLView* view) {
     void* func = SI_NS_FUNCTIONS[NS_OPENGL_VIEW_OPENGL_CONTEXT_CODE];
-    return (NSOpenGLContext*)objc_func(view, func);
+    return ((NSOpenGLContext (*)(id, SEL))abi_objc_msgSend_stret)(view, func);
 }
 
 void NSOpenGLContext_setValues(NSOpenGLContext* context, const int* vals, NSOpenGLContextParameter param) {
