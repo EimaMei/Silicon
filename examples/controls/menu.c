@@ -69,10 +69,6 @@ NSMenu* create_submenu(NSMenu* main_menu, const char* title, NSMenuItem** items,
 	return new_menu;
 }
 
-
-#define selector(function) sel_getUid(#function":")
-
-
 int main() {
 	/*
 		C's function pointers and Objective-C's class methods (SELs) are different. While they are 'pointers' at their core, SELs are class functions and as such, sending a regular function pointer will not work.
@@ -144,7 +140,7 @@ int main() {
 
 	// Now we create the menus themselves.
 	// '<Process name>' menu
-	NSMenu* process_menu = create_submenu(main_menu, process_name, process_items, local_array_size(process_items));
+	create_submenu(main_menu, process_name, process_items, local_array_size(process_items));
 	NSMenu* process_services = NSAutoRelease(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE])); // We initialize a new menu.
 
 	NSMenuItem_setSubmenu(process_items[2], process_services); // 'process_items[2]' is 'Services' (refer to 'process_items' variable).

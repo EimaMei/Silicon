@@ -11,15 +11,15 @@ NSTextField* label;
 NSApplication* NSApp;
 
 void OnButtonClick(void* sender) {
-	NSSavePanel* saveFileDialog = NSInit(SI_NS_CLASSES[NS_SAVE_PANEL_CODE]);
 	siArray(const char*) value = si_array_init((char*[]){"txt", "md"}, si_sizeof(*value), 2);
-
+	NSSavePanel* saveFileDialog = NSInit(SI_NS_CLASSES[NS_SAVE_PANEL_CODE]);
+	
  	NSSavePanel_setCanCreateDirectories(saveFileDialog, true);
 	NSSavePanel_setAllowedFileTypes(saveFileDialog, value);
 
 	siArray(const char*) directories = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, true);
 	NSURL* url = NSURL_fileURLWithPath(directories[0]);
-
+	
 	NSSavePanel_setDirectoryURL(saveFileDialog, url);
 	NSSavePanel_setNameFieldStringValue(saveFileDialog, "MyFile.txt");
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 
 	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
 	NSView* view = NSWindow_contentView(window);
-	
+
 	button = NSButton_initWithFrame(NSMakeRect(10, 265, 100, 32));
 	NSButton_setTitle(button, "Save...");
 	NSButton_setBezelStyle(button, NSBezelStyleRounded);

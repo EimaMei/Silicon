@@ -1,4 +1,5 @@
 LIBS = -framework Cocoa
+ARGS = -g -o0 -Wall
 
 example:
 	make opengl
@@ -14,37 +15,37 @@ example:
 	make iphone
 
 debug:
-	gcc -g -Wall examples/general/basic.c -I./ -framework Cocoa -o basic
+	gcc $(ARGS) examples/general/basic.c -I./ -framework Cocoa -o basic
 	./basic
 
 button:
-	gcc examples/controls/button.c -I./ -framework Cocoa -o button
+	gcc $(ARGS) examples/controls/button.c -I./ -framework Cocoa -o button
 checkbox:
-	gcc examples/controls/checkbox.c -I./ -framework Cocoa -o checkbox
+	gcc $(ARGS) examples/controls/checkbox.c -I./ -framework Cocoa -o checkbox
 combobox:	
-	gcc examples/controls/combobox.c -I./ -framework Cocoa -o combobox
+	gcc $(ARGS) examples/controls/combobox.c -I./ -framework Cocoa -o combobox
 menu:	
-	gcc examples/controls/menu.c -I./ -framework Cocoa -o menu
+	gcc $(ARGS) examples/controls/menu.c -I./ -framework Cocoa -o menu
 trackbar:
-	gcc examples/controls/trackbar.c -I./ -framework Cocoa -o trackbar
+	gcc $(ARGS) examples/controls/trackbar.c -I./ -framework Cocoa -o trackbar
 
 save-file:
-	gcc examples/dialogs/save-file.c -I./ -framework Cocoa -o save-file
+	gcc $(ARGS) examples/dialogs/save-file.c -I./ -framework Cocoa -o save-file
 
 basic:
-	gcc examples/general/basic.c -I./ -framework Cocoa -o basic
+	gcc $(ARGS) examples/general/basic.c -I./ -framework Cocoa -o basic
 mac-load:
-	gcc examples/general/mac-load.c -I./ -framework Cocoa -o mac-load
+	gcc $(ARGS) examples/general/mac-load.c -I./ -framework Cocoa -o mac-load
 hello-world:
-	gcc examples/general/hello-world.c -I./ -framework Cocoa -o hello-world
+	gcc $(ARGS) examples/general/hello-world.c -I./ -framework Cocoa -o hello-world
 events:
-	gcc examples/general/events.c -I./ -framework Cocoa -o events
+	gcc $(ARGS) examples/general/events.c -I./ -framework Cocoa -o events
 
 opengl:
-	gcc examples/graphics/opengl.c -I./ -framework Cocoa -framework OpenGL -framework CoreVideo -o opengl
+	gcc $(ARGS) examples/graphics/opengl.c -I./ -framework Cocoa -framework OpenGL -framework CoreVideo -o opengl
 
 iphone:
-	gcc examples/iphone/print.c -I./ -framework Cocoa -o iphone_print
+	gcc $(ARGS) examples/iphone/print.c -I./ -framework Cocoa -o iphone_print
 
 runExamples:
 	./opengl
@@ -60,4 +61,4 @@ runExamples:
 	./iphone_print
 
 clean:
-	rm -f main.m opengl mac-load basic events menu trackbar checkbox combobox button save-file hello-world 
+	rm -r -f main.m opengl mac-load basic events menu trackbar checkbox combobox button save-file hello-world iphone_print *.dSYM

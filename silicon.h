@@ -3110,7 +3110,6 @@ const char* NSString_to_char(NSString* str) {
 }
 
 NSString* NSStringFromClass(id class) {
-    void* func = SI_NS_FUNCTIONS[NS_STRING_FROM_CLASS_CODE];
     return NSString_stringWithUTF8String(class_getName((Class)class)); 
 } 
 
