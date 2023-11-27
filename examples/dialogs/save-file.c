@@ -5,7 +5,6 @@
 #define SILICON_IMPLEMENTATION
 #include <silicon.h>
 
-
 NSButton* button;
 NSTextField* label;
 
@@ -26,9 +25,8 @@ void OnButtonClick(void* sender) {
 
 	NSModalResponse response = NSSavePanel_runModal(saveFileDialog);
 
-  	if (response == NSModalResponseOK) {
+  	if (response == NSModalResponseOK)
 		NSTextField_setStringValue(label, NSURL_path(NSSavePanel_URL(saveFileDialog)));
-    }
 
 	si_array_free(value);
 	si_array_free(directories);
@@ -51,12 +49,13 @@ int main(int argc, char* argv[]) {
 
 	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
 	NSView* view = NSWindow_contentView(window);
-
+	
 	button = NSButton_initWithFrame(NSMakeRect(10, 265, 100, 32));
 	NSButton_setTitle(button, "Save...");
 	NSButton_setBezelStyle(button, NSBezelStyleRounded);
 	NSButton_setTarget(button, (id)window);
-	NSButton_setAction(button, sel_getUid("OnButtonClick"));
+
+	NSButton_setAction(button, selector(OnButtonClick));
 	NSButton_setAutoresizingMask(button, NSViewMaxXMargin | NSViewMinYMargin);
 
 	label = NSTextField_initWithFrame(NSMakeRect(10, 235, 280, 20));
