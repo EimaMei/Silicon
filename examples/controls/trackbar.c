@@ -26,8 +26,6 @@ bool windowShouldClose(id sender) {
 	return true;
 }
 
-#define selector(function) sel_getUid(#function":")
-
 int main(int argc, char* argv[]) {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);

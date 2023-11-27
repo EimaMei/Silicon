@@ -79,8 +79,6 @@ NSButton* create_checkbox(checkBox checkbox) {
 	return result;
 }
 
-#define selector(function) sel_getUid(#function":")
-
 
 int main(int argc, char* argv[]) {
 	NSApp = NSApplication_sharedApplication();
