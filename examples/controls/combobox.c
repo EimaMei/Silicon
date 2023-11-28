@@ -1,8 +1,9 @@
 /*
 	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/CommonControls/ComboBox/README.md
 */
-
-#include <Silicon/silicon.h>
+#define GL_SILENCE_DEPRECATION
+#define SILICON_IMPLEMENTATION
+#include <silicon.h>
 
 // The main variables for our example.
 NSComboBox* comboBox1;
@@ -13,6 +14,8 @@ NSComboBox* comboBox2;
 void OnComboBox1SelectedItemChange(id sender) {
 	NSComboBox_selectItem(comboBox2, NSComboBox_indexOfSelectedItem(comboBox1));
 }
+
+NSApplication* NSApp;
 
 // Standard close function.
 bool windowShouldClose(id sender) {
@@ -25,7 +28,7 @@ int main(int argc, char* argv[]) {
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 	si_func_to_SEL(SI_DEFAULT, OnComboBox1SelectedItemChange);
 
-	NSApplication_sharedApplication();
+	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	// Init the window beforehand as we'll have to reference for later.

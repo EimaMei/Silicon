@@ -1,21 +1,24 @@
 /*
 	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/CommonDialogs/SaveFileDialog/README.md
 */
-#include <Silicon/silicon.h>
-
+#define GL_SILENCE_DEPRECATION
+#define SILICON_IMPLEMENTATION
+#include <silicon.h>
 
 NSButton* button;
 NSTextField* label;
 
+NSApplication* NSApp;
 
 void OnButtonClick(void* sender) {
-	NSSavePanel* saveFileDialog = malloc_class(NSSavePanel);
 	siArray(const char*) value = si_array_init((char*[]){"txt", "md"}, si_sizeof(*value), 2);
-
+	NSSavePanel* saveFileDialog = NSInit(NSAlloc(SI_NS_CLASSES[NS_SAVE_PANEL_CODE]));
+	
  	NSSavePanel_setCanCreateDirectories(saveFileDialog, true);
 	NSSavePanel_setAllowedFileTypes(saveFileDialog, value);
 
 	siArray(const char*) directories = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, true);
+	
 	NSURL* url = NSURL_fileURLWithPath(directories[0]);
 
 	NSSavePanel_setDirectoryURL(saveFileDialog, url);
@@ -23,9 +26,8 @@ void OnButtonClick(void* sender) {
 
 	NSModalResponse response = NSSavePanel_runModal(saveFileDialog);
 
-  	if (response == NSModalResponseOK) {
+  	if (response == NSModalResponseOK)
 		NSTextField_setStringValue(label, NSURL_path(NSSavePanel_URL(saveFileDialog)));
-    }
 
 	si_array_free(value);
 	si_array_free(directories);
@@ -43,7 +45,7 @@ int main(int argc, char* argv[]) {
 	si_func_to_SEL(SI_DEFAULT, OnButtonClick);
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 
-	NSApplication_sharedApplication();
+	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
@@ -53,6 +55,7 @@ int main(int argc, char* argv[]) {
 	NSButton_setTitle(button, "Save...");
 	NSButton_setBezelStyle(button, NSBezelStyleRounded);
 	NSButton_setTarget(button, (id)window);
+
 	NSButton_setAction(button, selector(OnButtonClick));
 	NSButton_setAutoresizingMask(button, NSViewMaxXMargin | NSViewMinYMargin);
 

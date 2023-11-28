@@ -2,10 +2,13 @@
 	Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/HelloWorlds/HelloWorld/README.md
 */
 
-#include <Silicon/silicon.h>
+#define GL_SILENCE_DEPRECATION
+#define SILICON_IMPLEMENTATION
+#include <silicon.h>
 
+NSApplication* NSApp;
 
-bool windowShouldClose(void* self, id sender)  {
+bool windowShouldClose(id sender)  {
 	NSApplication_terminate(NSApp, sender);
 	return true;
 }
@@ -15,7 +18,7 @@ int main() {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
 
-	NSApplication_sharedApplication();
+	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	NSTextField* label = NSTextField_initWithFrame(NSMakeRect(5, 100, 290, 100));

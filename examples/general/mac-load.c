@@ -1,4 +1,7 @@
-#include <Silicon/silicon.h>
+#define GL_SILENCE_DEPRECATION
+#define SILICON_IMPLEMENTATION
+#include <silicon.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -21,6 +24,8 @@ void onRect(NSRect rect) {
 }
 
 
+NSApplication* NSApp;
+
 bool windowShouldClose(void* self)  {
 	NSApplication_stop(NSApp, self);
 	return true;
@@ -33,14 +38,14 @@ int main() {
     si_func_to_SEL_with_name("NSView", "drawRect", onRect);
 
 
-	NSApplication_sharedApplication();
+	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
-	NSAutoreleasePool* myPool = malloc_class(NSAutoreleasePool);
+	NSAutoreleasePool* myPool = NSAutoreleasePool_init();
 
 	NSRect rect = {{100.0, 350.0}, {400.0, 400.0}};
-	NSInteger mask = NSTitledWindowMask | NSClosableWindowMask
-				   | NSMiniaturizableWindowMask;
+	NSInteger mask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable
+				   | NSWindowStyleMaskMiniaturizable;
 	NSWindow* myWnd = NSWindow_init(rect, mask, NSBackingStoreBuffered, false);
 	NSWindow_setTitle(myWnd, "ObjC Application Window");
 

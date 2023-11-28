@@ -1,8 +1,10 @@
 /*
     Based on: https://github.com/gammasoft71/Examples_Cocoa/blob/master/src/MenusAndToolbars/MainMenu/README.md
 */
+#define GL_SILENCE_DEPRECATION
+#define SILICON_IMPLEMENTATION
+#include <silicon.h>
 
-#include <Silicon/silicon.h>
 #include <stdarg.h>
 #define local_array_size(array) sizeof(array) / sizeof(*array) // For convenience sake.
 
@@ -18,6 +20,7 @@ void editPaste() { printf("MainMenu/Edit/Paste\n"); }
 void editDelete() { printf("MainMenu/Edit/Delete\n"); }
 void editSelectAll() { printf("MainMenu/Edit/SelectAll\n"); }
 
+NSApplication* NSApp;
 
 bool windowShouldClose(id sender) {
 	NSApplication_terminate(NSApp, sender);
@@ -50,21 +53,21 @@ const char* sprintf_output(const char* text, ...) {
 // Creates a submenu for the main menu.
 NSMenu* create_submenu(NSMenu* main_menu, const char* title, NSMenuItem** items, size_t sizeof_items) {
 	// First, create a submenu for the app's menu bar.
-	NSMenuItem* submenu = autorelease(malloc_class(NSMenuItem));
-	NSMenu_addItem(main_menu, submenu);
+    NSMenuItem* menuItem = NSAutoRelease(NSAlloc(SI_NS_CLASSES[NS_MENUITEM_CODE]));
+
+    // Add the NSMenuItem to the main menu
+	NSMenu_addItem(main_menu, menuItem);
 
 	// Create a menu list for our submenu.
 	NSMenu* new_menu = NSMenu_init(title);
-	NSMenuItem_setSubmenu(submenu, new_menu);
+	NSMenuItem_setSubmenu(menuItem, new_menu);
 
 	// Add the items to the new menu list.
 	for (size_t i = 0; i < sizeof_items; i++)
 		NSMenu_addItem(new_menu, items[i]);
-
+		
 	return new_menu;
 }
-
-
 
 int main() {
 	/*
@@ -86,16 +89,15 @@ int main() {
 	si_func_to_SEL(SI_DEFAULT, editDelete);
 	si_func_to_SEL(SI_DEFAULT, editSelectAll);
 
+	NSApp = NSApplication_sharedApplication();
+	// Ever since MacOS 10.6, Mac applications require a 'NSApplicationActivationPolicyRegular' type policy to show menubars.
+	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
+
 	// Get the executable name.
 	const char* process_name = NSProcessInfo_processName(NSProcessInfo_processInfo());
 
-	// Ever since MacOS 10.6, Mac applications require a 'NSApplicationActivationPolicyRegular' type policy to show menubars.
-	NSApplication_sharedApplication();
-	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
-
-
 	// Create and set the main menubar
-	NSMenu* main_menu = autorelease(malloc_class(NSMenu));
+	NSMenu* main_menu = NSAutoRelease(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE]));
 	NSApplication_setMainMenu(NSApp, main_menu);
 
 	// The items for each of our menus ('<Executable name>', 'File', 'Edit', 'View', 'Windows' and 'Help')
@@ -138,9 +140,11 @@ int main() {
 
 	// Now we create the menus themselves.
 	// '<Process name>' menu
-	NSMenu* process_menu = create_submenu(main_menu, process_name, process_items, local_array_size(process_items));
-	NSMenu* process_services = autorelease(malloc_class(NSMenu)); // We initialize a new menu.
-	NSMenuItem_setSubmenu(NSMenu_itemArray(process_menu)[2], process_services); // 'NSMenu_itemArray(process_menu)[2]' is 'Services' (refer to 'process_items' variable).
+	create_submenu(main_menu, process_name, process_items, local_array_size(process_items));
+	NSMenu* process_services = NSAutoRelease(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE])); // We initialize a new menu.
+
+	NSMenuItem_setSubmenu(process_items[2], process_services); // 'process_items[2]' is 'Services' (refer to 'process_items' variable).
+
 	NSApplication_setServicesMenu(NSApp, process_services); // Now 'Services' becomes a Services menu.
 
 	// 'File' menu
@@ -159,7 +163,6 @@ int main() {
 	// 'Help' menu
 	NSMenu* help_menu = create_submenu(main_menu, "Help", nil, 0);
 	NSApplication_setHelpMenu(NSApp, help_menu); // Set our menu into a Help menu.
-
 
 	// Create our window.
 	NSWindow* win = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
