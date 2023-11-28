@@ -12,14 +12,15 @@ NSApplication* NSApp;
 
 void OnButtonClick(void* sender) {
 	siArray(const char*) value = si_array_init((char*[]){"txt", "md"}, si_sizeof(*value), 2);
-	NSSavePanel* saveFileDialog = NSInit(SI_NS_CLASSES[NS_SAVE_PANEL_CODE]);
+	NSSavePanel* saveFileDialog = NSInit(NSAlloc(SI_NS_CLASSES[NS_SAVE_PANEL_CODE]));
 	
  	NSSavePanel_setCanCreateDirectories(saveFileDialog, true);
 	NSSavePanel_setAllowedFileTypes(saveFileDialog, value);
 
 	siArray(const char*) directories = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, true);
-	NSURL* url = NSURL_fileURLWithPath(directories[0]);
 	
+	NSURL* url = NSURL_fileURLWithPath(directories[0]);
+
 	NSSavePanel_setDirectoryURL(saveFileDialog, url);
 	NSSavePanel_setNameFieldStringValue(saveFileDialog, "MyFile.txt");
 

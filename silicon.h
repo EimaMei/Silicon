@@ -1175,7 +1175,8 @@ typedef NS_ENUM(NSUInteger, NSSearchPathDomainMask) {
     NSAllDomainsMask = 0x0ffff  // all domains: all of the above and future items
 };
 
-siArray(const char*) NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, bool expandTilde);
+#define NSSearchPathForDirectoriesInDomains _NSSearchPathForDirectoriesInDomains
+siArray(const char*) _NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, bool expandTilde);
 
 #endif /* ndef SILICON_H */
 
@@ -3163,7 +3164,7 @@ NSUInteger NSArray_count(NSArray* array) {
 
 void* NSArray_objectAtIndex(NSArray* array, NSUInteger index) {
     void* func = SI_NS_FUNCTIONS[NS_OBJECT_AT_INDEX_CODE];
-    return ((id (*)(id, SEL, NSUInteger))objc_msgSend)(SI_NS_CLASSES[NS_STRING_CODE], func, index);
+    return ((id (*)(id, SEL, NSUInteger))objc_msgSend)(array, func, index);
 }
 
 id NSAutoRelease(id obj) { return (id)objc_msgSend_id(obj, SI_NS_FUNCTIONS[NS_AUTORELEASE_CODE]); }
@@ -3238,6 +3239,25 @@ void si_array_free(siArray(void) array) {
 
 	free(SI_ARRAY_HEADER(array));
 }
+
+#undef NSSearchPathForDirectoriesInDomains
+
+NSArray* NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, BOOL expandTilde);
+
+siArray(const char*) _NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, bool expandTilde) {
+    NSArray* output = NSSearchPathForDirectoriesInDomains(directory, domainMask, expandTilde);
+
+    NSUInteger count = NSArray_count(output);
+    siArray(const char*) res = si_array_init_reserve(si_sizeof(const char*), count);
+    
+    for (NSUInteger i = 0; i < count; i++)
+        res[i] = NSString_to_char(NSArray_objectAtIndex(output, i));
+
+	return res;
+}
+
+#define NSSearchPathForDirectoriesInDomains _NSSearchPathForDirectoriesInDomains
+
 #endif
 
 #endif /* SILICON_IMPLEMENTATION */
