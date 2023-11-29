@@ -6,9 +6,7 @@ Heavily based on the original silicon but rewritten in pure-C as a single-header
 ![alt text](logo.png)
 
 # build status
-![macos](https://github.com/ColleagueRiley/RGFW/actions/workflows/macos.yml/badge.svg)
-
-(this uses the RGFW workflow badge, because for some reason the workflow badges are weird for forks. It should be the same since (most of the time) RGFW is using silicon.h)
+![macos](https://github.com/EimaMei/Silicon/actions/workflows/macos.yml/badge.svg)
 
 # Why Silicon?
 Because there isn't anything else like it (to my knowledge, at least). If you want to create low-level MacOS apps, you have to use and learn Objective-C, and as we all know the language is notorious for its syntax and its unique (albeit terrible) way of handling object-oriented programming. It also ruins cross-platform code as if you compile an Objective-C file as C, you get a bunch of errors (however there are at least easy work around that).
