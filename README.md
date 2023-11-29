@@ -82,6 +82,8 @@ To compile and run all of the examples in a row, you can use `make runExamples` 
 ## General
 - [hidefromkgb's 'mac_load' repository](https://github.com/hidefromkgb/mac_load#objective-c-gui-app-example) - the backend for some of the important parts of Silicon (such as defining Objective-C types and functions).
 - Apple - all of the headers from [include/Silicon/headers](include/Silicon/headers/) have been directly copied and modified to not have any Objective-C shenanigans in them for them to be compiled in C.
+- EimaMei - Original creator of Silicon
+- [Colleague Riley](https://github.com/ColleagueRiley) - Creator of the orginal single-header version of Silicon (silicon.h) and co-author of silicon
 
 ## The example sources
 All of the repositories that I took examples from and eithered completely ported to Silicon or modified heavilly:
