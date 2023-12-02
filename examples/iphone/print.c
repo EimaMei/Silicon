@@ -22,7 +22,7 @@ void init_console() {
 	NSDictionary* bundleInfo = NSBundle_infoDictionary(bundle); // Get the dictionary.
 	const char* bundle_identifier = NSDictionary_objectForKey(bundleInfo, "CFBundleIdentifier"); // Read from the dictionary to get the bundle identifier of the app.
 
-	//os_log_system = os_log_create(bundle_identifier, "connections"); // Set our logging to only focus on the bundle identifer of the app.
+	//os_log_system = os_log_create(bundle_identifier, ""); // Set our logging to only focus on the bundle identifer of the app.
 	#define printf(message, __VA_ARGS__...) os_log(os_log_system, message, ## __VA_ARGS__); // Define the new 'printf', as the old printf won't work anymore regardless.
 
 	// Release all of the garbage.

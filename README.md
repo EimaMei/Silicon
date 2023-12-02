@@ -6,9 +6,7 @@ Heavily based on the original Silicon but rewritten in pure-C as a single-header
 ![alt text](logo.png)
 
 # build status
-![macos](https://github.com/ColleagueRiley/RGFW/actions/workflows/macos.yml/badge.svg)
-
-(this uses the RGFW workflow badge, because for some reason the workflow badges are weird for forks. It should be the same since (most of the time) RGFW is using Silicon.h)
+![macos](https://github.com/EimaMei/Silicon/actions/workflows/macos.yml/badge.svg)
 
 # Why Silicon?
 Because there isn't anything else like it (to my knowledge, at least). If you want to create low-level MacOS apps, you have to use and learn Objective-C, and as we all know the language is notorious for its syntax and its unique (albeit terrible) way of handling object-oriented programming. It also ruins cross-platform code as if you compile an Objective-C file as C, you get a bunch of errors (however there are at least easy work around that).
@@ -195,6 +193,8 @@ To compile and run all of the examples in a row, you can use `make runExamples` 
 ## General
 - [hidefromkgb's 'mac_load' repository](https://github.com/hidefromkgb/mac_load#objective-c-gui-app-example) - the backend for some of the important parts of Silicon (such as defining Objective-C types and functions).
 - Apple - all of the headers from [include/Silicon/headers](include/Silicon/headers/) have been directly copied and modified to not have any Objective-C shenanigans in them for them to be compiled in C.
+- EimaMei - original creator of Silicon.
+- [Colleague Riley](https://github.com/ColleagueRiley) - creator of the original single-header version of Silicon (Silicon.h) and co-author of Silicon.
 
 ## The example sources
 All of the repositories that I took examples from and eithered completely ported to Silicon or modified heavilly:

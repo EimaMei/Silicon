@@ -5,20 +5,20 @@
 #define SILICON_IMPLEMENTATION
 #include <silicon.h>
 
-
 NSButton* button;
 NSTextField* label;
 
 NSApplication* NSApp;
 
 void OnButtonClick(void* sender) {
-	NSSavePanel* saveFileDialog = NSInit(SI_NS_CLASSES[NS_SAVE_PANEL_CODE]);
 	siArray(const char*) value = si_array_init((char*[]){"txt", "md"}, si_sizeof(*value), 2);
-
+	NSSavePanel* saveFileDialog = NSInit(NSAlloc(SI_NS_CLASSES[NS_SAVE_PANEL_CODE]));
+	
  	NSSavePanel_setCanCreateDirectories(saveFileDialog, true);
 	NSSavePanel_setAllowedFileTypes(saveFileDialog, value);
 
 	siArray(const char*) directories = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, true);
+	
 	NSURL* url = NSURL_fileURLWithPath(directories[0]);
 
 	NSSavePanel_setDirectoryURL(saveFileDialog, url);
@@ -26,9 +26,8 @@ void OnButtonClick(void* sender) {
 
 	NSModalResponse response = NSSavePanel_runModal(saveFileDialog);
 
-  	if (response == NSModalResponseOK) {
+  	if (response == NSModalResponseOK)
 		NSTextField_setStringValue(label, NSURL_path(NSSavePanel_URL(saveFileDialog)));
-    }
 
 	si_array_free(value);
 	si_array_free(directories);
@@ -56,7 +55,8 @@ int main(int argc, char* argv[]) {
 	NSButton_setTitle(button, "Save...");
 	NSButton_setBezelStyle(button, NSBezelStyleRounded);
 	NSButton_setTarget(button, (id)window);
-	NSButton_setAction(button, sel_getUid("OnButtonClick"));
+
+	NSButton_setAction(button, selector(OnButtonClick));
 	NSButton_setAutoresizingMask(button, NSViewMaxXMargin | NSViewMinYMargin);
 
 	label = NSTextField_initWithFrame(NSMakeRect(10, 235, 280, 20));
