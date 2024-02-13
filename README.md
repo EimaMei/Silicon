@@ -38,53 +38,46 @@ If you want to set the icon, you have to either run `make iosBuild ICON=<filenam
 
 If you only want to install or launch the app, then you can use the command `make iosInstall` and `make iosLaunch` respectively.
 
-# How to create your own Silicon functions
-    If Silicon does not include a function from Cocoa that you need, you'll have to either create an issue on the github repo asking for the function or try to create your own function.
+# How to create your own Silicon classes/functions
+If Silicon does not include a class or function from Cocoa that you need, you could create an issue on the GitHub repository, asking for a possible implementation. However, this solution isn't that economically viable, given the fact that it takes a lot of unnecessary time to wait for some stranger to do a few simple things for you. If time is of concern, you can just implement the Cocoa classes/functions into Silicon yourself with these steps:
 
-    (These steps don't have to be done in order per se)\
+## Classes
+### 1. Make sure the class type is defined
+On line ~128 there are a bunch of typedefs for class types. If your functio's class type isn't in that list, you can simply add it in an appropriate place. Simply define the type as a `void`. Example:
+```c
+typedef void NSWindow;
+```
 
-## First, make sure the class-type is defined
-    On line ~127 there is a bunch of typedefs for class-types\
-    If you can't find your class type simply add it to appropriate somewhere on the list  
+### 2. Declare the function in the proper location in the file
+The format for the declaration: 
+```c
+SICDEF <return type> <class>_<function name>([object (if any)], <args>);
+```
 
-    eg. `NSWindow` becomes `typedef void NSWindow;`
-
-## Next, declare the function (and place it in a proper location in the file)\
-    `SICDEF [return-type] [class]_([object (if needed)], [args]);`\
-    
-    ```c
-    ex.
+Examples:
+```obj-c
+    /* Objective-C */
     [window setFrame:(frame) display:(true) animate:(true)];
-
-    becomes 
+    /* Silicon verson. */
     void NSWindow_setFrameAndDisplay(NSWindow* window, NSRect frame, bool display, bool animate) 
 
+    /* Objective-C */
     [NSFont fontWithName:(str) size:(fontSize)];
+    /* Silicon verson. */
+    NSFont* NSFont_init(const char* fontName, CGFloat fontSize); // Note that for custom object allocation functions, 'init<WithSomething>' is used instead.
+```
 
-    becomes
-    NSFont* NSFont_init(const char* fontName, CGFloat fontSize);
-    ```
+### 3. Define the new class
+    
+If your function is initializing an object from a class, you may also need to define the class. In that case, first check if the class is already defined  in the list of enums one line ~1284, where, if it exists, will be under the enum format of `NS_[CLASS]_CODE` (eg. `NSwindow` enum is `NS_WINDOW_CODE`).
 
-## Then, you must define any objective c classes and function selectors\
-    
-    If your function is init'ing an object from a class, you may also need to define the class\
-    In which case, first check if the class is already defined, you can do this by checking the enum on line ~1239\
-
-    It will be in all caps in this format (NS_[CLASS]_CODE), eg. NSWindow becomes `NS_WINDOW_CODE`\
-    
-    If it's not defined, find a proper place to put it in the enum\
-    Then go to the `si_initNS` function where you will define the class in the `SI_NS_CLASSES` array,\
-    if the `SI_NS_CLASSES` array is too small, raise it by 1\
-    eg. `void* SI_NS_CLASSES[36] = {NULL};` to `void* SI_NS_CLASSES[37] = {NULL};`\
-    Then find a proper place in the function to define the class and define it like this\
-    `SI_NS_CLASSES[(CLASS ENUM)] = objc_getClass("[CLASS NAME]");`
-    
-    for example,
-    ```c
+If it's not defined, create it in a proper place inside the list. Then go over to the `si_initNS` function, where you need to define the class in the `SI_NS_CLASSES` array. Firstly find the appropriate place in the function to define the class under the format of  `SI_NS_CLASSES[<CLASS_ENUM>] = objc_getClass("<NSClass name>");`. Example:
+```c
     SI_NS_CLASSES[NS_WINDOW_CODE] = obj_getClass("NSWindow");
-    ```
+```
 
-### Now, you define the function selectors
+## Functions (function selectors)
+### 1. Define the function
     First, check if the function is already defined, you can do this by checking the enum on line ~1239\
 
     It will be in all caps in this format (NS_[CLASS_NAME]_[FUNCTION_NAME]_CODE)\
