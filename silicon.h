@@ -1552,9 +1552,11 @@ enum { /* classes */
     NS_WINDOW_STYLE_MASK_CODE,
     NS_STRING_FROM_CLASS_CODE,
     NS_STRING_IS_EQUAL_CODE,
+
+    NS_CODE_LEN,
 };
 
-void* SI_NS_CLASSES[36] = {NULL};
+void* SI_NS_CLASSES[NS_CODE_LEN] = {NULL};
 void* SI_NS_FUNCTIONS[233];
 
 void si_initNS(void) {    
