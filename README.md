@@ -76,72 +76,78 @@ If it's not defined, create it in a proper place inside the list. Then go over t
     SI_NS_CLASSES[NS_WINDOW_CODE] = obj_getClass("NSWindow");
 ```
 
-## Functions (function selectors)
-### 1. Define the function
-    First, check if the function is already defined, you can do this by checking the enum on line ~1239\
+## Methods/Functions (function selectors)
+### 1. Make sure the method is already defined
+Just after the classes enum (specifically line ~1324), you'll see another huge list containing the method IDs under the format of '`SI_[CLASS_NAME]_[METHOD_NAME]_CODE` (eg. `[<NSWindow> makeMainWindow]` turns into `NS_WINDOW_MAKE_MAIN_WINDOW_CODE`). If the needed method is not in the list, simply define it at the appropriate place inside the enum.
 
-    It will be in all caps in this format (NS_[CLASS_NAME]_[FUNCTION_NAME]_CODE)\
-    eg. NSWindow_makeMainWindow becomes `NS_WINDOW_MAKE_MAIN_WINDOW_CODE`\
-    
-    If it's not defined, find a proper place to put it in the enum\
-    Then go to the `si_initNS` function where you will define the class in the `SI_NS_FUNCTIONS` array,\
-    if the `SI_NS_FUNCTIONS` array is too small, raise it by 1\
-    eg. `void* SI_NS_FUNCTIONS[232];` to `void* SI_NS_CLASSES[233];`\
-    Then find a proper place in the function to define the class and define it like this\
-    `SI_NS_FUNCTIONS[(CLASS ENUM)] = objc_getClass("[FUNCTION NAME]");`
-    
-    for example,
-    ```c
-    SI_NS_FUNCTIONS[NS_WINDOW_MAKE_MAIN_WINDOW_CODE] = obj_getClass("makeMainWindow");
-    ```
 
-    If your function has args, the class name (for objc_getClass) must include them\
-    If it's only one arg, you just need to add `:` at the end, if it's more than one,
-    you add one `:` then a `arg_name:` for each arg after
+### 2. Define the method
+At the `si_initNS(void)` function you have to find a proper place in the function to define the class and define it under the format of `SI_NS_FUNCTIONS[<FUNCTION_CODE>] = sel_getUid("functionName");`
 
-    eg.
-    ```c
-    NSWindow_setFrameAndDisplay(NSWindow* window, NSRect frame, bool display, bool animate);
+Example:
+```c
+SI_NS_FUNCTIONS[NS_WINDOW_MAKE_MAIN_WINDOW_CODE] = sel_getUid("makeMainWindow");
+```
+If the method requires multiple arguments, you must append them to the function name with a ':' prefix and name of the argument.
 
-    becomes
+Example ([setFrame:Display:Animate](https://developer.apple.com/documentation/appkit/nswindow/1419519-setframe?language=objc) method):
+```Obj-C
+[<NSWindow> setFrame: display: ];
+// becomes
+SI_NS_FUNCTIONS[NS_WINDOW_SET_FRAME_AND_DISPLAY_CODE] = sel_getUid("setFrame:display:animate:");    
+```
 
-    SI_NS_FUNCTIONS[NS_WINDOW_SET_FRAME_AND_DISPLAY_CODE] = sel_getUid("setFrame:display:animate:");    
-    ```
+### 3. Implement the method
+Firstly, find a good spot to define the function implementaion under the `#ifdef SILICON_IMPLEMENTATION` line. To start, know that all function implementions follow the same general structure of:
+```c
+<return type> <NSClass>_<methodName>([NSClassType class], [...args]) {
+	void* func = SI_NS_FUNCTIONS[NS_<CLASS>_<FUNCTION_NAME>_CODE];
+	objc_msgSend_<specific_msgSend_version_suffix>([...args], func);
+}
+```
 
-    Check the Cocoa [documentation](https://developer.apple.com/documentation/) for more information
+The needed `objc_msgSend` function version will depend on what the inputs are and return type is for the new function. 
 
-## Finally, it's time to define the actual function
-    Simply find a good spot to define the function under the `#ifdef SILICON_IMPLEMENTATION` line\
+For example, for `makeMainWindow`, this is how it should be implemented in Silicon:
+```c
+void NSWindow_makeMainWindow(NSWindow* window) {
+    void* func = SI_NS_FUNCTIONS[NS_WINDOW_MAKE_MAIN_WINDOW_CODE];
+    objc_msgSend_void(window, func);
+}
+```
+Since the function doesn't return anything, we can simply just use the `_void` version of the function. For the entire available list, it's over at ~line 1195. Unfortunately, you may have to cast the original `objc_msgSend` if the needed return type and inputs combo version isn't in the list.
 
-    Here is a quick example for `makeMainWindow`\
-    First, define `void* func` as being the function selector you want to use\
-    `void* func = SI_NS_FUNCTIONS[NS_WINDOW_MAKE_MAIN_WINDOW_CODE];`\
-    Next, use the proper `objc_msgSend` depending on the function's input and return type\ 
-    you may have to cast it yourself if none is avaliable, I'd suggest you check out functions which do this first.\
-    For `makeMainWindow`, we can use `objc_msgSend_void`
+### 4. Other noteworthy things to know
+1. When dealing with general Objective-C types, you should replace the external input/output to equivalent C types (`NSString` -> `char*`). Notable example of this being 'NSArray', where instead you should use 'siArray' externally and then interanlly convert the `siArray` to an `NSArray`.
 
-    ```c
-    void NSWindow_makeMainWindow(NSWindow* window) {
-        void* func = SI_NS_FUNCTIONS[NS_WINDOW_MAKE_MAIN_WINDOW_CODE];
-        objc_msgSend_void(window, func);
-    }
-    ```
+Example ([registerForDraggedTypes](https://developer.apple.com/documentation/appkit/nswindow/1419519-setframe?language=objc) method):
+```c
+void NSView_registerForDraggedTypes(NSView* view, siArray(NSPasteboardType) newTypes) {
+	void* func = SI_NS_FUNCTIONS[NS_VIEW_REGISTER_FOR_DRAGGED_TYPES_CODE];
 
-    You may also need to convert NSArray to siArray (or vice versa), or NSString to const char* (or vice versa)\
-    In such cases I would suggest you refference other functions that do this
+	NSArray* array = si_array_to_NSArray(newTypes);
 
-    When doing a `_init` function, you may need to do an allocation for the class.\
-    Here is an example of that
+	objc_msgSend_void_id(view, func, array);
 
-    ```c
-    NSButton* NSButton_initWithFrame(NSRect frameRect) {
-        void* func = SI_NS_FUNCTIONS[NS_BUTTON_INIT_WITH_FRAME_CODE];
-        return objc_msgSend_id_rect(NSAlloc(SI_NS_CLASSES[NS_BUTTON_CODE]), func, frameRect);
-    }
-    ```
+	NSRelease(array);
+}
+```
+This also applies in the opposite direction, where the original method's return is `NSArray`. Instead, it should be `siArray`.
 
-    Again, check the Cocoa [documentation](https://developer.apple.com/documentation/) for more information\
-    I would also suggest looking at Objective C example code to see if you need to use Alloc (or something else) or not
+
+2. When doing an initialization function, you may need to do an allocation for the class.
+
+Example ([initWithFrame](https://developer.apple.com/documentation/appkit/nsview/1483458-initwithframe) method):
+```c
+NSButton* NSButton_initWithFrame(NSRect frameRect) {
+    void* func = SI_NS_FUNCTIONS[NS_BUTTON_INIT_WITH_FRAME_CODE];
+    return objc_msgSend_id_rect(NSAlloc(SI_NS_CLASSES[NS_BUTTON_CODE]), func, frameRect);
+}
+```
+
+3. Check the Cocoa [documentation](https://developer.apple.com/documentation/) as a main source for converting Objective-C Cocoa methods into Silicon C functions.
+
+4. Refer to the official Silicon examples if applicable for the conversion. 
 
 
 # Examples
