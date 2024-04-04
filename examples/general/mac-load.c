@@ -7,7 +7,7 @@
 #include <math.h>
 
 
-void onRect(NSRect rect) {
+void onRect(void* self, SEL cmd, NSRect rect) {
 	NSColor* color = NSColor_keyboardFocusIndicatorColor();
 	NSColor_set(color);
 
@@ -35,7 +35,7 @@ bool windowShouldClose(void* self)  {
 int main() {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
 	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
-    si_func_to_SEL_with_name("NSView", "drawRect", onRect);
+    si_func_to_SEL_with_name("NSView", "drawRect:", onRect);
 
 
 	NSApp = NSApplication_sharedApplication();
@@ -46,10 +46,10 @@ int main() {
 	NSRect rect = {{100.0, 350.0}, {400.0, 400.0}};
 	NSInteger mask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable
 				   | NSWindowStyleMaskMiniaturizable;
-	NSWindow* myWnd = NSWindow_init(rect, mask, NSBackingStoreBuffered, false);
+	NSWindow* myWnd = NSAutoRelease(NSWindow_init(rect, mask, NSBackingStoreBuffered, false));
 	NSWindow_setTitle(myWnd, "ObjC Application Window");
 
-	NSView* myView = NSView_init();
+	NSView* myView = NSAutoRelease(NSView_init());
 	NSWindow_setContentView(myWnd, myView);
 	NSWindow_setDelegate(myWnd, (id)myView);
 	NSWindow_orderFront(myWnd, nil);

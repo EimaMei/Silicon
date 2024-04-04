@@ -35,6 +35,13 @@
 #include <objc/runtime.h>
 #include <objc/message.h>
 
+#define SILICON_H
+#ifdef SICDEF_STATIC
+#define SICDEF static /* I have this so I can get warnings for functions that aren't defined */
+#else
+#define SICDEF static inline
+#endif
+
 
 #define NS_ENUM(type, name) type name; enum
 
@@ -153,6 +160,8 @@ typedef void NSSavePanel;
 typedef void NSOpenPanel;
 typedef void NSColorPanel;
 typedef void NSBundle;
+typedef void NSNotification;
+typedef void NSNotificationCenter;
 typedef void CALayer;
 #ifndef __OBJC__
 typedef void NSDictionary;
@@ -428,7 +437,7 @@ enum {
 	NSOpenGLPFAAcceleratedCompute    NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  =  97,	/* choose a hardware accelerated compute device */
 
 	NSOpenGLPFAOpenGLProfile         NS_OPENGL_ENUM_DEPRECATED(10.7, 10.14)  =  99,    /* specify an OpenGL Profile to use             */
-	NSOpenGLProfileVersionLegacy 	 NS_OPENGL_ENUM_DEPRECATED(10.7, 10.14)  = 0x1000, /* The requested profile is a legacy (pre-OpenGL 3.0) profile. */
+	NSOpenGLProfileVersionLegacy     NS_OPENGL_ENUM_DEPRECATED(10.7, 10.14)  = 0x1000, /* The requested profile is a legacy (pre-OpenGL 3.0) profile. */
 	NSOpenGLProfileVersion3_2Core    NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  = 0x3200, /* The 3.2 Profile of OpenGL */
 	NSOpenGLProfileVersion4_1Core    NS_OPENGL_ENUM_DEPRECATED(10.0, 10.14)  = 0x3200, /* The 4.1 profile of OpenGL */
 
@@ -705,6 +714,8 @@ SICDEF void NSApplication_stop(NSApplication* application, void* view);
 SICDEF void NSApplication_terminate(NSApplication* application, id sender);
 /* */
 SICDEF void NSApplication_sendEvent(NSApplication* application, NSEvent* event);
+/* */
+SICDEF void NSApplication_postEvent(NSApplication* application, NSEvent* event, bool atStart);
 /* */
 SICDEF void NSApplication_updateWindows(NSApplication* application);
 /* */
@@ -1307,7 +1318,7 @@ abi_objc_msgSend_stret - Sends a message with a data-structure return value to a
 		f(obj, SI_NS_FUNCTIONS[func], d); \
 	}
 
-#define NSAlloc(nsclass) objc_msgSend_id((id)(nsclass), SI_NS_CLASSES[NS_ALLOC_CODE])
+#define NSAlloc(nsclass) objc_msgSend_id((id)(nsclass), SI_NS_FUNCTIONS[NS_ALLOC_CODE])
 
 const NSSize _NSZeroSize = {0, 0};
 
@@ -1362,7 +1373,6 @@ const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 enum { /* classes */
 	NS_APPLICATION_CODE = 0,
 	NS_WINDOW_CODE,
-	NS_ALLOC_CODE,
 	NS_VALUE_CODE,
 	NS_EVENT_CODE,
 	NS_DATE_CODE,
@@ -1397,6 +1407,7 @@ enum { /* classes */
 	NS_SLIDER_CODE,
 	NS_URL_CODE,
 	NS_BUNDLE_CODE,
+	NS_NOTIFICATIONCENTER_CODE,
 	CA_TRANSACTION_CODE,
 	NS_WINDOW_CONTROLLER_CODE,
 
@@ -1406,6 +1417,7 @@ enum { /* classes */
 enum{
 	/* functions */
 	NS_APPLICATION_SET_ACTIVATION_POLICY_CODE = 0,
+	NS_ALLOC_CODE,
 	NS_APPLICATION_SAPP_CODE,
 	NS_APPLICATION_RUN_CODE,
 	NS_APPLICATION_FL_CODE,
@@ -1434,6 +1446,7 @@ enum{
 	NS_APPLICATION_STOP_CODE,
 	NS_APPLICATION_TERMINATE_CODE,
 	NS_APPLICATION_SEND_EVENT_CODE,
+	NS_APPLICATION_POST_EVENT_CODE,
 	NS_APPLICATION_UPDATE_WINDOWS_CODE,
 	NS_APPLICATION_ACTIVATE_IGNORING_OTHER_APPS_CODE,
 	NS_APPLICATION_NEXT_EVENT_MATCHING_MASK_CODE,
@@ -1671,6 +1684,8 @@ enum{
 	NS_GRAPHICS_CONTEXT_WITH_WINDOW_CODE,
 	NS_GRAPHICS_CONTEXT_FLUSH_GRAPHICS_CODE,
 	NS_CURSOR_PERFORM_SELECTOR,
+	NS_NOTIFICATIONCENTER_ADD_OBSERVER,
+	NS_NOTIFICATIONCENTER_DEFAULT_CENTER,
 	NS_WINDOW_CONTROLLER_INIT_WITH_WINDOW_CODE,
 
 	NS_FUNC_LEN
@@ -1682,7 +1697,6 @@ void* SI_NS_FUNCTIONS[NS_FUNC_LEN];
 void si_initNS(void) {
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
 	SI_NS_CLASSES[NS_WINDOW_CODE] = objc_getClass("NSWindow");
-	SI_NS_CLASSES[NS_ALLOC_CODE] = sel_registerName("alloc");
 	SI_NS_CLASSES[NS_VALUE_CODE] = objc_getClass("NSValue");
 	SI_NS_CLASSES[NS_EVENT_CODE] = objc_getClass("NSEvent");
 	SI_NS_CLASSES[NS_DATE_CODE] = objc_getClass("NSDate");
@@ -1717,10 +1731,12 @@ void si_initNS(void) {
 	SI_NS_CLASSES[NS_SLIDER_CODE] = objc_getClass("NSSlider");
 	SI_NS_CLASSES[NS_URL_CODE] = objc_getClass("NSURL");
 	SI_NS_CLASSES[NS_BUNDLE_CODE] = objc_getClass("NSBundle");
+	SI_NS_CLASSES[NS_NOTIFICATIONCENTER_CODE] = objc_getClass("NSNotificationCenter");
 	SI_NS_CLASSES[CA_TRANSACTION_CODE] = objc_getClass("CATransaction");
 	SI_NS_CLASSES[NS_WINDOW_CONTROLLER_CODE] = objc_getClass("NSWindowController");
 
 	SI_NS_FUNCTIONS[NS_APPLICATION_SET_ACTIVATION_POLICY_CODE] = sel_registerName("setActivationPolicy:");
+	SI_NS_FUNCTIONS[NS_ALLOC_CODE] = sel_registerName("alloc");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_registerName("sharedApplication");
 	SI_NS_FUNCTIONS[NS_APPLICATION_RUN_CODE] = sel_registerName("run");
 	SI_NS_FUNCTIONS[NS_APPLICATION_FL_CODE] = sel_registerName("finishLaunching");
@@ -1991,6 +2007,8 @@ void si_initNS(void) {
 	SI_NS_FUNCTIONS[NS_GRAPHICS_CONTEXT_FLUSH_GRAPHICS_CODE] = sel_registerName("flushGraphics:");
 	SI_NS_FUNCTIONS[NS_CURSOR_PERFORM_SELECTOR] = sel_registerName("performSelector:");
 	SI_NS_FUNCTIONS[NS_WINDOW_CONTENT_VIEW_CONTROLLER_CODE] = sel_registerName("initWithWindow:");
+	SI_NS_FUNCTIONS[NS_NOTIFICATIONCENTER_ADD_OBSERVER] = sel_registerName("addObserver:selector:name:object:");
+	SI_NS_FUNCTIONS[NS_NOTIFICATIONCENTER_DEFAULT_CENTER] = sel_registerName("defaultCenter");
 }
 
 void si_impl_func_to_SEL_with_name(const char* class_name, const char* register_name, void* function) {
@@ -2156,7 +2174,7 @@ bool NSThread_isMainThread(void) {
 	void* nsclass = SI_NS_CLASSES[NS_THREAD_CODE];
 	void* func = SI_NS_FUNCTIONS[NS_THREAD_IS_MAIN_THREAD_CODE];
 
-	return objc_msgSend_bool(class, func);
+	return objc_msgSend_bool(nsclass, func);
 }
 
 NSApplication* NSApplication_sharedApplication(void) {
@@ -2239,6 +2257,12 @@ void NSApplication_sendEvent(NSApplication* application, NSEvent* event) {
 	objc_msgSend_void_id(application, func, event);
 }
 
+void NSApplication_postEvent(NSApplication* application, NSEvent* event, bool atStart) {
+	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_POST_EVENT_CODE];
+	((void (*)(id, SEL, id, bool))objc_msgSend)
+		(application, func, event, atStart);
+}
+
 void NSApplication_updateWindows(NSApplication* application) {
 	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_UPDATE_WINDOWS_CODE];
 	objc_msgSend_void(application, func);
@@ -2269,7 +2293,7 @@ NSScreen* NSScreen_mainScreen(void) {
 	void* func = SI_NS_FUNCTIONS[NS_SCREEN_MAIN_SCREEN_CODE];
 	void* nsclass = SI_NS_CLASSES[NS_SCREEN_CODE];
 
-	return (NSScreen *)objc_msgSend_id(class, func);
+	return (NSScreen *)objc_msgSend_id(nsclass, func);
 }
 
 NSRect NSScreen_frame(NSScreen* screen) {
@@ -2312,6 +2336,7 @@ void NSWindow_setTitle(NSWindow* window, const char* title) {
 
 void NSWindow_setMaxSize(NSWindow* window, NSSize size) {
 	void* func = SI_NS_FUNCTIONS[NS_WINDOW_SET_MAX_SIZE_CODE];
+
 
 	((void (*)(id, SEL, NSSize))objc_msgSend)(window, func, size);
 }
@@ -3426,34 +3451,34 @@ void CATransaction_begin(void) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_BEGIN_CODE];
 
-	objc_msgSend_void(class, func);
+	objc_msgSend_void(nsclass, func);
 }
 
 void CATransaction_commit(void) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_COMMIT_CODE];
 
-	objc_msgSend_void(class, func);
+	objc_msgSend_void(nsclass, func);
 }
 
 void CATransaction_flush(void) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_FLUSH_CODE];
 
-	objc_msgSend_void(class, func);
+	objc_msgSend_void(nsclass, func);
 }
 bool CATransaction_disableActions(void) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_DISABLE_ACTIONS_CODE];
 
-	return objc_msgSend_bool(class, func);
+	return objc_msgSend_bool(nsclass, func);
 }
 
 void CATransaction_setDisableActions(bool flag) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_SET_DISABLE_ACTIONS_CODE];
 
-	objc_msgSend_void_bool(class, func, flag);
+	objc_msgSend_void_bool(nsclass, func, flag);
 }
 
 
@@ -3515,6 +3540,24 @@ NSBundle* NSBundle_mainBundle(void) {
 	void* nsclass = SI_NS_CLASSES[NS_BUNDLE_CODE];
 
 	return objc_msgSend_id(nsclass, func);
+}
+
+NSNotificationCenter* NSNotificationCenter_defaultCenter(void) {
+	void* func =  SI_NS_FUNCTIONS[NS_NOTIFICATIONCENTER_DEFAULT_CENTER];
+	void* nsclass = SI_NS_CLASSES[NS_NOTIFICATIONCENTER_CODE];
+
+	return objc_msgSend_id(nsclass, func);
+}
+
+void NSNotificationCenter_addObserver(NSNotificationCenter* center, id observer, SEL aSelector, char* aName, id anObject) {
+	void* func = SI_NS_FUNCTIONS[NS_NOTIFICATIONCENTER_ADD_OBSERVER];
+
+	NSString* str = NSString_stringWithUTF8String(aName);
+
+	((void (*)(id, SEL, id, SEL, NSString*, id))objc_msgSend)
+			(center, func, observer, aSelector, aName, anObject);
+
+	NSRelease(str);
 }
 
 NSArray* si_array_to_NSArray(siArray(void) array) {

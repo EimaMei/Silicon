@@ -5,7 +5,7 @@
 #define SILICON_IMPLEMENTATION
 #include <silicon.h>
 
-#define local_array_size(array) si_sizeof(array) / si_sizeof(*array) // For convenience sake.
+#define arr_countof(array) (sizeof(array) / sizeof(*array))
 
 
 typedef struct checkBox {
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 	};
 	NSView* view = NSWindow_contentView(window);
 
-	for (size_t i = 0; i < local_array_size(array_of_checkboxes); i++) {
+	for (size_t i = 0; i < arr_countof(array_of_checkboxes); i++) {
 		// We create the checkboxes, set them as the pointers to the selector functions, and also add them to the NSView as subviews to make them visible.
 		created_checkboxes[i] = create_checkbox(array_of_checkboxes[i]);
 		NSView_addSubview(view, (NSView*)created_checkboxes[i]);
