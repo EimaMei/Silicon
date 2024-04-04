@@ -1318,7 +1318,7 @@ abi_objc_msgSend_stret - Sends a message with a data-structure return value to a
 		f(obj, SI_NS_FUNCTIONS[func], d); \
 	}
 
-#define NSAlloc(nsclass) objc_msgSend_id((id)(nsclass), SI_NS_CLASSES[NS_ALLOC_CODE])
+#define NSAlloc(nsclass) objc_msgSend_id((id)(nsclass), SI_NS_FUNCTIONS[NS_ALLOC_CODE])
 
 const NSSize _NSZeroSize = {0, 0};
 
@@ -1373,7 +1373,6 @@ const unsigned char NSKEYCOUNT = sizeof(NSKEYS);
 enum { /* classes */
 	NS_APPLICATION_CODE = 0,
 	NS_WINDOW_CODE,
-	NS_ALLOC_CODE,
 	NS_VALUE_CODE,
 	NS_EVENT_CODE,
 	NS_DATE_CODE,
@@ -1418,6 +1417,7 @@ enum { /* classes */
 enum{
 	/* functions */
 	NS_APPLICATION_SET_ACTIVATION_POLICY_CODE = 0,
+	NS_ALLOC_CODE,
 	NS_APPLICATION_SAPP_CODE,
 	NS_APPLICATION_RUN_CODE,
 	NS_APPLICATION_FL_CODE,
@@ -1697,7 +1697,6 @@ void* SI_NS_FUNCTIONS[NS_FUNC_LEN];
 void si_initNS(void) {
 	SI_NS_CLASSES[NS_APPLICATION_CODE] = objc_getClass("NSApplication");
 	SI_NS_CLASSES[NS_WINDOW_CODE] = objc_getClass("NSWindow");
-	SI_NS_CLASSES[NS_ALLOC_CODE] = sel_registerName("alloc");
 	SI_NS_CLASSES[NS_VALUE_CODE] = objc_getClass("NSValue");
 	SI_NS_CLASSES[NS_EVENT_CODE] = objc_getClass("NSEvent");
 	SI_NS_CLASSES[NS_DATE_CODE] = objc_getClass("NSDate");
@@ -1737,6 +1736,7 @@ void si_initNS(void) {
 	SI_NS_CLASSES[NS_WINDOW_CONTROLLER_CODE] = objc_getClass("NSWindowController");
 
 	SI_NS_FUNCTIONS[NS_APPLICATION_SET_ACTIVATION_POLICY_CODE] = sel_registerName("setActivationPolicy:");
+	SI_NS_FUNCTIONS[NS_ALLOC_CODE] = sel_registerName("alloc");
 	SI_NS_FUNCTIONS[NS_APPLICATION_SAPP_CODE] = sel_registerName("sharedApplication");
 	SI_NS_FUNCTIONS[NS_APPLICATION_RUN_CODE] = sel_registerName("run");
 	SI_NS_FUNCTIONS[NS_APPLICATION_FL_CODE] = sel_registerName("finishLaunching");
@@ -1745,7 +1745,6 @@ void si_initNS(void) {
 	SI_NS_FUNCTIONS[NS_WINDOW_MAKEOF_CODE] = sel_registerName("orderFront:");
 	SI_NS_FUNCTIONS[NS_VALUE_RECT_CODE] = sel_registerName("valueWithRect:");
 	SI_NS_FUNCTIONS[NS_RELEASE_CODE] = sel_registerName("release");
-
 	SI_NS_FUNCTIONS[NS_OPENGL_FB_CODE] = sel_registerName("flushBuffer");
 	SI_NS_FUNCTIONS[NS_COLOR_CLEAR_CODE] = sel_registerName("clearColor");
 	SI_NS_FUNCTIONS[NS_COLOR_KEYBOARD_FOCUS_INDICATOR_CODE] = sel_registerName("keyboardFocusIndicatorColor");
@@ -2175,7 +2174,7 @@ bool NSThread_isMainThread(void) {
 	void* nsclass = SI_NS_CLASSES[NS_THREAD_CODE];
 	void* func = SI_NS_FUNCTIONS[NS_THREAD_IS_MAIN_THREAD_CODE];
 
-	return objc_msgSend_bool(class, func);
+	return objc_msgSend_bool(nsclass, func);
 }
 
 NSApplication* NSApplication_sharedApplication(void) {
@@ -2260,7 +2259,7 @@ void NSApplication_sendEvent(NSApplication* application, NSEvent* event) {
 
 void NSApplication_postEvent(NSApplication* application, NSEvent* event, bool atStart) {
 	void* func = SI_NS_FUNCTIONS[NS_APPLICATION_POST_EVENT_CODE];
-	((void (*)(id, SEL, id, bool))objc_msgSend) 
+	((void (*)(id, SEL, id, bool))objc_msgSend)
 		(application, func, event, atStart);
 }
 
@@ -2294,7 +2293,7 @@ NSScreen* NSScreen_mainScreen(void) {
 	void* func = SI_NS_FUNCTIONS[NS_SCREEN_MAIN_SCREEN_CODE];
 	void* nsclass = SI_NS_CLASSES[NS_SCREEN_CODE];
 
-	return (NSScreen *)objc_msgSend_id(class, func);
+	return (NSScreen *)objc_msgSend_id(nsclass, func);
 }
 
 NSRect NSScreen_frame(NSScreen* screen) {
@@ -3452,34 +3451,34 @@ void CATransaction_begin(void) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_BEGIN_CODE];
 
-	objc_msgSend_void(class, func);
+	objc_msgSend_void(nsclass, func);
 }
 
 void CATransaction_commit(void) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_COMMIT_CODE];
 
-	objc_msgSend_void(class, func);
+	objc_msgSend_void(nsclass, func);
 }
 
 void CATransaction_flush(void) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_FLUSH_CODE];
 
-	objc_msgSend_void(class, func);
+	objc_msgSend_void(nsclass, func);
 }
 bool CATransaction_disableActions(void) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_DISABLE_ACTIONS_CODE];
 
-	return objc_msgSend_bool(class, func);
+	return objc_msgSend_bool(nsclass, func);
 }
 
 void CATransaction_setDisableActions(bool flag) {
 	void* nsclass = SI_NS_CLASSES[CA_TRANSACTION_CODE];
 	void* func = SI_NS_FUNCTIONS[CA_TRANSACTION_SET_DISABLE_ACTIONS_CODE];
 
-	objc_msgSend_void_bool(class, func, flag);
+	objc_msgSend_void_bool(nsclass, func, flag);
 }
 
 
@@ -3557,7 +3556,7 @@ void NSNotificationCenter_addObserver(NSNotificationCenter* center, id observer,
 
 	((void (*)(id, SEL, id, SEL, NSString*, id))objc_msgSend)
 			(center, func, observer, aSelector, aName, anObject);
-	
+
 	NSRelease(str);
 }
 
