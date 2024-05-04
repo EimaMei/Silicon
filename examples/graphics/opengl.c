@@ -52,7 +52,6 @@ int main() {
 
 	NSOpenGLContext_makeCurrentContext(context);
 	NSWindow_setContentView(win, (NSView*)view);
-	NSWindow_setIsVisible(win, true);
 	NSWindow_makeMainWindow(win);
 
 	NSApplication_finishLaunching(NSApp);
