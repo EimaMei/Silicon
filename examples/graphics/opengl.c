@@ -20,7 +20,7 @@ int main() {
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
-	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
+	si_func_to_SEL("NSObject", windowShouldClose);
 
 	NSWindow* win = NSWindow_init(NSMakeRect(100, 100, 512, 512), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable, NSBackingStoreBuffered, false);
 	NSWindow_setTitle(win, "OpenGL example");
