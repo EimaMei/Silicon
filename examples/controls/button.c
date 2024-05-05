@@ -13,7 +13,7 @@ int button1Clicked;
 int button2Clicked;
 
 // Buffer for our text.
-static char buffer[30];
+char buffer[30];
 
 NSApplication* NSApp;
 
@@ -23,25 +23,27 @@ bool windowShouldClose(id sender) {
 }
 
 void OnButton1Click(id sender) {
-	sprintf(buffer, "button1 clicked %d times", ++button1Clicked);
+	button1Clicked += 1;
+	sprintf(buffer, "button1 clicked %d times", button1Clicked);
 	NSTextField_setStringValue(label1, buffer);
 }
 
 void OnButton2Click(id sender) {
-	sprintf(buffer, "button2 clicked %d times", ++button2Clicked);
+	button2Clicked += 1;
+	sprintf(buffer, "button2 clicked %d times", button2Clicked);
 	NSTextField_setStringValue(label2, buffer);
 }
 
 int main(int argc, char* argv[]) {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
-	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
-	si_func_to_SEL(SI_DEFAULT, OnButton1Click);
-	si_func_to_SEL(SI_DEFAULT, OnButton2Click);
+	si_func_to_SEL("NSObject", windowShouldClose);
+	si_func_to_SEL("NSObject", OnButton1Click);
+	si_func_to_SEL("NSObject", OnButton2Click);
 
 	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
-	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
+	NSWindow* window = NSWindow_init(NSAlloc(NSClass(NSWindow)), NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
 
 	button1Clicked = 0;
 	button2Clicked = 0;
@@ -50,14 +52,14 @@ int main(int argc, char* argv[]) {
 	button1 = NSButton_initWithFrame(NSMakeRect(50, 225, 90, 25)); // [[[NSButton alloc] initWithFrame:NSMakeRect(50, 225, 90, 25)] autorelease];
 	NSButton_setTitle(button1, "button1");
 	NSButton_setBezelStyle(button1, NSBezelStyleRounded);
-	NSButton_setTarget(button1, (id)window);
+	NSButton_setTarget(button1, window);
 	NSButton_setAction(button1, selector(OnButton1Click));
 	NSButton_setAutoresizingMask(button1, NSViewMaxXMargin | NSViewMinYMargin);
 
 	button2 = NSButton_initWithFrame(NSMakeRect(50, 125, 200, 75));
 	NSButton_setTitle(button2, "button2");
 	NSButton_setBezelStyle(button2, NSBezelStyleRegularSquare);
-	NSButton_setTarget(button2, (id)window);
+	NSButton_setTarget(button2, window);
 	NSButton_setAction(button2, selector(OnButton2Click));
 	NSButton_setAutoresizingMask(button2, NSViewMaxXMargin | NSViewMinYMargin);
 
@@ -76,12 +78,11 @@ int main(int argc, char* argv[]) {
 
 	NSWindow_setTitle(window, "Button example");
 	NSView* view = NSWindow_contentView(window);
-	NSView_addSubview(view, (NSView*)button1);
-	NSView_addSubview(view, (NSView*)button2);
-	NSView_addSubview(view, (NSView*)label1);
-	NSView_addSubview(view, (NSView*)label2);
-	NSWindow_setIsVisible(window, true);
-	NSWindow_makeMainWindow(window);
+	NSView_addSubview(view, button1);
+	NSView_addSubview(view, button2);
+	NSView_addSubview(view, label1);
+	NSView_addSubview(view, label2);
+	NSWindow_makeKeyAndOrderFront(window, nil);
 
 	NSApplication_run(NSApp);
 

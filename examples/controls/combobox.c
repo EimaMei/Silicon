@@ -25,14 +25,14 @@ bool windowShouldClose(id sender) {
 
 int main(int argc, char* argv[]) {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
-	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
-	si_func_to_SEL(SI_DEFAULT, OnComboBox1SelectedItemChange);
+	si_func_to_SEL("NSObject", windowShouldClose);
+	si_func_to_SEL("NSObject", OnComboBox1SelectedItemChange);
 
 	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	// Init the window beforehand as we'll have to reference for later.
-	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
+	NSWindow* window = NSWindow_init(NSAlloc(NSClass(NSWindow)), NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
  	NSWindow_setTitle(window, "ComboBox Example");
 
 	// Init our comboBoxes.
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 	NSComboBox_addItem(comboBox1, "item1");
 	NSComboBox_addItem(comboBox1, "item2");
 	NSComboBox_addItem(comboBox1, "item3");
-	NSComboBox_setTarget(comboBox1, (id)window);
+	NSComboBox_setTarget(comboBox1, window);
 	NSComboBox_setAction(comboBox1, selector(OnComboBox1SelectedItemChange));
 
 	comboBox2 = NSComboBox_initWithFrame(NSMakeRect(10, 220, 121, 26));
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 	NSComboBox_addItem(comboBox2, "item1");
 	NSComboBox_addItem(comboBox2, "item2");
 	NSComboBox_addItem(comboBox2, "item3");
-	NSComboBox_setTarget(comboBox2, (id)window);
+	NSComboBox_setTarget(comboBox2, window);
 
 	// Select which item index to show for each comboBox.
 	NSComboBox_selectItem(comboBox1, 1);
@@ -56,12 +56,11 @@ int main(int argc, char* argv[]) {
 
 	// Add the comboBoxes to the view.
 	NSView* view = NSWindow_contentView(window);
-	NSView_addSubview(view, (NSView*)comboBox1);
-	NSView_addSubview(view, (NSView*)comboBox2);
+	NSView_addSubview(view, comboBox1);
+	NSView_addSubview(view, comboBox2);
 
-	// Set the window visible and main.
-	NSWindow_setIsVisible(window, true);
-	NSWindow_makeMainWindow(window);
+	// Set the window as key and put it in the front.
+	NSWindow_makeKeyAndOrderFront(window, nil);
 
 	// Run it.
 	NSApplication_run(NSApp);
