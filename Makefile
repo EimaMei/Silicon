@@ -5,6 +5,7 @@ example:
 	make opengl
 	make mac-load
 	make hello-world
+	make gamepad
 	make save-file
 	make button
 	make checkbox
@@ -38,6 +39,8 @@ mac-load:
 	gcc $(ARGS) examples/general/mac-load.c -I./ -framework Cocoa -o mac-load
 hello-world:
 	gcc $(ARGS) examples/general/hello-world.c -I./ -framework Cocoa -o hello-world
+gamepad:
+	gcc $(ARGS) examples/general/gamepad.c -I./ -framework Cocoa -framework IOKit -o gamepad
 events:
 	gcc $(ARGS) examples/general/events.c -I./ -framework Cocoa -o events
 
