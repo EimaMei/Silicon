@@ -20,9 +20,14 @@ int main() {
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
-	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
+	si_func_to_SEL("NSObject", windowShouldClose);
 
-	NSWindow* win = NSWindow_init(NSMakeRect(100, 100, 512, 512), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable, NSBackingStoreBuffered, false);
+	NSWindow* win = NSAlloc(NSClass(NSWindow));
+	win = NSWindow_init(
+		win, NSMakeRect(100, 100, 512, 512),
+		NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable,
+		NSBackingStoreBuffered, false
+	);
 	NSWindow_setTitle(win, "OpenGL example");
 
 	NSOpenGLPixelFormatAttribute attributes[] = {
@@ -51,16 +56,15 @@ int main() {
 	CVDisplayLinkStart(displayLink);
 
 	NSOpenGLContext_makeCurrentContext(context);
-	NSWindow_setContentView(win, (NSView*)view);
-	NSWindow_setIsVisible(win, true);
-	NSWindow_makeMainWindow(win);
+	NSWindow_setContentView(win, view);
+	NSWindow_makeKeyAndOrderFront(win, nil);
 
 	NSApplication_finishLaunching(NSApp);
 
 	while (is_running) {
 		// Get the Windows events.
 		NSEvent* e = NSApplication_nextEventMatchingMask(NSApp, NSEventMaskAny, NSDate_distantFuture(), NSDefaultRunLoopMode, true);
-		
+
 		NSApplication_sendEvent(NSApp, e);
 		NSApplication_updateWindows(NSApp);
 

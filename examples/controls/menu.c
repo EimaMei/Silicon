@@ -6,7 +6,7 @@
 #include <silicon.h>
 
 #include <stdarg.h>
-#define local_array_size(array) sizeof(array) / sizeof(*array) // For convenience sake.
+#define arr_size(array) sizeof(array) / sizeof(*array) // For convenience sake.
 
 // Define all of the functions that'll be activated when the menu item gets clicked.
 void fileNew() { printf("MainMenu/File/New\n"); }
@@ -21,31 +21,23 @@ void editDelete() { printf("MainMenu/Edit/Delete\n"); }
 void editSelectAll() { printf("MainMenu/Edit/SelectAll\n"); }
 
 NSApplication* NSApp;
+char* allocator;
+size_t allocator_index = 0;
 
 bool windowShouldClose(id sender) {
 	NSApplication_terminate(NSApp, sender);
 	return YES;
 }
 
-/*
-	This is just a quick 'n dirty way to achieve the same result as [NSString stringWithFormat:(...)]
-	Note that after each usage of 'sprintf_output' in this file, the returned string does not get freed, which in production code should obviously
-*/
 const char* sprintf_output(const char* text, ...) {
-	va_list args;
+	char* output = &allocator[allocator_index];
 
-	// Get the length of the args (important for the malloc size).
-	va_start(args, text);
-	int len = vsnprintf(0, 0, text, args);
-	va_end(args);
+	va_list va;
+	va_start(va, text);
+	size_t len = vsnprintf(output, 1024 - allocator_index, text, va);
+	va_end(va);
 
-	char* output = malloc(len + 1);
-
-	// Do sprintf.
-	va_start(args, text);
-	vsnprintf(output, len + 1, text, args);
-	va_end(args);
-
+	allocator_index += len;
 	return output;
 }
 
@@ -53,41 +45,38 @@ const char* sprintf_output(const char* text, ...) {
 // Creates a submenu for the main menu.
 NSMenu* create_submenu(NSMenu* main_menu, const char* title, NSMenuItem** items, size_t sizeof_items) {
 	// First, create a submenu for the app's menu bar.
-    NSMenuItem* menuItem = NSAutoRelease(NSAlloc(SI_NS_CLASSES[NS_MENUITEM_CODE]));
+    NSMenuItem* menu_item = NSAutorelease(NSAlloc(NSClass(NSMenuItem)));
 
     // Add the NSMenuItem to the main menu
-	NSMenu_addItem(main_menu, menuItem);
+	NSMenu_addItem(main_menu, menu_item);
 
 	// Create a menu list for our submenu.
 	NSMenu* new_menu = NSMenu_init(title);
-	NSMenuItem_setSubmenu(menuItem, new_menu);
+	NSMenuItem_setSubmenu(menu_item, new_menu);
 
 	// Add the items to the new menu list.
 	for (size_t i = 0; i < sizeof_items; i++)
 		NSMenu_addItem(new_menu, items[i]);
-		
+
 	return new_menu;
 }
 
 int main() {
-	/*
-		C's function pointers and Objective-C's class methods (SELs) are different. While they are 'pointers' at their core, SELs are class functions and as such, sending a regular function pointer will not work.
-		The way to fix this is to use the 'si_func_to_SEL' function, which takes a function and adds it as a method to the provided class (default being SI_DEFAULT). With this you can now do selector(<function name>),
-		which finds the SEL pointer to the provided function and use it as a valid argument.
-	*/
-	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
+	allocator = malloc(1024);
 
-	si_func_to_SEL(SI_DEFAULT, fileNew);
-	si_func_to_SEL(SI_DEFAULT, fileOpen);
-	si_func_to_SEL(SI_DEFAULT, fileClose);
+	si_func_to_SEL("NSObject", windowShouldClose);
 
-	si_func_to_SEL(SI_DEFAULT, editUndo);
-	si_func_to_SEL(SI_DEFAULT, editRedo);
-	si_func_to_SEL(SI_DEFAULT, editCut);
-	si_func_to_SEL(SI_DEFAULT, editCopy);
-	si_func_to_SEL(SI_DEFAULT, editPaste);
-	si_func_to_SEL(SI_DEFAULT, editDelete);
-	si_func_to_SEL(SI_DEFAULT, editSelectAll);
+	si_func_to_SEL("NSObject", fileNew);
+	si_func_to_SEL("NSObject", fileOpen);
+	si_func_to_SEL("NSObject", fileClose);
+
+	si_func_to_SEL("NSObject", editUndo);
+	si_func_to_SEL("NSObject", editRedo);
+	si_func_to_SEL("NSObject", editCut);
+	si_func_to_SEL("NSObject", editCopy);
+	si_func_to_SEL("NSObject", editPaste);
+	si_func_to_SEL("NSObject", editDelete);
+	si_func_to_SEL("NSObject", editSelectAll);
 
 	NSApp = NSApplication_sharedApplication();
 	// Ever since MacOS 10.6, Mac applications require a 'NSApplicationActivationPolicyRegular' type policy to show menubars.
@@ -97,7 +86,7 @@ int main() {
 	const char* process_name = NSProcessInfo_processName(NSProcessInfo_processInfo());
 
 	// Create and set the main menubar
-	NSMenu* main_menu = NSAutoRelease(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE]));
+	NSMenu* main_menu = NSAutorelease(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE]));
 	NSApplication_setMainMenu(NSApp, main_menu);
 
 	// The items for each of our menus ('<Executable name>', 'File', 'Edit', 'View', 'Windows' and 'Help')
@@ -140,18 +129,18 @@ int main() {
 
 	// Now we create the menus themselves.
 	// '<Process name>' menu
-	create_submenu(main_menu, process_name, process_items, local_array_size(process_items));
-	NSMenu* process_services = NSAutoRelease(NSAlloc(SI_NS_CLASSES[NS_MENU_CODE])); // We initialize a new menu.
+	create_submenu(main_menu, process_name, process_items, arr_size(process_items));
+	NSMenu* process_services = NSAutorelease(NSAlloc(NSClass(NSMenu))); // We initialize a new menu.
 
 	NSMenuItem_setSubmenu(process_items[2], process_services); // 'process_items[2]' is 'Services' (refer to 'process_items' variable).
 
 	NSApplication_setServicesMenu(NSApp, process_services); // Now 'Services' becomes a Services menu.
 
 	// 'File' menu
-	create_submenu(main_menu, "File", file_items, local_array_size(file_items));
+	create_submenu(main_menu, "File", file_items, arr_size(file_items));
 
 	// 'File' menu
-	create_submenu(main_menu, "Edit", edit_items, local_array_size(edit_items));
+	create_submenu(main_menu, "Edit", edit_items, arr_size(edit_items));
 
 	// 'View' menu
 	create_submenu(main_menu, "View", nil, 0); // For whatever reason, MacOS turns a "View" titled menu automatically into a View menu.
@@ -165,13 +154,14 @@ int main() {
 	NSApplication_setHelpMenu(NSApp, help_menu); // Set our menu into a Help menu.
 
 	// Create our window.
-	NSWindow* win = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
+	NSWindow* win = NSWindow_init(NSAlloc(NSClass(NSWindow)), NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
 	NSWindow_setTitle(win, "MainMenu example");
-	NSWindow_setIsVisible(win, true);
-	NSWindow_makeMainWindow(win);
+	NSWindow_makeKeyAndOrderFront(win, nil);
 
 	// Run it.
 	NSApplication_run(NSApp);
+
+	free(allocator);
 
 	return 0;
 }

@@ -64,7 +64,7 @@ void OnCheckBox5Click(id sender) {
 
 
 NSButton* create_checkbox(checkBox checkbox) {
-	NSButton* result = NSAutoRelease(NSButton_initWithFrame(checkbox.rect));
+	NSButton* result = NSAutorelease(NSButton_initWithFrame(checkbox.rect));
 	NSButton_setTitle(result, checkbox.title);
 	NSButton_setAllowsMixedState(result, checkbox.allowMixedState);
 	NSButton_setButtonType(result, checkbox.type);
@@ -85,14 +85,14 @@ int main(int argc, char* argv[]) {
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
-	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
-	si_func_to_SEL(SI_DEFAULT, OnCheckBox1Click);
-	si_func_to_SEL(SI_DEFAULT, OnCheckBox2Click);
-	si_func_to_SEL(SI_DEFAULT, OnCheckBox3Click);
-	si_func_to_SEL(SI_DEFAULT, OnCheckBox4Click);
-	si_func_to_SEL(SI_DEFAULT, OnCheckBox5Click);
+	si_func_to_SEL("NSObject", windowShouldClose);
+	si_func_to_SEL("NSObject", OnCheckBox1Click);
+	si_func_to_SEL("NSObject", OnCheckBox2Click);
+	si_func_to_SEL("NSObject", OnCheckBox3Click);
+	si_func_to_SEL("NSObject", OnCheckBox4Click);
+	si_func_to_SEL("NSObject", OnCheckBox5Click);
 
-	NSWindow* window = NSWindow_init(NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
+	NSWindow* window = NSWindow_init(NSAlloc(NSClass(NSWindow)), NSMakeRect(100, 100, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
 	NSWindow_setTitle(window, "CheckBox example");
 
 	checkBox array_of_checkboxes[5] = {
@@ -108,11 +108,9 @@ int main(int argc, char* argv[]) {
 	for (size_t i = 0; i < arr_countof(array_of_checkboxes); i++) {
 		// We create the checkboxes, set them as the pointers to the selector functions, and also add them to the NSView as subviews to make them visible.
 		created_checkboxes[i] = create_checkbox(array_of_checkboxes[i]);
-		NSView_addSubview(view, (NSView*)created_checkboxes[i]);
+		NSView_addSubview(view, created_checkboxes[i]);
 	}
-
-	NSWindow_setIsVisible(window, true);
-	NSWindow_makeMainWindow(window);
+	NSWindow_makeKeyAndOrderFront(window, nil);
 
 	NSApplication_run(NSApp);
 }

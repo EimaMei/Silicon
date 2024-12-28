@@ -33,10 +33,10 @@ bool windowShouldClose(void* self)  {
 
 
 int main() {
-	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
-	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
-    si_func_to_SEL_with_name("NSView", "drawRect:", onRect);
+	si_func_to_SEL("NSObject", windowShouldClose);
 
+	Class MyView = objc_allocateClassPair(NSClass(NSView), "nAmE", 0);
+    class_addMethod(MyView, sel_registerName("drawRect:"), (IMP)onRect, "v@:{CGRect={ffff}}");
 
 	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
@@ -46,17 +46,20 @@ int main() {
 	NSRect rect = {{100.0, 350.0}, {400.0, 400.0}};
 	NSInteger mask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable
 				   | NSWindowStyleMaskMiniaturizable;
-	NSWindow* myWnd = NSAutoRelease(NSWindow_init(rect, mask, NSBackingStoreBuffered, false));
+	NSWindow* myWnd = NSAutorelease(
+		NSWindow_init(NSAlloc(NSClass(NSWindow)), rect, mask, NSBackingStoreBuffered, false)
+	);
 	NSWindow_setTitle(myWnd, "ObjC Application Window");
 
-	NSView* myView = NSAutoRelease(NSView_init());
+	NSView* myView = NSAutorelease(NSInit(NSAlloc(MyView)));
 	NSWindow_setContentView(myWnd, myView);
-	NSWindow_setDelegate(myWnd, (id)myView);
+	NSWindow_setDelegate(myWnd, myView);
 	NSWindow_orderFront(myWnd, nil);
 	NSWindow_makeKeyWindow(myWnd);
 
 	NSApplication_run(NSApp);
 	release(myPool);
+	objc_disposeClassPair(MyView);
 
 	return 0;
 }

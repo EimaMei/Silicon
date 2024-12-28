@@ -16,7 +16,7 @@ bool windowShouldClose(id sender)  {
 
 int main() {
 	// Convert C functions to Objective-C methods (refer to the 'si_func_to_SEL' comment from 'examples/menu.c' for more).
-	si_func_to_SEL(SI_DEFAULT, windowShouldClose);
+	si_func_to_SEL("NSObject", windowShouldClose);
 
 	NSApp = NSApplication_sharedApplication();
 	NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
@@ -37,13 +37,12 @@ int main() {
 	NSTextField_setFont(label, current_font);
 
 
-	NSWindow* win = NSWindow_init(NSMakeRect(0, 0, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
+	NSWindow* win = NSWindow_init(NSAlloc(NSClass(NSWindow)), NSMakeRect(0, 0, 300, 300), NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, false);
 	NSWindow_setTitle(win, "Hello world (label)");
-	NSView_addSubview(NSWindow_contentView(win), (NSView*)label);
+	NSView_addSubview(NSWindow_contentView(win), label);
 	NSWindow_center(win);
-	NSWindow_setIsVisible(win, true);
 
-	NSWindow_makeMainWindow(win);
+	NSWindow_makeKeyAndOrderFront(win, nil);
   	NSApplication_run(NSApp);
 
 	return 0;

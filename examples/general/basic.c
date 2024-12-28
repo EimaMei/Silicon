@@ -2,7 +2,7 @@
 #define SILICON_IMPLEMENTATION
 #include "silicon.h"
 
-NSApplication* NSApp; 
+NSApplication* NSApp;
 NSWindow* win;
 
 bool windowShouldClose(void* self)  {
@@ -13,23 +13,19 @@ bool windowShouldClose(void* self)  {
     return true;
 }
 
-int main() {    
+int main() {
+	si_func_to_SEL("NSObject", windowShouldClose);
+
 	NSApp = NSApplication_sharedApplication();
-	
     NSApplication_setActivationPolicy(NSApp, NSApplicationActivationPolicyRegular);
 
-
-    si_func_to_SEL(SI_DEFAULT, windowShouldClose);
-
-    win = NSWindow_init(NSMakeRect(500, 500, 200, 200), 
-                                    NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable, NSBackingStoreBuffered, 
-                                    false
-                                );
-
+    win = NSWindow_init(
+		NSAlloc(NSClass(NSWindow)), NSMakeRect(500, 500, 200, 200),
+        NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable,
+		NSBackingStoreBuffered, false
+    );
     NSWindow_setTitle(win, "Basic Example");
-
     NSWindow_makeKeyAndOrderFront(win, nil);
-
 	NSApplication_run(NSApp);
 
     return 0;
